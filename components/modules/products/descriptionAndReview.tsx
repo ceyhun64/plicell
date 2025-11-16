@@ -12,12 +12,7 @@ interface Comment {
   title?: string;
   comment?: string;
   createdAt: string;
-  user?: {
-    // user artık opsiyonel
-    id: number;
-    name: string;
-    surname: string;
-  };
+  user?: { id: number; name: string; surname: string };
 }
 
 interface ProductTabsProps {
@@ -33,21 +28,19 @@ export default function ProductTabs({ productId }: ProductTabsProps) {
   const [isLoading, setIsLoading] = useState(false);
 
   const [rating, setRating] = useState(0);
+  const [hoverRating, setHoverRating] = useState(0);
   const [title, setTitle] = useState("");
   const [commentText, setCommentText] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [userId, setUserId] = useState<number | null>(null);
-
   const [hasUserCommented, setHasUserCommented] = useState(false);
 
-  // Kullanıcı bilgisini al
   useEffect(() => {
     async function fetchUser() {
       try {
         const res = await fetch("/api/account/check");
         const data = await res.json();
-        console.log(data);
         if (data.user?.id) setUserId(data.user.id);
       } catch (err) {
         console.error(err);
@@ -58,7 +51,8 @@ export default function ProductTabs({ productId }: ProductTabsProps) {
 
   useEffect(() => {
     if (productId) fetchComments();
-  }, [productId]);
+  }, [productId, userId]);
+
   const fetchComments = async () => {
     if (!productId) return;
     setIsLoading(true);
@@ -68,7 +62,6 @@ export default function ProductTabs({ productId }: ProductTabsProps) {
       if (!res.ok) throw new Error(data.error || "Yorumlar alınamadı");
       setComments(data);
 
-      // Eğer kullanıcı giriş yaptıysa, onun yorum yapıp yapmadığını kontrol et
       if (userId) {
         const userAlreadyCommented = data.some(
           (comment: Comment) => comment.user?.id === userId
@@ -110,6 +103,7 @@ export default function ProductTabs({ productId }: ProductTabsProps) {
 
       setComments([data, ...comments]);
       setRating(0);
+      setHoverRating(0);
       setTitle("");
       setCommentText("");
       toast.success("Yorum başarıyla gönderildi!");
@@ -145,73 +139,82 @@ export default function ProductTabs({ productId }: ProductTabsProps) {
   ];
 
   return (
-    <section className="mt-16 mb-8 ">
-      <div className="flex border-b border-gray-200 mb-8">
-        <button
-          onClick={() => setActiveTab("description")}
-          className={`flex items-center gap-2 py-3 px-6 text-base font-medium transition-all duration-200 ${
-            activeTab === "description"
-              ? "text-gray-900 border-b-2 border-gray-900"
-              : "text-gray-500 hover:text-gray-800"
-          }`}
-        >
-          <Info size={18} /> Açıklama
-        </button>
-        <button
-          onClick={() => setActiveTab("comments")}
-          className={`flex items-center gap-2 py-3 px-6 text-base font-medium transition-all duration-200 ${
-            activeTab === "comments"
-              ? "text-gray-900 border-b-2 border-gray-900"
-              : "text-gray-500 hover:text-gray-800"
-          }`}
-        >
-          <MessageCircle size={18} /> Yorumlar ({comments.length})
-        </button>
+    <section className="mt-16 mb-8">
+      {/* Tabs */}
+      <div className="flex border-b border-gray-200 mb-8 gap-4 overflow-x-auto">
+        {["description", "comments"].map((tab) => {
+          const isActive = activeTab === tab;
+          const label =
+            tab === "description"
+              ? "Açıklama"
+              : `Yorumlar (${comments.length})`;
+          const Icon = tab === "description" ? Info : MessageCircle;
+
+          return (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab as any)}
+              className={`flex items-center gap-2 py-3 px-6 font-medium text-sm sm:text-base transition-all duration-200 ${
+                isActive
+                  ? "text-gray-900 border-b-2 border-red-700"
+                  : "text-gray-500 hover:text-gray-800"
+              }`}
+            >
+              <Icon size={18} /> {label}
+            </button>
+          );
+        })}
       </div>
 
-      <Card className="border-gray-200 shadow-sm rounded-2xl bg-white">
-        <CardContent className="p-8">
+      {/* Content */}
+      <Card className="shadow-lg rounded-none bg-white border border-gray-100">
+        <CardContent className="p-6 sm:p-8 space-y-6">
           {activeTab === "description" && (
-            <div className="text-gray-700 space-y-6">
-              <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse text-sm sm:text-base">
-                  <tbody>
-                    {tableData.map((item, index) => (
-                      <tr
-                        key={index}
-                        className="border-b border-gray-100 last:border-none"
-                      >
-                        <td className="py-2 sm:py-3 font-medium text-gray-900 w-1/2 md:w-1/3 text-xs sm:text-base">
-                          {item.label}
-                        </td>
-                        <td className="py-2 sm:py-3 text-gray-600 w-1/2 md:w-2/3 text-xs sm:text-base">
-                          {item.value}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse text-sm sm:text-base">
+                <tbody>
+                  {tableData.map((item, idx) => (
+                    <tr
+                      key={idx}
+                      className="border-b border-gray-100 last:border-none hover:bg-gray-50 transition"
+                    >
+                      <td className="py-2 sm:py-3 font-semibold text-gray-900 w-1/3">
+                        {item.label}
+                      </td>
+                      <td className="py-2 sm:py-3 text-gray-600 w-2/3">
+                        {item.value}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           )}
 
           {activeTab === "comments" && (
             <div className="space-y-6">
+              {/* Comment Form */}
               {!hasUserCommented && (
                 <form
                   onSubmit={handleSubmit}
-                  className="border p-4 rounded-lg space-y-4"
+                  className="border border-gray-200 rounded-xl p-4 sm:p-6 space-y-4 shadow-sm hover:shadow-md transition"
                 >
-                  <h4 className="font-semibold text-gray-900">Yorum Yazın</h4>
-                  <div className="flex items-center gap-2">
+                  <h4 className="text-lg font-semibold text-gray-900">
+                    Yorum Yazın
+                  </h4>
+                  <div className="flex items-center gap-1">
                     {[1, 2, 3, 4, 5].map((n) => (
                       <Star
                         key={n}
                         size={24}
-                        className={`cursor-pointer ${
-                          n <= rating ? "text-yellow-500" : "text-gray-300"
+                        className={`cursor-pointer transition-colors ${
+                          (hoverRating || rating) >= n
+                            ? "text-yellow-400 fill-yellow-400"
+                            : "text-gray-300"
                         }`}
                         onClick={() => setRating(n)}
+                        onMouseEnter={() => setHoverRating(n)}
+                        onMouseLeave={() => setHoverRating(0)}
                       />
                     ))}
                   </div>
@@ -220,32 +223,36 @@ export default function ProductTabs({ productId }: ProductTabsProps) {
                     placeholder="Başlık (opsiyonel)"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    className="w-full border rounded p-2"
+                    className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-red-400 outline-none transition"
                   />
                   <textarea
                     placeholder="Yorumunuz"
                     value={commentText}
                     onChange={(e) => setCommentText(e.target.value)}
-                    className="w-full border rounded p-2"
+                    className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-red-400 outline-none transition resize-none"
+                    rows={4}
                     required
                   />
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700"
+                    className="bg-rose-800 text-white py-2 px-4 rounded-lg hover:bg-rose-900 transition transform hover:scale-105 disabled:opacity-50"
                   >
                     {isSubmitting ? "Gönderiliyor..." : "Gönder"}
                   </button>
                 </form>
               )}
 
+              {/* Comment List */}
               {isLoading ? (
-               <Spinner />
+                <div className="flex justify-center">
+                  <Spinner />
+                </div>
               ) : comments.length > 0 ? (
                 comments.map((comment) => (
                   <div
                     key={comment.id}
-                    className="border border-gray-100 rounded-xl p-4 hover:shadow-sm transition-all"
+                    className="border border-gray-100 rounded-2xl p-4 sm:p-6 shadow-sm hover:shadow-md transition"
                   >
                     <div className="flex justify-between items-start mb-1">
                       <p className="font-semibold text-gray-900">
@@ -258,14 +265,14 @@ export default function ProductTabs({ productId }: ProductTabsProps) {
                         )}
                       </span>
                     </div>
-                    <div className="flex items-center mb-2 text-yellow-500">
+                    <div className="flex items-center mb-2 text-yellow-400">
                       {Array.from({ length: 5 }).map((_, i) => (
                         <Star
                           key={i}
                           size={16}
                           className={
                             i < comment.rating
-                              ? "fill-yellow-500"
+                              ? "fill-yellow-400"
                               : "text-gray-300"
                           }
                         />
@@ -282,7 +289,7 @@ export default function ProductTabs({ productId }: ProductTabsProps) {
                   </div>
                 ))
               ) : (
-                <p className="text-gray-600">
+                <p className="text-gray-500">
                   Bu ürün için henüz yorum yapılmamıştır. İlk yorum yapan siz
                   olun!
                 </p>
