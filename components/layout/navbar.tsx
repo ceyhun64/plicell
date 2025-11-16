@@ -316,8 +316,7 @@ export default function Navbar() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.35 }}
-              className="fixed inset-0 bg-white/85 backdrop-blur-xl flex flex-col items-center justify-center gap-10 md:hidden z-20 h-screen overflow-y-auto"
-              aria-label="Mobil menü"
+              className="fixed inset-0 bg-white/85 backdrop-blur-xl flex flex-col items-center justify-center gap-10 md:hidden z-[999] h-screen overflow-y-auto"
             >
               {/* Close Button */}
               <button

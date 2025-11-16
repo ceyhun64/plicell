@@ -66,8 +66,8 @@ export default function HeroSection() {
           key={slide.id}
           className={`absolute inset-0 transition-all duration-1000 ease-in-out transform ${
             index === current
-              ? "opacity-100 scale-100 translate-x-0 z-20"
-              : "opacity-0 scale-95 -translate-x-10 z-10"
+              ? "opacity-100 translate-x-0"
+              : "opacity-0 -translate-x-full "
           }`}
         >
           <Image
@@ -98,7 +98,7 @@ export default function HeroSection() {
       ))}
 
       {/* Navigation Buttons */}
-      <div className="absolute top-2/3 md:top-1/2 left-[-2] md:left-3  transform -translate-y-1/2 z-30">
+      <div className="absolute top-2/3 md:top-1/2 left-[-2] md:left-3  transform -translate-y-1/2 ">
         <Button
           variant="ghost"
           size="icon"
@@ -109,7 +109,7 @@ export default function HeroSection() {
           <ChevronLeft size={28} />
         </Button>
       </div>
-      <div className="absolute top-2/3 md:top-1/2 right-[-2] md:right-3 transform -translate-y-1/2 z-30">
+      <div className="absolute top-2/3 md:top-1/2 right-[-2] md:right-3 transform -translate-y-1/2 ">
         <Button
           variant="ghost"
           size="icon"
