@@ -39,19 +39,15 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Label } from "@/components/ui/label";
 
-type NavbarProps = {
-  links: { name: string; href: string }[];
-};
-
-export default function Navbar({
-  links = [
+export default function Navbar() {
+  const links = [
     { name: "Tüm Ürünler", href: "/shop" },
     { name: "Plicell", href: "/plants" },
     { name: "Zebra", href: "/accessories" },
     { name: "Stor", href: "/accessories" },
     { name: "Ahşap Jaluzi", href: "/accessories" },
-  ],
-}: NavbarProps) {
+  ];
+
   const [searchOpen, setSearchOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -143,7 +139,7 @@ export default function Navbar({
           {/* Right Icons */}
           <div className="flex items-center gap-1 md:gap-4">
             {/* Search */}
-            <Button variant="ghost" size="icon" aria-label="Ara" >
+            <Button variant="ghost" size="icon" aria-label="Ara">
               <Search className="h-5 w-5" />
             </Button>
 
