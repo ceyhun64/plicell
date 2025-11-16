@@ -1,0 +1,122 @@
+[
+  {
+    "id": 1,
+    "name": "Klasik Düz Perde",
+    "price": "₺150,00",
+    "image": "/products/1.webp",
+    "image2": "/products/2.webp",
+    "image3": "/products/3.webp",
+    "image4": "/products/4.webp",
+    "description": "Şık ve modern düz kesim perde. Her mekana kolayca uyum sağlar.",
+    "stock": 25,
+    "rating": 4.0
+  },
+  {
+    "id": 2,
+    "name": "Blackout Perde",
+    "price": "₺150,00",
+    "image": "/products/10.webp",
+    "image2": "/products/6.webp",
+    "image3": "/products/7.webp",
+    "image4": "/products/8.webp",
+    "description": "Işığı tamamen keser, yatak odaları için idealdir.",
+    "stock": 25,
+    "rating": 4.0
+  },
+  {
+    "id": 3,
+    "name": "Keten Görünümlü Perde",
+    "price": "₺150,00",
+    "image": "/products/11.webp",
+    "image2": "/products/10.webp",
+    "image3": "/products/11.webp",
+    "image4": "/products/12.webp",
+    "description": "Doğal görünümlü, yumuşak dokulu keten efektli perde.",
+    "stock": 25,
+    "rating": 4.0
+  },
+  {
+    "id": 4,
+    "name": "Desenli Salon Perdesi",
+    "price": "₺150,00",
+    "image": "/products/13.webp",
+    "image2": "/products/14.webp",
+    "image3": "/products/15.webp",
+    "image4": "/products/16.webp",
+    "description": "Büyük desenli, oturma odalarına şıklık katan model.",
+    "stock": 25,
+    "rating": 4.0
+  },
+  {
+    "id": 5,
+    "name": "Özel Ölçü Fon Perde",
+    "price": "₺150,00",
+    "image": "/products/17.webp",
+    "image2": "/products/18.webp",
+    "image3": "/products/19.webp",
+    "image4": "/products/1.webp",
+    "description": "Yanlarda kullanılan, kalın ve dekoratif fon perdesi.",
+    "stock": 25,
+    "rating": 4.0
+  },
+  {
+    "id": 6,
+    "name": "Çocuk Odası Perdesi",
+    "price": "₺160,00",
+    "image": "/products/2.webp",
+    "image2": "/products/3.webp",
+    "image3": "/products/4.webp",
+    "image4": "/products/5.webp",
+    "description": "Canlı renkte, desenli çocuk ve genç odası perdesi.",
+    "stock": 20,
+    "rating": 4.2
+  },
+  {
+    "id": 7,
+    "name": "Tül Perde",
+    "price": "₺120,00",
+    "image": "/products/6.webp",
+    "image2": "/products/7.webp",
+    "image3": "/products/8.webp",
+    "image4": "/products/9.webp",
+    "description": "Hafif ve zarif tül perde. Işığı yumuşatır.",
+    "stock": 30,
+    "rating": 4.5
+  },
+  {
+    "id": 8,
+    "name": "Zebra Perde",
+    "price": "₺250,00",
+    "image": "/products/10.webp",
+    "image2": "/products/11.webp",
+    "image3": "/products/12.webp",
+    "image4": "/products/13.webp",
+    "description": "Kullanışlı ve pratik, hem tül hem güneşlik özelliği.",
+    "stock": 15,
+    "rating": 3.9
+  },
+  {
+    "id": 9,
+    "name": "Stor Perde",
+    "price": "₺200,00",
+    "image": "/products/14.webp",
+    "image2": "/products/15.webp",
+    "image3": "/products/16.webp",
+    "image4": "/products/17.webp",
+    "description": "Kolay montaj ve kullanım sunan modern stor perde.",
+    "stock": 22,
+    "rating": 4.1
+  },
+  {
+    "id": 10,
+    "name": "Jaluzi Perde",
+    "price": "₺180,00",
+    "image": "/products/18.webp",
+    "image2": "/products/19.webp",
+    "image3": "/products/1.webp",
+    "image4": "/products/2.webp",
+    "description": "Işık açısını ayarlayabileceğiniz pratik jaluzi sistemi.",
+    "stock": 18,
+    "rating": 4.3
+  }
+]
