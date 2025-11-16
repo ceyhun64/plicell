@@ -146,16 +146,16 @@ export default function Navbar() {
 
             {/* User Dropdown */}
             <DropdownMenu>
-              <DropdownMenuTrigger asChild>
+              <DropdownMenuTrigger asChild className="z-500">
                 <Button variant="ghost" size="icon" aria-label="Kullanıcı">
                   <User className="h-5 w-5" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem asChild>
+                <DropdownMenuItem asChild className="z-500">
                   <Link href="/login">Giriş Yap</Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild>
+                <DropdownMenuItem asChild className="z-500">
                   <Link href="/register">Kayıt Ol</Link>
                 </DropdownMenuItem>
               </DropdownMenuContent>

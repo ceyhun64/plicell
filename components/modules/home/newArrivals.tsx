@@ -107,7 +107,7 @@ export default function YeniUrunlerCarousel() {
         </Carousel>
 
         {/* Alt Progress Bar */}
-        <div className="absolute bottom-0 left-0 right-0 flex justify-center space-x-2 pb-4 z-10">
+        <div className="absolute -bottom-10 md:bottom-0 left-0 right-0 flex justify-center space-x-2 pb-4 z-10">
           {api &&
             Array.from({ length: count }).map((_, index) => (
               <button
