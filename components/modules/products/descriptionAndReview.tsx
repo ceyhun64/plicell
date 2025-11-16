@@ -140,8 +140,8 @@ export default function ProductTabs({ productId }: ProductTabsProps) {
 
   return (
     <section className="mt-16 mb-8">
-      {/* Tabs */}
-      <div className="flex border-b border-gray-200 mb-8 gap-4 overflow-x-auto">
+      {/* Sticky Tabs */}
+      <div className="sticky top-0  bg-white/80 backdrop-blur border-b border-gray-200 flex gap-4 px-2 sm:px-0 overflow-x-auto">
         {["description", "comments"].map((tab) => {
           const isActive = activeTab === tab;
           const label =
@@ -154,150 +154,157 @@ export default function ProductTabs({ productId }: ProductTabsProps) {
             <button
               key={tab}
               onClick={() => setActiveTab(tab as any)}
-              className={`flex items-center gap-2 py-3 px-6 font-medium text-sm sm:text-base transition-all duration-200 ${
-                isActive
-                  ? "text-gray-900 border-b-2 border-red-700"
-                  : "text-gray-500 hover:text-gray-800"
-              }`}
+              className={`relative flex items-center gap-2 py-4 px-5 font-medium whitespace-nowrap transition-all
+            ${isActive ? "text-rose-700" : "text-gray-600 hover:text-gray-900"}
+          `}
             >
-              <Icon size={18} /> {label}
+              <Icon size={18} />
+              {label}
+              {isActive && (
+                <span className="absolute bottom-0 left-0 w-full h-[2px] bg-rose-700 rounded-full"></span>
+              )}
             </button>
           );
         })}
       </div>
 
       {/* Content */}
-      <Card className="shadow-lg rounded-none bg-white border border-gray-100">
-        <CardContent className="p-6 sm:p-8 space-y-6">
-          {activeTab === "description" && (
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse text-sm sm:text-base">
-                <tbody>
-                  {tableData.map((item, idx) => (
-                    <tr
-                      key={idx}
-                      className="border-b border-gray-100 last:border-none hover:bg-gray-50 transition"
-                    >
-                      <td className="py-2 sm:py-3 font-semibold text-gray-900 w-1/3">
-                        {item.label}
-                      </td>
-                      <td className="py-2 sm:py-3 text-gray-600 w-2/3">
-                        {item.value}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
+      <div className="bg-white border border-gray-100  rounded-none p-1 sm:p-8 mt-6">
+        {activeTab === "description" && (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse text-[15px]">
+              <tbody>
+                {tableData.map((item, idx) => (
+                  <tr
+                    key={idx}
+                    className="border-b border-gray-100 last:border-none hover:bg-gray-50/60"
+                  >
+                    <td className="py-4 text-xs font-semibold text-gray-900 w-1/2">
+                      {item.label}
+                    </td>
+                    <td className="py-4 text-sm text-gray-600 w-1/2">{item.value}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
 
-          {activeTab === "comments" && (
-            <div className="space-y-6">
-              {/* Comment Form */}
-              {!hasUserCommented && (
-                <form
-                  onSubmit={handleSubmit}
-                  className="border border-gray-200 rounded-xl p-4 sm:p-6 space-y-4 shadow-sm hover:shadow-md transition"
+        {activeTab === "comments" && (
+          <div className="space-y-8">
+            {/* Comment Form */}
+            {!hasUserCommented && (
+              <form
+                onSubmit={handleSubmit}
+                className="p-6 border border-gray-200 rounded-none shadow-sm hover:shadow-md transition"
+              >
+                <h4 className="text-xl font-semibold text-gray-900 mb-4">
+                  Yorum Yazın
+                </h4>
+
+                {/* Rating */}
+                <div className="flex items-center gap-1 mb-3">
+                  {[1, 2, 3, 4, 5].map((n) => (
+                    <Star
+                      key={n}
+                      size={28}
+                      className={`cursor-pointer transition-transform ${
+                        (hoverRating || rating) >= n
+                          ? "text-yellow-400 fill-yellow-400"
+                          : "text-gray-300"
+                      }`}
+                      onClick={() => setRating(n)}
+                      onMouseEnter={() => setHoverRating(n)}
+                      onMouseLeave={() => setHoverRating(0)}
+                    />
+                  ))}
+                </div>
+
+                {/* Title */}
+                <input
+                  type="text"
+                  placeholder="Başlık (opsiyonel)"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                  className="w-full mb-3 border rounded-none p-3 focus:ring-2 focus:ring-rose-400 outline-none"
+                />
+
+                {/* Comment */}
+                <textarea
+                  placeholder="Yorumunuz"
+                  value={commentText}
+                  onChange={(e) => setCommentText(e.target.value)}
+                  className="w-full border rounded-none p-3 focus:ring-2 focus:ring-rose-400 outline-none resize-none"
+                  rows={4}
+                  required
+                />
+
+                {/* Submit */}
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="mt-4 w-25 bg-rose-700 text-white py-3 rounded-none font-semibold hover:bg-rose-800 transition disabled:opacity-50"
                 >
-                  <h4 className="text-lg font-semibold text-gray-900">
-                    Yorum Yazın
-                  </h4>
-                  <div className="flex items-center gap-1">
-                    {[1, 2, 3, 4, 5].map((n) => (
+                  {isSubmitting ? "Gönderiliyor..." : "Gönder"}
+                </button>
+              </form>
+            )}
+
+            {/* Comments */}
+            {isLoading ? (
+              <div className="flex justify-center py-8">
+                <Spinner />
+              </div>
+            ) : comments.length > 0 ? (
+              comments.map((comment) => (
+                <div
+                  key={comment.id}
+                  className="border border-gray-100 rounded-none p-6 shadow-sm hover:shadow-lg transition"
+                >
+                  <div className="flex justify-between items-start mb-3">
+                    <p className="font-semibold text-gray-900 text-base">
+                      {comment.user?.name ?? "Anonim"}{" "}
+                      {comment.user?.surname ?? ""}
+                    </p>
+                    <span className="text-xs text-gray-500">
+                      {new Date(comment.createdAt).toLocaleDateString("tr-TR")}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center mb-2 text-yellow-400">
+                    {Array.from({ length: 5 }).map((_, i) => (
                       <Star
-                        key={n}
-                        size={24}
-                        className={`cursor-pointer transition-colors ${
-                          (hoverRating || rating) >= n
-                            ? "text-yellow-400 fill-yellow-400"
+                        key={i}
+                        size={18}
+                        className={
+                          i < comment.rating
+                            ? "fill-yellow-400"
                             : "text-gray-300"
-                        }`}
-                        onClick={() => setRating(n)}
-                        onMouseEnter={() => setHoverRating(n)}
-                        onMouseLeave={() => setHoverRating(0)}
+                        }
                       />
                     ))}
                   </div>
-                  <input
-                    type="text"
-                    placeholder="Başlık (opsiyonel)"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-red-400 outline-none transition"
-                  />
-                  <textarea
-                    placeholder="Yorumunuz"
-                    value={commentText}
-                    onChange={(e) => setCommentText(e.target.value)}
-                    className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-red-400 outline-none transition resize-none"
-                    rows={4}
-                    required
-                  />
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="bg-rose-800 text-white py-2 px-4 rounded-lg hover:bg-rose-900 transition transform hover:scale-105 disabled:opacity-50"
-                  >
-                    {isSubmitting ? "Gönderiliyor..." : "Gönder"}
-                  </button>
-                </form>
-              )}
 
-              {/* Comment List */}
-              {isLoading ? (
-                <div className="flex justify-center">
-                  <Spinner />
-                </div>
-              ) : comments.length > 0 ? (
-                comments.map((comment) => (
-                  <div
-                    key={comment.id}
-                    className="border border-gray-100 rounded-2xl p-4 sm:p-6 shadow-sm hover:shadow-md transition"
-                  >
-                    <div className="flex justify-between items-start mb-1">
-                      <p className="font-semibold text-gray-900">
-                        {comment.user?.name ?? "Anonim"}{" "}
-                        {comment.user?.surname ?? ""}
-                      </p>
-                      <span className="text-xs text-gray-500">
-                        {new Date(comment.createdAt).toLocaleDateString(
-                          "tr-TR"
-                        )}
-                      </span>
-                    </div>
-                    <div className="flex items-center mb-2 text-yellow-400">
-                      {Array.from({ length: 5 }).map((_, i) => (
-                        <Star
-                          key={i}
-                          size={16}
-                          className={
-                            i < comment.rating
-                              ? "fill-yellow-400"
-                              : "text-gray-300"
-                          }
-                        />
-                      ))}
-                    </div>
-                    {comment.title && (
-                      <p className="font-medium text-gray-900">
-                        {comment.title}
-                      </p>
-                    )}
-                    <p className="text-gray-700 text-sm leading-relaxed">
-                      {comment.comment}
+                  {comment.title && (
+                    <p className="font-medium text-gray-900 mb-1 text-[15px]">
+                      {comment.title}
                     </p>
-                  </div>
-                ))
-              ) : (
-                <p className="text-gray-500">
-                  Bu ürün için henüz yorum yapılmamıştır. İlk yorum yapan siz
-                  olun!
-                </p>
-              )}
-            </div>
-          )}
-        </CardContent>
-      </Card>
+                  )}
+
+                  <p className="text-gray-700 text-[15px] leading-relaxed">
+                    {comment.comment}
+                  </p>
+                </div>
+              ))
+            ) : (
+              <p className="text-gray-500 text-center py-6">
+                Bu ürün için henüz yorum yapılmamıştır. İlk yorum yapan siz
+                olun!
+              </p>
+            )}
+          </div>
+        )}
+      </div>
     </section>
   );
 }
