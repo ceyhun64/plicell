@@ -18,7 +18,7 @@ export default function Footer() {
         {/* Hakkımızda Bölümü */}
         <div className="flex-1">
           <div className="text-2xl font-bold mb-3 font-[Playfair_Display]">
-            <Link href="/home">Plicell</Link>
+            <Link href="/home">Moda Perde</Link>
           </div>
           <p className="text-sm leading-relaxed font-['Mozilla_Headline'] mb-4 md:mb-6">
             Müşterilerimize en iyi ürünleri ve hizmetleri sunmaya kendimizi
@@ -118,7 +118,7 @@ export default function Footer() {
             </Button>
           </div>
           <p className="text-xs text-gray-500">
-            &copy; {new Date().getFullYear()} Plicell. Tüm hakları saklıdır.
+            &copy; {new Date().getFullYear()} Moda Perde. Tüm hakları saklıdır.
           </p>
         </div>
       </div>

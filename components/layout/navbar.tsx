@@ -38,6 +38,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Label } from "@/components/ui/label";
+import { GradientText } from "../ui/shadcn-io/gradient-text/indext";
 
 export default function Navbar() {
   const links = [
@@ -106,14 +107,18 @@ export default function Navbar() {
       <nav
         className={`fixed top-0 w-full z-20 transition-all duration-300 ${
           scrolled
-            ? "py-3 bg-white/60 backdrop-blur-lg shadow-md border-b"
-            : "py-5 bg-white/60"
+            ? "py-3 bg-white/80 backdrop-blur-lg shadow-md border-b"
+            : "py-5 bg-white/80"
         }`}
       >
         <div className="flex items-center justify-between px-4 md:px-10  max-w-7xl mx-auto">
           {/* Logo */}
           <Link href="/" className="text-2xl font-bold font-[Playfair_Display]">
-            Plicell
+            <GradientText
+              className="text-xl font-serif tracking-tighter"
+              text="Moda Perde"
+              gradient="linear-gradient(90deg, #000000 0%, #000000 60%, #7B0323 100%)"
+            />
           </Link>
 
           {/* Desktop Menu */}
