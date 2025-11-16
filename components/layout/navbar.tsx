@@ -41,11 +41,11 @@ import { Label } from "@/components/ui/label";
 
 export default function Navbar() {
   const links = [
-    { name: "Tüm Ürünler", href: "/shop" },
-    { name: "Plicell", href: "/plants" },
-    { name: "Zebra", href: "/accessories" },
-    { name: "Stor", href: "/accessories" },
-    { name: "Ahşap Jaluzi", href: "/accessories" },
+    { name: "Tüm Ürünler", href: "/" },
+    { name: "Plicell", href: "/" },
+    { name: "Zebra", href: "/" },
+    { name: "Stor", href: "/" },
+    { name: "Ahşap Jaluzi", href: "/" },
   ];
 
   const [searchOpen, setSearchOpen] = useState(false);

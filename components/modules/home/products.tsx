@@ -11,7 +11,7 @@ export default function Products() {
     <div className="min-h-screen bg-gradient-to-b from-white via-amber-50 to-white text-gray-900 font-sans flex flex-col items-center justify-center px-2 py-12 lg:p-16">
       <div className="container mx-auto flex flex-col lg:flex-row gap-12 lg:gap-24 items-start">
         {/* Sol metin ve buton */}
-        <div className="flex-1 flex flex-col justify-center items-center lg:items-start text-center lg:text-left md:sticky top-20 self-start max-w-md">
+        <div className="flex-1 flex flex-col justify-center items-center lg:items-start text-center lg:text-left lg:sticky top-20 self-start max-w-md">
           <h2 className="text-2xl md:text-5xl lg:text-6xl font-extrabold tracking-tight mb-4 text-gray-900 font-[Playfair_Display]">
             Şık ve Modern Perdeler
           </h2>
