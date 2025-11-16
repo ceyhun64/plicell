@@ -1,7 +1,14 @@
 "use client";
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { Github, Twitter, Instagram, Linkedin } from "lucide-react";
+import {
+  Github,
+  Twitter,
+  Instagram,
+  Linkedin,
+  Facebook,
+  Phone,
+} from "lucide-react";
 import Link from "next/link";
 
 export default function Footer() {
@@ -71,22 +78,32 @@ export default function Footer() {
           <div className="flex space-x-4 justify-start md:justify-start mb-4">
             <Button variant="ghost" size="icon" asChild>
               <a
-                href="https://github.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="GitHub"
-              >
-                <Github size={24} className="text-gray-800" />
-              </a>
-            </Button>
-            <Button variant="ghost" size="icon" asChild>
-              <a
                 href="https://twitter.com"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Twitter"
               >
                 <Twitter size={24} className="text-gray-800" />
+              </a>
+            </Button>
+            <Button variant="ghost" size="icon" asChild>
+              <a
+                href="https://facebook.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Facebook"
+              >
+                <Facebook size={24} className="text-gray-800" />
+              </a>
+            </Button>
+            <Button variant="ghost" size="icon" asChild>
+              <a
+                href="#"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Phone"
+              >
+                <Phone size={24} className="text-gray-800" />
               </a>
             </Button>
             <Button variant="ghost" size="icon" asChild>
@@ -99,16 +116,6 @@ export default function Footer() {
                 <Instagram size={24} className="text-gray-800" />
               </a>
             </Button>
-            <Button variant="ghost" size="icon" asChild>
-              <a
-                href="https://linkedin.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="LinkedIn"
-              >
-                <Linkedin size={24} className="text-gray-800" />
-              </a>
-            </Button>
           </div>
           <p className="text-xs text-gray-500">
             &copy; {new Date().getFullYear()} Plicell. Tüm hakları saklıdır.
@@ -119,14 +126,9 @@ export default function Footer() {
       {/* Geliştirici bilgisi */}
       <div className="mt-12 border-t border-gray-200 pt-6 text-center text-sm text-gray-500">
         Developed By{" "}
-        <a
-          href="https://bionluk.com/ceyhunturkmen"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="font-semibold text-gray-900 hover:underline"
-        >
+        <span className="font-semibold text-gray-900 hover:underline">
           Ceyhun Türkmen
-        </a>
+        </span>
       </div>
     </footer>
   );

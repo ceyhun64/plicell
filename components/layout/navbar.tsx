@@ -39,7 +39,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Label } from "@/components/ui/label";
 
-
 export default function Navbar() {
   const links = [
     { name: "Tüm Ürünler", href: "/shop" },
@@ -105,7 +104,7 @@ export default function Navbar() {
 
       {/* Navbar */}
       <nav
-        className={`fixed top-0 w-full z-[100] transition-all duration-300 ${
+        className={`fixed top-0 w-full z-20 transition-all duration-300 ${
           scrolled
             ? "py-3 bg-white/60 backdrop-blur-lg shadow-md border-b"
             : "py-5 bg-white/60"
@@ -146,16 +145,16 @@ export default function Navbar() {
 
             {/* User Dropdown */}
             <DropdownMenu>
-              <DropdownMenuTrigger asChild className="z-500">
+              <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" aria-label="Kullanıcı">
                   <User className="h-5 w-5" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem asChild className="z-500">
+                <DropdownMenuItem asChild>
                   <Link href="/login">Giriş Yap</Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem asChild className="z-500">
+                <DropdownMenuItem asChild>
                   <Link href="/register">Kayıt Ol</Link>
                 </DropdownMenuItem>
               </DropdownMenuContent>

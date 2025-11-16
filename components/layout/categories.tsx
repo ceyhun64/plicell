@@ -9,37 +9,37 @@ const categories = [
     id: 1,
     name: "Tül Perde",
     image: "/categories/1.jpg",
-    href: "/categories/tul",
+    href: "/",
   },
   {
     id: 2,
     name: "Fon Perde",
     image: "/categories/2.jpg",
-    href: "/categories/fon",
+    href: "/",
   },
   {
     id: 3,
     name: "Stor Perde",
     image: "/categories/3.avif",
-    href: "/categories/stor",
+    href: "/",
   },
   {
     id: 4,
     name: "Zebra Perde",
     image: "/categories/4.webp",
-    href: "/categories/zebra",
+    href: "/",
   },
   {
     id: 5,
     name: "Blackout Perde",
     image: "/categories/5.jpg",
-    href: "/categories/blackout",
+    href: "/",
   },
   {
     id: 6,
     name: "Panel Perde",
     image: "/categories/6.webp",
-    href: "/categories/panel",
+    href: "/",
   },
 ];
 

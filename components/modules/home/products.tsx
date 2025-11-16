@@ -32,7 +32,7 @@ export default function Products() {
               key={product.id}
               className="group cursor-pointer overflow-hidden rounded-none hover:shadow-2xl transition-shadow duration-500 relative"
             >
-              {/* <Link href={`/products/${product.id}`}> */}
+              <Link href={`/products/${product.id}`}>
                 <Card className="p-0 m-0 rounded-none overflow-hidden hover:shadow-2xl transition-shadow duration-500">
                   <CardContent className="flex flex-col p-0 m-0 relative">
                     <div className="relative w-full aspect-square">
@@ -57,7 +57,7 @@ export default function Products() {
                     </div>
                   </CardContent>
                 </Card>
-              {/* </Link> */}
+              </Link>
             </div>
           ))}
         </div>
