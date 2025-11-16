@@ -1,10 +1,7 @@
 "use client";
-import * as React from "react";
-import { useState, useEffect } from "react";
-import Image from "next/image";
-import Link from "next/link";
 
-// Component/UI Imports
+import { useState, useEffect, useCallback } from "react";
+import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Carousel,
@@ -13,12 +10,8 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-
-// Veriyi import edin (önceki konuşmalarda oluşturulan ve güncellenen ürün listesi)
-// NOT: products.json dosyasının uygulamanızın '@/data/' dizininde bulunması gerekir.
 import products from "@/data/products.json";
 
-// Ürün tipi tanımı (TypeScript için önerilir)
 interface Product {
   id: number;
   name: string;
@@ -32,39 +25,33 @@ interface Product {
   rating: number;
 }
 
-// products.json dosyasından gelen veriyi Product[] tipine dönüştürelim
 const productList: Product[] = products as Product[];
 
 export default function YeniUrunlerCarousel() {
-  // Carousel API'sini ve o an seçili olan slaytın indeksini tutmak için state'ler
-  const [api, setApi] = useState<any>(null); // EmblaCarousel API tipini 'any' olarak varsayalım
+  const [api, setApi] = useState<any>(null);
   const [current, setCurrent] = useState(0);
+  const [count, setCount] = useState(0);
+
+  const updateCurrent = useCallback(() => {
+    if (!api) return;
+    setCurrent(api.selectedScrollSnap());
+    setCount(api.scrollSnapList().length);
+  }, [api]);
 
   useEffect(() => {
     if (!api) return;
+    updateCurrent();
+    api.on("select", updateCurrent);
+    api.on("reInit", updateCurrent);
 
-    // Carousel yüklendiğinde mevcut index'i ayarla
-    setCurrent(api.selectedScrollSnap());
-
-    // Slayt değiştiğinde mevcut index'i güncelle
-    api.on("select", () => {
-      setCurrent(api.selectedScrollSnap());
-    });
-
-    // Sayfa bazlı görünümde toplam nokta sayısı, görünür öğe sayısına göre hesaplanmalıdır.
-    // Ancak bu örnekte, Embla'nın `selectedScrollSnap`'i kaydırma pozisyonunu döndürür.
-    // Bu yüzden sadece `productList.length` kadar nokta oluşturacağız.
-
-    // Cleanup fonksiyonu: Component kaldırıldığında event listener'ı temizle
     return () => {
-      api.off("select", () => {
-        setCurrent(api.selectedScrollSnap());
-      });
+      api.off("select", updateCurrent);
+      api.off("reInit", updateCurrent);
     };
-  }, [api]);
+  }, [api, updateCurrent]);
 
   return (
-    <div className="container mx-auto px-2 py-12 lg:p-16 relative bg-gradient-to-b from-white via-amber-50 to-white mb-12">
+    <div className="container mx-auto px-2 lg:px-16 py-12 relative bg-gradient-to-b from-white via-amber-50 to-white mb-12">
       {/* Başlık */}
       <div className="flex justify-between items-center mb-6 px-4">
         <div>
@@ -78,63 +65,60 @@ export default function YeniUrunlerCarousel() {
       </div>
 
       {/* Carousel Wrapper */}
-      <div className="relative pb-10">
+      <div className="relative w-full min-h-[400px] sm:min-h-[500px] lg:min-h-[550px]">
         <Carousel
           opts={{ align: "start", loop: true }}
           setApi={setApi}
-          className="w-full"
+          className="w-full h-full"
         >
-          <CarouselContent>
-            {productList.map((product, index) => (
+          <CarouselContent className="h-full">
+            {productList.map((product) => (
               <CarouselItem
-                key={index}
-                className="sm:basis-1/2 lg:basis-1/3 xl:basis-1/4"
+                key={product.id}
+                className="sm:basis-1/2 lg:basis-1/3 xl:basis-1/4 p-1 cursor-pointer h-full"
               >
-                <div className="p-1 cursor-pointer">
-                  <Card className="p-0 m-0 rounded-none overflow-hidden hover:shadow-2xl transition-shadow duration-500 group">
-                    <CardContent className="flex flex-col p-0 m-0">
-                      <div className="relative w-full aspect-square">
-                        <Image
-                          src={product.image}
-                          alt={product.name}
-                          width={350}
-                          height={600}
-                          className="object-cover w-full h-full"
-                          priority={index < 4}
-                        />
-                      </div>
-                      <div className="p-4">
-                        <p className="text-sm font-medium text-gray-900 transition-colors group-hover:text-red-600">
-                          {product.name}
-                        </p>
-                        <p className="text-gray-600">{product.price}</p>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
+                <Card className="p-0 m-0 rounded-none overflow-hidden hover:shadow-2xl transition-shadow duration-500 group h-full flex flex-col">
+                  <CardContent className="flex flex-col p-0 m-0 h-full">
+                    <div className="relative w-full aspect-square">
+                      <Image
+                        src={product.image}
+                        alt={product.name}
+                        width={350}
+                        height={600}
+                        className="object-cover w-full h-full"
+                        priority
+                      />
+                    </div>
+                    <div className="p-4 mt-auto">
+                      <p className="text-sm font-medium text-gray-900 transition-colors group-hover:text-red-600">
+                        {product.name}
+                      </p>
+                      <p className="text-gray-600">{product.price}</p>
+                    </div>
+                  </CardContent>
+                </Card>
               </CarouselItem>
             ))}
           </CarouselContent>
 
+          {/* Sol / Sağ Ok */}
           <CarouselPrevious className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 flex bg-white text-gray-800 border border-gray-300 hover:bg-gray-100 rounded-full p-2 shadow-md z-20" />
           <CarouselNext className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 flex bg-white text-gray-800 border border-gray-300 hover:bg-gray-100 rounded-full p-2 shadow-md z-20" />
         </Carousel>
 
-        {/* Alt ilerleme göstergesi */}
-        <div className="absolute bottom-0 left-0 right-0 flex justify-center space-x-2 pb-4">
+        {/* Alt Progress Bar */}
+        <div className="absolute bottom-0 left-0 right-0 flex justify-center space-x-2 pb-4 z-10">
           {api &&
-            api
-              .scrollSnapList()
-              .map((_: any, index: number) => (
-                <button
-                  key={index}
-                  onClick={() => api.scrollTo(index)}
-                  className={`h-1 rounded-full transition-all duration-300 ${
-                    current === index ? "bg-gray-900 w-8" : "bg-gray-300 w-4"
-                  }`}
-                  aria-label={`Go to slide ${index + 1}`}
-                />
-              ))}
+            Array.from({ length: count }).map((_, index) => (
+              <button
+                key={index}
+                onClick={() => api.scrollTo(index)}
+                className={`h-1 rounded-full transition-all duration-300 ${
+                  current === index ? "bg-gray-900 w-8" : "bg-gray-300 w-4"
+                }`}
+                aria-label={`Go to slide ${index + 1}`}
+              />
+            ))}
         </div>
       </div>
     </div>

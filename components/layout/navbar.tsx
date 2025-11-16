@@ -39,6 +39,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Label } from "@/components/ui/label";
 
+
 export default function Navbar() {
   const links = [
     { name: "Tüm Ürünler", href: "/shop" },
