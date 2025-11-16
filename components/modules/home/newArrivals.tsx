@@ -11,6 +11,7 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import products from "@/data/products.json";
+import Link from "next/link";
 
 interface Product {
   id: number;
@@ -77,26 +78,28 @@ export default function YeniUrunlerCarousel() {
                 key={product.id}
                 className="sm:basis-1/2 lg:basis-1/3 xl:basis-1/4 p-1 cursor-pointer h-full"
               >
-                <Card className="p-0 m-0 rounded-none overflow-hidden hover:shadow-2xl transition-shadow duration-500 group h-full flex flex-col">
-                  <CardContent className="flex flex-col p-0 m-0 h-full">
-                    <div className="relative w-full aspect-square">
-                      <Image
-                        src={product.image}
-                        alt={product.name}
-                        width={350}
-                        height={600}
-                        className="object-cover w-full h-full"
-                        priority
-                      />
-                    </div>
-                    <div className="p-4 mt-auto">
-                      <p className="text-sm font-medium text-gray-900 transition-colors group-hover:text-red-600">
-                        {product.name}
-                      </p>
-                      <p className="text-gray-600">{product.price}</p>
-                    </div>
-                  </CardContent>
-                </Card>
+                <Link href ={`/products/${product.id}`}>
+                  <Card className="p-0 m-0 rounded-none overflow-hidden hover:shadow-2xl transition-shadow duration-500 group h-full flex flex-col">
+                    <CardContent className="flex flex-col p-0 m-0 h-full">
+                      <div className="relative w-full aspect-square">
+                        <Image
+                          src={product.image}
+                          alt={product.name}
+                          width={350}
+                          height={600}
+                          className="object-cover w-full h-full"
+                          priority
+                        />
+                      </div>
+                      <div className="p-4 mt-auto">
+                        <p className="text-sm font-medium text-gray-900 transition-colors group-hover:text-red-600">
+                          {product.name}
+                        </p>
+                        <p className="text-gray-600">{product.price}</p>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
               </CarouselItem>
             ))}
           </CarouselContent>
