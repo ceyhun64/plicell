@@ -1,10 +1,49 @@
-// prisma/seed.ts
 import dotenv from "dotenv";
 dotenv.config();
 import prisma from "@/lib/db";
-import { UserRole } from "@/lib/generated/prisma/enums";
 import bcrypt from "bcrypt";
 import productData from "@/data/products.json" assert { type: "json" };
+
+// 👑 Admin Role enum
+enum UserRole {
+  USER = "USER",
+  ADMIN = "ADMIN",
+}
+
+// 👑 Admin interface
+interface Admin {
+  name: string;
+  surname: string;
+  email: string;
+  password: string;
+  role: UserRole;
+}
+
+// 🛍 Product interface (seed için gerekli alanlar)
+interface ProductSeed {
+  title: string;
+  pricePerM2: number;
+  rating: number;
+  reviewCount?: number;
+  mainImage: string;
+  subImage?: string;
+  subImage2?: string;
+  subImage3?: string;
+  description: string;
+  category: string;
+  subCategory?: string;
+  roomId?: number;
+}
+
+// 🏷 Category interface
+interface CategorySeed {
+  name: string;
+}
+
+// 🏠 Room interface
+interface RoomSeed {
+  name: string;
+}
 
 //
 // 👑 ADMIN SEED
@@ -30,16 +69,15 @@ async function seedAdmin() {
 
   const hashedPassword = await bcrypt.hash(adminPassword, 10);
 
-  await prisma.user.create({
-    data: {
-      name: adminName,
-      surname: adminSurname,
-      email: adminEmail,
-      password: hashedPassword,
-      role: UserRole.ADMIN,
-    },
-  });
+  const admin: Admin = {
+    name: adminName,
+    surname: adminSurname,
+    email: adminEmail,
+    password: hashedPassword,
+    role: UserRole.ADMIN,
+  };
 
+  await prisma.user.create({ data: admin });
   console.log("👑 Admin başarıyla oluşturuldu.");
 }
 
@@ -47,8 +85,7 @@ async function seedAdmin() {
 // 🧩 CATEGORY SEED
 //
 async function seedCategories() {
-  // Yeni kategori listesi (label => veritabanı name olarak)
-  const mainCategories = [
+  const mainCategories: string[] = [
     "Dikey Perde",
     "Ahşap Jaluzi",
     "Metal Jaluzi",
@@ -61,12 +98,12 @@ async function seedCategories() {
     "Plise",
   ];
 
-  const createdMainCategories: Record<string, { id: number }> = {};
-
   for (const name of mainCategories) {
-    let cat = await prisma.category.findFirst({ where: { name } });
-    if (!cat) cat = await prisma.category.create({ data: { name } });
-    createdMainCategories[name] = cat;
+    const exists = await prisma.category.findFirst({ where: { name } });
+    if (!exists) {
+      const category: CategorySeed = { name };
+      await prisma.category.create({ data: category });
+    }
   }
 
   console.log("✅ Kategori seed tamamlandı.");
@@ -76,7 +113,7 @@ async function seedCategories() {
 // 🏠 ROOM SEED
 //
 async function seedRooms() {
-  const rooms = [
+  const rooms: string[] = [
     "Salon",
     "Mutfak",
     "Yatak Odası",
@@ -84,20 +121,25 @@ async function seedRooms() {
     "Çocuk Odası",
     "Oturma Odası",
   ];
+
   for (const name of rooms) {
     const exists = await prisma.room.findFirst({ where: { name } });
-    if (!exists) await prisma.room.create({ data: { name } });
+    if (!exists) {
+      const room: RoomSeed = { name };
+      await prisma.room.create({ data: room });
+    }
   }
+
   console.log("✅ Room seed tamamlandı.");
 }
 
 //
-// 🛒 PRODUCT SEED (Room eklenmiş hali)
+// 🛒 PRODUCT SEED
 //
 async function seedProducts() {
   console.log("Ürün sayısı:", productData.length);
 
-  for (const p of productData) {
+  for (const p of productData as ProductSeed[]) {
     const exists = await prisma.product.findFirst({
       where: { title: p.title },
     });
