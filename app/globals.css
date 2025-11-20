@@ -121,6 +121,14 @@
   }
 }
 
+button {
+  @apply cursor-pointer;
+}
+
+link {
+  @apply cursor-pointer;
+}
+
 /* Scrollbar genel boyut */
 ::-webkit-scrollbar {
   width: 12px;
@@ -144,8 +152,4 @@
   background-color: #0c0c0c; /* Daha koyu altın rengi */
 }
 
-
-button {
-  cursor: pointer;
-}
 

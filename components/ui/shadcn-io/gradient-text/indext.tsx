@@ -15,7 +15,7 @@ type GradientTextProps = React.ComponentProps<"span"> & {
 function GradientText({
   text,
   className,
-  gradient = "linear-gradient(90deg, #1e3a8a 0%, #3b82f6 40%, #f8fafc 60%, #3b82f6 80%, #1e3a8a 100%)",
+gradient = "linear-gradient(90deg, #1e3a8a 0%, #3b82f6 40%, #000000 60%, #3b82f6 80%, #1e3a8a 100%)",
   neon = false,
   transition = { duration: 3, repeat: Infinity, ease: "linear" },
   ...props

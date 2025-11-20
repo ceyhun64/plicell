@@ -1,7 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Info, MessageCircle, Star } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { toast } from "sonner";
+import { Spinner } from "@/components/ui/spinner";
 
 interface Comment {
   id: number;
@@ -9,7 +12,12 @@ interface Comment {
   title?: string;
   comment?: string;
   createdAt: string;
-  user?: { id: number; name: string; surname: string };
+  user?: {
+    // user artık opsiyonel
+    id: number;
+    name: string;
+    surname: string;
+  };
 }
 
 interface ProductTabsProps {
@@ -21,24 +29,97 @@ export default function ProductTabs({ productId }: ProductTabsProps) {
   const [activeTab, setActiveTab] = useState<"description" | "comments">(
     "description"
   );
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
-  // API kaldırıldı → örnek yorumlar (istersen boş bırakırım)
-  const [comments] = useState<Comment[]>([
-    {
-      id: 1,
-      rating: 5,
-      title: "Harika ürün",
-      comment: "Kalitesi çok iyi, hızlı teslimat.",
-      createdAt: new Date().toISOString(),
-      user: { id: 1, name: "Ahmet", surname: "Yılmaz" },
-    },
-  ]);
-
-  // Yorum formu sadece UI — hiçbir yere göndermez
   const [rating, setRating] = useState(0);
-  const [hoverRating, setHoverRating] = useState(0);
   const [title, setTitle] = useState("");
   const [commentText, setCommentText] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const [userId, setUserId] = useState<number | null>(null);
+
+  const [hasUserCommented, setHasUserCommented] = useState(false);
+
+  // Kullanıcı bilgisini al
+  useEffect(() => {
+    async function fetchUser() {
+      try {
+        const res = await fetch("/api/account/check");
+        const data = await res.json();
+        console.log(data);
+        if (data.user?.id) setUserId(data.user.id);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+    fetchUser();
+  }, []);
+
+  useEffect(() => {
+    if (productId) fetchComments();
+  }, [productId]);
+  const fetchComments = async () => {
+    if (!productId) return;
+    setIsLoading(true);
+    try {
+      const res = await fetch(`/api/review/${productId}`);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Yorumlar alınamadı");
+      setComments(data);
+
+      // Eğer kullanıcı giriş yaptıysa, onun yorum yapıp yapmadığını kontrol et
+      if (userId) {
+        const userAlreadyCommented = data.some(
+          (comment: Comment) => comment.user?.id === userId
+        );
+        setHasUserCommented(userAlreadyCommented);
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!productId || !userId) {
+      toast.error("Yorum gönderebilmek için giriş yapmalısınız.");
+      return;
+    }
+    if (rating === 0 || !commentText) {
+      toast.error("Lütfen bir puan seçin ve yorum yazın.");
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const res = await fetch("/api/review", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          productId,
+          rating,
+          title,
+          comment: commentText,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Yorum gönderilemedi");
+
+      setComments([data, ...comments]);
+      setRating(0);
+      setTitle("");
+      setCommentText("");
+      toast.success("Yorum başarıyla gönderildi!");
+    } catch (error) {
+      console.error(error);
+      toast.error("Yorum gönderilemedi: " + (error as Error).message);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   const tableData = [
     { label: "KUMAŞ", value: "Polyester" },
@@ -65,166 +146,151 @@ export default function ProductTabs({ productId }: ProductTabsProps) {
 
   return (
     <section className="mt-16 mb-8">
-      {/* Sticky Tabs */}
-      <div className="sticky top-0 bg-white/80 backdrop-blur border-b border-gray-200 flex gap-4 px-2 sm:px-0 overflow-x-auto">
-        {["description", "comments"].map((tab) => {
-          const isActive = activeTab === tab;
-          const label =
-            tab === "description"
-              ? "Açıklama"
-              : `Yorumlar (${comments.length})`;
-          const Icon = tab === "description" ? Info : MessageCircle;
-
-          return (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab as any)}
-              className={`relative flex items-center gap-2 py-4 px-5 font-medium whitespace-nowrap transition-all
-                ${
-                  isActive
-                    ? "text-rose-700"
-                    : "text-gray-600 hover:text-gray-900"
-                }
-              `}
-            >
-              <Icon size={18} />
-              {label}
-              {isActive && (
-                <span className="absolute bottom-0 left-0 w-full h-[2px] bg-rose-700 rounded-full"></span>
-              )}
-            </button>
-          );
-        })}
+      <div className="flex border-b border-gray-200 mb-8">
+        <button
+          onClick={() => setActiveTab("description")}
+          className={`flex items-center gap-2 py-3 px-6 text-base font-medium transition-all duration-200 ${
+            activeTab === "description"
+              ? "text-gray-900 border-b-2 border-gray-900"
+              : "text-gray-500 hover:text-gray-800"
+          }`}
+        >
+          <Info size={18} /> Açıklama
+        </button>
+        <button
+          onClick={() => setActiveTab("comments")}
+          className={`flex items-center gap-2 py-3 px-6 text-base font-medium transition-all duration-200 ${
+            activeTab === "comments"
+              ? "text-gray-900 border-b-2 border-gray-900"
+              : "text-gray-500 hover:text-gray-800"
+          }`}
+        >
+          <MessageCircle size={18} /> Yorumlar ({comments.length})
+        </button>
       </div>
 
-      {/* Content */}
-      <div className="bg-white border border-gray-100 p-1 sm:p-8 mt-6 rounded-none">
-        {/* DESCRIPTION TAB */}
-        {activeTab === "description" && (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse text-[15px]">
-              <tbody>
-                {tableData.map((item, idx) => (
-                  <tr
-                    key={idx}
-                    className="border-b border-gray-100 last:border-none hover:bg-gray-50/60"
-                  >
-                    <td className="py-4 text-xs font-semibold text-gray-900 w-1/2">
-                      {item.label}
-                    </td>
-                    <td className="py-4 text-sm text-gray-600 w-1/2">
-                      {item.value}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-
-        {/* COMMENTS TAB */}
-        {activeTab === "comments" && (
-          <div className="space-y-8">
-            {/* Static comment form — API yok */}
-            <form
-              onSubmit={(e) => e.preventDefault()}
-              className="p-6 border border-gray-200 rounded-none shadow-sm transition"
-            >
-              <h4 className="text-xl font-semibold text-gray-900 mb-4">
-                Yorum Yazın (Sadece UI)
-              </h4>
-
-              {/* Rating */}
-              <div className="flex items-center gap-1 mb-3">
-                {[1, 2, 3, 4, 5].map((n) => (
-                  <Star
-                    key={n}
-                    size={28}
-                    className={`cursor-pointer transition-transform ${
-                      (hoverRating || rating) >= n
-                        ? "text-yellow-400 fill-yellow-400"
-                        : "text-gray-300"
-                    }`}
-                    onClick={() => setRating(n)}
-                    onMouseEnter={() => setHoverRating(n)}
-                    onMouseLeave={() => setHoverRating(0)}
-                  />
-                ))}
+      <Card className="border-gray-200 shadow-sm rounded-xs bg-white">
+        <CardContent className="p-4 md:p-8">
+          {activeTab === "description" && (
+            <div className="text-gray-700 space-y-6">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse text-sm sm:text-base">
+                  <tbody>
+                    {tableData.map((item, index) => (
+                      <tr
+                        key={index}
+                        className="border-b border-gray-100 last:border-none"
+                      >
+                        <td className="py-2 sm:py-3 font-medium text-gray-900 w-1/2 md:w-1/3 text-xs sm:text-base">
+                          {item.label}
+                        </td>
+                        <td className="py-2 sm:py-3 text-gray-600 w-1/2 md:w-1/2 text-xs sm:text-base">
+                          {item.value}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
+            </div>
+          )}
 
-              <input
-                type="text"
-                placeholder="Başlık (opsiyonel)"
-                className="w-full mb-3 border rounded-none p-3"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-              />
-
-              <textarea
-                placeholder="Yorumunuz"
-                className="w-full border rounded-none p-3 resize-none"
-                rows={4}
-                value={commentText}
-                onChange={(e) => setCommentText(e.target.value)}
-              />
-
-              <button
-                type="submit"
-                className="mt-4 bg-rose-700 text-white py-3 px-6 rounded-none font-semibold"
-              >
-                Gönder (Demo)
-              </button>
-            </form>
-
-            {/* Comments (static) */}
-            {comments.length > 0 ? (
-              comments.map((comment) => (
-                <div
-                  key={comment.id}
-                  className="border border-gray-100 rounded-none p-6 shadow-sm transition"
+          {activeTab === "comments" && (
+            <div className="space-y-6">
+              {!hasUserCommented && (
+                <form
+                  onSubmit={handleSubmit}
+                  className="border p-4 rounded-md space-y-4"
                 >
-                  <div className="flex justify-between items-start mb-3">
-                    <p className="font-semibold text-gray-900 text-base">
-                      {comment.user?.name} {comment.user?.surname}
-                    </p>
-                    <span className="text-xs text-gray-500">
-                      {new Date(comment.createdAt).toLocaleDateString("tr-TR")}
-                    </span>
-                  </div>
-
-                  <div className="flex items-center mb-2 text-yellow-400">
-                    {Array.from({ length: 5 }).map((_, i) => (
+                  <h4 className="font-semibold text-gray-900">Yorum Yazın</h4>
+                  <div className="flex items-center gap-2">
+                    {[1, 2, 3, 4, 5].map((n) => (
                       <Star
-                        key={i}
-                        size={18}
-                        className={
-                          i < comment.rating
-                            ? "fill-yellow-400"
-                            : "text-gray-300"
-                        }
+                        key={n}
+                        size={24}
+                        className={`cursor-pointer ${
+                          n <= rating ? "text-yellow-500" : "text-gray-300"
+                        }`}
+                        onClick={() => setRating(n)}
                       />
                     ))}
                   </div>
+                  <input
+                    type="text"
+                    placeholder="Başlık (opsiyonel)"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    className="w-full border rounded p-2"
+                  />
+                  <textarea
+                    placeholder="Yorumunuz"
+                    value={commentText}
+                    onChange={(e) => setCommentText(e.target.value)}
+                    className="w-full border rounded p-2"
+                    required
+                  />
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 rounded-full"
+                  >
+                    {isSubmitting ? "Gönderiliyor..." : "Gönder"}
+                  </button>
+                </form>
+              )}
 
-                  {comment.title && (
-                    <p className="font-medium text-gray-900 mb-1 text-[15px]">
-                      {comment.title}
+              {isLoading ? (
+                <Spinner />
+              ) : comments.length > 0 ? (
+                comments.map((comment) => (
+                  <div
+                    key={comment.id}
+                    className="border border-gray-100 rounded-xl p-4 hover:shadow-sm transition-all"
+                  >
+                    <div className="flex justify-between items-start mb-1">
+                      <p className="font-semibold text-gray-900">
+                        {comment.user?.name ?? "Anonim"}{" "}
+                        {comment.user?.surname ?? ""}
+                      </p>
+                      <span className="text-xs text-gray-500">
+                        {new Date(comment.createdAt).toLocaleDateString(
+                          "tr-TR"
+                        )}
+                      </span>
+                    </div>
+                    <div className="flex items-center mb-2 text-yellow-500">
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <Star
+                          key={i}
+                          size={16}
+                          className={
+                            i < comment.rating
+                              ? "fill-yellow-500"
+                              : "text-gray-300"
+                          }
+                        />
+                      ))}
+                    </div>
+                    {comment.title && (
+                      <p className="font-medium text-gray-900">
+                        {comment.title}
+                      </p>
+                    )}
+                    <p className="text-gray-700 text-sm leading-relaxed">
+                      {comment.comment}
                     </p>
-                  )}
-
-                  <p className="text-gray-700 text-[15px] leading-relaxed">
-                    {comment.comment}
-                  </p>
-                </div>
-              ))
-            ) : (
-              <p className="text-gray-500 text-center py-6">
-                Yorum bulunamadı.
-              </p>
-            )}
-          </div>
-        )}
-      </div>
+                  </div>
+                ))
+              ) : (
+                <p className="text-gray-600">
+                  Bu ürün için henüz yorum yapılmamıştır. İlk yorum yapan siz
+                  olun!
+                </p>
+              )}
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </section>
   );
 }

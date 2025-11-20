@@ -1,8 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import Image from "next/image";
-import { Card, CardContent } from "@/components/ui/card";
+
 import {
   Carousel,
   CarouselContent,
@@ -10,28 +9,30 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import products from "@/data/products.json";
-import Link from "next/link";
+import ProductCard from "../products/productCard";
+import { Spinner } from "@/components/ui/spinner";
 
-interface Product {
+interface ProductData {
   id: number;
-  name: string;
-  price: string;
-  image: string;
-  image2: string;
-  image3: string;
-  image4: string;
+  title: string;
+  mainImage: string;
+  subImage?: string;
+  subImage2?: string;
+  subImage3?: string;
   description: string;
-  stock: number;
+  pricePerM2: number;
   rating: number;
+  reviewCount?: number;
+  category: string;
+  subCategory?: string;
 }
-
-const productList: Product[] = products as Product[];
 
 export default function YeniUrunlerCarousel() {
   const [api, setApi] = useState<any>(null);
   const [current, setCurrent] = useState(0);
   const [count, setCount] = useState(0);
+  const [products, setProducts] = useState<ProductData[]>([]);
+  const [loading, setLoading] = useState(true);
 
   const updateCurrent = useCallback(() => {
     if (!api) return;
@@ -51,8 +52,28 @@ export default function YeniUrunlerCarousel() {
     };
   }, [api, updateCurrent]);
 
+  useEffect(() => {
+    async function fetchProducts() {
+      try {
+        const res = await fetch("/api/products");
+        const data = await res.json();
+        console.log("data:", data);
+        if (data.products) {
+          setProducts(data.products);
+        }
+      } catch (error) {
+        console.error("Ürünleri çekerken hata:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchProducts();
+  }, []);
+
+  if (loading) return <Spinner />;
+
   return (
-    <div className="container mx-auto px-2 lg:px-16 py-12 relative bg-gradient-to-b from-white via-amber-50 to-white mb-12">
+    <div className="container mx-auto px-2 lg:px-16 py-12 relative bg-gradient-to-b from-white via-amber-950/20 mb-2">
       {/* Başlık */}
       <div className="flex justify-between items-center mb-6 px-4">
         <div>
@@ -73,33 +94,12 @@ export default function YeniUrunlerCarousel() {
           className="w-full h-full"
         >
           <CarouselContent className="h-full">
-            {productList.map((product) => (
+            {products.map((product) => (
               <CarouselItem
                 key={product.id}
                 className="sm:basis-1/2 lg:basis-1/3 xl:basis-1/4 p-1 cursor-pointer h-full"
               >
-                <Link href ={`/products/${product.id}`}>
-                  <Card className="p-0 m-0 rounded-none overflow-hidden hover:shadow-2xl transition-shadow duration-500 group h-full flex flex-col">
-                    <CardContent className="flex flex-col p-0 m-0 h-full">
-                      <div className="relative w-full aspect-square">
-                        <Image
-                          src={product.image}
-                          alt={product.name}
-                          width={350}
-                          height={600}
-                          className="object-cover w-full h-full"
-                          priority
-                        />
-                      </div>
-                      <div className="p-4 mt-auto">
-                        <p className="text-sm font-medium text-gray-900 transition-colors group-hover:text-red-600">
-                          {product.name}
-                        </p>
-                        <p className="text-gray-600">{product.price}</p>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </Link>
+                <ProductCard product={product} />
               </CarouselItem>
             ))}
           </CarouselContent>

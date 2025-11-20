@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import ClientLayoutWrapper from "@/components/layout/ClientLayoutWrapper";
 import ScrollToTopButton from "@/components/layout/scrollToTop";
+import { CartProvider } from "@/contexts/cartContext";
+import { Toaster } from "sonner";
+import Head from "next/head"; // 👈 ekledik
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,36 +18,57 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Moda Perde",
+  title:
+    "Moda Perde | Online Perde Mağazası – Plicell, Zebra, Store ve Ahşap Jaluzi Perde Modelleri",
   description:
-    "Evinize şıklık ve konfor katan modern perde koleksiyonlarını keşfedin. Fon, blackout, stor ve tül perdelerle dekorasyonunuza zarif dokunuşlar ekleyin.",
+    "Moda Perde – Kaliteli, şık ve uygun fiyatlı perde modelleri. Tül, stor, zebra ve fon perdelerle evinize zarafet katın. Türkiye’nin güvenilir online perde mağazası!",
   openGraph: {
-    title: "Moda Perde",
+    title: "Moda Perde | Online Perde Mağazası",
     description:
-      "Evinize şıklık ve konfor katan modern perde koleksiyonlarını keşfedin. Fon, blackout, stor ve tül perdelerle dekorasyonunuza zarif dokunuşlar ekleyin.",
-    images: [
-      {
-        url: "/og-image.png", // Buraya projenizdeki uygun bir görselin yolunu koyun
-        width: 630,
-        height: 630,
-        alt: "Moda Perde Koleksiyonu",
-      },
-    ],
+      "Plicell, zebra, stor ve ahşap jaluzi perde modelleriyle evinize zarafet katın.",
+    siteName: "Moda Perde",
+    images: ["/og-image.png"],
+    locale: "tr_TR",
+    type: "website",
   },
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="tr">
+      <Head>
+        {/* 🔹 Kritik performans optimizasyonları */}
+        <link rel="preconnect" href="https://www.nowartplicell.com" />
+        <link rel="preload" as="style" href="/css/6ded801ecd631cf3.css" />
+        <link rel="preload" as="style" href="/css/de70bee13400563f.css" />
+        <link
+          rel="preload"
+          as="font"
+          type="font/woff2"
+          href="/media/ba015fad6dcf6784-s.woff2"
+          crossOrigin="anonymous"
+        />
+      </Head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ScrollToTopButton />
-        {children}
+        <CartProvider>
+          <ClientLayoutWrapper>
+            <main>{children}</main>
+          </ClientLayoutWrapper>
+          <ScrollToTopButton />
+          <Toaster
+            richColors
+            position="bottom-right"
+            toastOptions={{
+              style: { zIndex: 9999 },
+            }}
+          />
+        </CartProvider>
       </body>
     </html>
   );

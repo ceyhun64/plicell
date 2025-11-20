@@ -12,15 +12,18 @@ interface MeasureModalProps {
   open: boolean;
   onClose: () => void;
   onConfirm: () => void;
+  accepted: boolean;
+  setAccepted: (v: boolean) => void;
 }
 
 const MeasureModal: React.FC<MeasureModalProps> = ({
   open,
   onClose,
   onConfirm,
+  accepted,
+  setAccepted,
 }) => {
   const [current, setCurrent] = useState(0);
-  const [accepted, setAccepted] = useState(false);
 
   const images = ["/measure/measure1.webp", "/measure/measure2.webp"];
 
@@ -31,13 +34,9 @@ const MeasureModal: React.FC<MeasureModalProps> = ({
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm  z-100 flex justify-center items-center">
-      <div className="relative bg-white rounded-2xl shadow-xl w-[90%] md:w-[500px] p-6">
-        {/* Kapat Butonu */}
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
-        >
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-100 flex justify-center items-center">
+      <div className="relative bg-white rounded-xs shadow-xl w-[90%] md:w-[500px] p-6">
+        <button onClick={onClose} className="absolute top-4 right-4">
           <X size={22} />
         </button>
 
@@ -56,7 +55,7 @@ const MeasureModal: React.FC<MeasureModalProps> = ({
             <ChevronLeft />
           </Button>
 
-          <div className="w-full h-80 flex justify-center items-center overflow-hidden rounded-lg border border-gray-200 bg-gray-50">
+          <div className="w-full h-80 flex justify-center items-center overflow-hidden rounded-xs border border-gray-200 bg-gray-50">
             <AnimatePresence mode="wait">
               <motion.div
                 key={current}
@@ -71,7 +70,7 @@ const MeasureModal: React.FC<MeasureModalProps> = ({
                   alt={`Ölçü ${current + 1}`}
                   width={500}
                   height={500}
-                  className="object-contain max-h-80 w-auto rounded-lg"
+                  className="object-contain max-h-80 w-auto rounded-xs"
                   unoptimized
                 />
               </motion.div>
@@ -94,6 +93,12 @@ const MeasureModal: React.FC<MeasureModalProps> = ({
             id="measure_accept"
             checked={accepted}
             onCheckedChange={(v) => setAccepted(Boolean(v))}
+            className="
+    border-rose-400 
+    text-rose-700 
+    data-[state=checked]:bg-rose-600 
+    data-[state=checked]:border-rose-600
+    data-[state=checked]"
           />
           <label
             htmlFor="measure_accept"
@@ -103,13 +108,9 @@ const MeasureModal: React.FC<MeasureModalProps> = ({
           </label>
         </div>
 
-        {/* Alt Butonlar */}
+        {/* Butonlar */}
         <div className="flex justify-end gap-3 mt-6">
-          <Button
-            variant="outline"
-            onClick={onClose}
-            className="rounded-xl border-gray-300"
-          >
+          <Button variant="outline" onClick={onClose}>
             Kapat
           </Button>
           <Button
@@ -121,7 +122,7 @@ const MeasureModal: React.FC<MeasureModalProps> = ({
               onConfirm();
               onClose();
             }}
-            className="bg-[#001e59] hover:bg-[#002d80] text-white rounded-xl"
+            className="bg-[#7B0323] hover:bg-[#7B0323]/90 text-white"
           >
             Onayla
           </Button>

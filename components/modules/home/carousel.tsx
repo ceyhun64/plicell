@@ -60,7 +60,7 @@ export default function HeroSection() {
   };
 
   return (
-    <div className="relative w-full h-[500px] sm:h-[600px] lg:h-[700px] overflow-hidden mt-20">
+    <div className="relative w-full h-[500px] sm:h-[600px] lg:h-[700px] overflow-hidden">
       {heroes.map((slide, index) => (
         <div
           key={slide.id}
@@ -82,7 +82,7 @@ export default function HeroSection() {
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent"></div>
 
           {/* Text blok */}
-          <div className="absolute bottom-8 left-4 sm:left-8 p-6 sm:p-12 max-w-xs sm:max-w-lg rounded-md text-white backdrop-blur-sm bg-white/5 flex flex-col items-start">
+          <div className="absolute bottom-8 left-4 sm:left-8 p-6 sm:p-12 max-w-xs sm:max-w-lg rounded-xs text-white backdrop-blur-sm bg-white/5 flex flex-col items-start">
             <h1 className="scroll-m-20 text-3xl sm:text-5xl lg:text-7xl font-extrabold tracking-tight text-left font-[Playfair_Display] drop-shadow-lg">
               {slide.title}
             </h1>

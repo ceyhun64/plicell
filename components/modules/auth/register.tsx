@@ -1,64 +1,140 @@
 "use client";
-import { useState } from "react";
+import { useState, FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { Eye, EyeOff } from "lucide-react";
 
-export default function RegisterForm() {
+interface RegisterFormProps {
+  onLoginClick?: () => void; // kayıt sonrası login sayfasına yönlendirme
+}
+
+export default function RegisterForm({ onLoginClick }: RegisterFormProps) {
+  const [name, setName] = useState("");
+  const [surname, setSurname] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [registerMessage, setRegisterMessage] = useState("");
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleRegister = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    if (password !== confirmPassword) {
+      setRegisterMessage("Şifreler eşleşmiyor!");
+      setIsSuccess(false);
+      return;
+    }
+
+    setIsLoading(true);
+    setIsSuccess(false);
+
+    try {
+      const res = await fetch("/api/account/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, surname, email, password }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setRegisterMessage(data.error || "Kayıt başarısız!");
+        setIsSuccess(false);
+      } else {
+        setRegisterMessage("Kayıt başarılı! Giriş yapabilirsiniz.");
+        setIsSuccess(true);
+        if (onLoginClick) onLoginClick();
+      }
+    } catch (err) {
+      console.error(err);
+      setRegisterMessage("Sunucu hatası, tekrar deneyin.");
+      setIsSuccess(false);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <div className="w-full min-h-screen flex items-center justify-center bg-white px-4 mt-24 md:mt-0">
-      <div className="w-full max-w-5xl grid md:grid-cols-2 border-gray-200 rounded-2xl overflow-hidden">
+      <div className="w-full max-w-5xl grid md:grid-cols-2 border-gray-200 rounded-xs overflow-hidden">
         {/* Sol taraf - Kayıt Formu */}
         <div className="p-2 md:p-10 flex flex-col justify-center h-full">
           <h2 className="text-xl md:text-4xl font-serif font-extrabold mb-8">
             Hesap Oluştur
           </h2>
 
-          <div className="mb-4">
-            <Label
-              htmlFor="name"
-              className="text-xs font-semibold text-gray-600 uppercase tracking-wide"
-            >
-              İsim
-            </Label>
-            <Input
-              id="name"
-              type="text"
-              className="mt-1 rounded-md border border-gray-200 focus:border-black focus:ring-0"
-            />
-          </div>
+          <form onSubmit={handleRegister}>
+            <div className="mb-4">
+              <Label
+                htmlFor="name"
+                className="text-xs font-semibold text-gray-600 uppercase tracking-wide"
+              >
+                İsim
+              </Label>
+              <Input
+                id="name"
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+                className="mt-1 rounded-xs border border-gray-200 focus:border-black focus:ring-0"
+              />
+            </div>
 
-          <div className="mb-4">
-            <Label
-              htmlFor="email"
-              className="text-xs font-semibold text-gray-600 uppercase tracking-wide"
-            >
-              E-posta
-            </Label>
-            <Input
-              id="email"
-              type="email"
-              className="mt-1 rounded-md border border-gray-200 focus:border-black focus:ring-0"
-            />
-          </div>
+            <div className="mb-4">
+              <Label
+                htmlFor="surname"
+                className="text-xs font-semibold text-gray-600 uppercase tracking-wide"
+              >
+                Soyad
+              </Label>
+              <Input
+                id="surname"
+                type="text"
+                value={surname}
+                onChange={(e) => setSurname(e.target.value)}
+                required
+                className="mt-1 rounded-xs border border-gray-200 focus:border-black focus:ring-0"
+              />
+            </div>
 
-          <div className="mb-4">
-            <Label
-              htmlFor="password"
-              className="text-xs font-semibold text-gray-600 uppercase tracking-wide"
-            >
-              Şifre
-            </Label>
-            <div className="relative">
+            <div className="mb-4">
+              <Label
+                htmlFor="email"
+                className="text-xs font-semibold text-gray-600 uppercase tracking-wide"
+              >
+                E-posta
+              </Label>
+              <Input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="mt-1 rounded-xs border border-gray-200 focus:border-black focus:ring-0"
+              />
+            </div>
+
+            <div className="mb-4 relative">
+              <Label
+                htmlFor="password"
+                className="text-xs font-semibold text-gray-600 uppercase tracking-wide"
+              >
+                Şifre
+              </Label>
               <Input
                 id="password"
                 type={showPassword ? "text" : "password"}
-                className="mt-1 pr-10 rounded-md border border-gray-200 focus:border-black focus:ring-0"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                className="mt-1 pr-10 rounded-xs border border-gray-200 focus:border-black focus:ring-0"
               />
               <button
                 type="button"
@@ -68,20 +144,21 @@ export default function RegisterForm() {
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
             </div>
-          </div>
 
-          <div className="mb-6">
-            <Label
-              htmlFor="confirmPassword"
-              className="text-xs font-semibold text-gray-600 uppercase tracking-wide"
-            >
-              Şifreyi Onayla
-            </Label>
-            <div className="relative">
+            <div className="mb-6 relative">
+              <Label
+                htmlFor="confirmPassword"
+                className="text-xs font-semibold text-gray-600 uppercase tracking-wide"
+              >
+                Şifreyi Onayla
+              </Label>
               <Input
                 id="confirmPassword"
                 type={showConfirmPassword ? "text" : "password"}
-                className="mt-1 pr-10 rounded-md border border-gray-200 focus:border-black focus:ring-0"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+                className="mt-1 pr-10 rounded-xs border border-gray-200 focus:border-black focus:ring-0"
               />
               <button
                 type="button"
@@ -91,11 +168,27 @@ export default function RegisterForm() {
                 {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
             </div>
-          </div>
 
-          <Button className="w-full rounded-full bg-[#7B0323] hover:bg-gray-900 text-white py-6 text-lg font-semibold">
-            Hesap Oluştur
-          </Button>
+            <Button
+              type="submit"
+              className={`w-full rounded-full bg-[#7B0323] hover:bg-gray-900 text-white py-6 text-lg font-semibold ${
+                isLoading ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+              disabled={isLoading}
+            >
+              {isLoading ? "Kayıt yapılıyor..." : "Hesap Oluştur"}
+            </Button>
+
+            {registerMessage && (
+              <p
+                className={`text-sm text-center mt-2 ${
+                  isSuccess ? "text-green-500" : "text-red-500"
+                }`}
+              >
+                {registerMessage}
+              </p>
+            )}
+          </form>
         </div>
 
         {/* Sağ taraf - Zaten hesabınız var mı? */}

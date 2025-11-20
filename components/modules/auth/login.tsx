@@ -1,57 +1,136 @@
 "use client";
+import React, { useState, FormEvent } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
+import { signIn } from "next-auth/react";
+import { Eye, EyeOff } from "lucide-react";
 
-export default function LoginForm() {
+interface LoginFormProps {
+  onLoginSuccess?: (user: { name?: string; email?: string }) => void;
+}
+
+export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
+  const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [loginMessage, setLoginMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+
+  const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setIsSuccess(false);
+
+    const result = await signIn("credentials", {
+      redirect: false,
+      email,
+      password,
+    });
+
+    setIsLoading(false);
+
+    if (result?.error) {
+      setLoginMessage("Email veya şifre hatalı");
+      setIsSuccess(false);
+      return;
+    }
+
+    if (result?.ok) {
+      setLoginMessage("Giriş başarılı!");
+      setIsSuccess(true);
+
+      const loggedInUser = { email }; // API'den name vs. çekilebilir
+      if (onLoginSuccess) onLoginSuccess(loggedInUser);
+
+      setTimeout(() => {
+        router.push("/"); // İsteğe bağlı yönlendirme
+      }, 500);
+    }
+  };
+
   return (
     <div className="w-full min-h-screen flex items-center justify-center bg-white px-4 mt-24 md:mt-0">
-      <div className="w-full max-w-5xl grid md:grid-cols-2 border-gray-200 rounded-2xl overflow-hidden">
+      <div className="w-full max-w-5xl grid md:grid-cols-2 border-gray-200 rounded-xs overflow-hidden">
         {/* Sol taraf - Giriş */}
         <div className="p-2 md:p-10 flex flex-col justify-center h-full">
           <h2 className="text-xl md:text-4xl font-serif font-extrabold mb-8">
             Giriş Yap
           </h2>
 
-          <div className="mb-4">
-            <Label
-              htmlFor="email"
-              className="text-xs font-semibold text-gray-600 uppercase tracking-wide"
+          <form onSubmit={handleLogin}>
+            <div className="mb-4">
+              <Label
+                htmlFor="email"
+                className="text-xs font-semibold text-gray-600 uppercase tracking-wide"
+              >
+                E-posta
+              </Label>
+              <Input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="mt-1 rounded-xs border border-gray-200 focus:border-black focus:ring-0"
+              />
+            </div>
+
+            <div className="mb-6 relative">
+              <Label
+                htmlFor="password"
+                className="text-xs font-semibold text-gray-600 uppercase tracking-wide"
+              >
+                Şifre
+              </Label>
+              <Input
+                id="password"
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                className="mt-1 rounded-xs border border-gray-200 focus:border-black focus:ring-0"
+              />
+              <button
+                type="button"
+                className="absolute inset-y-0 right-3 flex items-center text-gray-400 hover:text-gray-600 transition"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
+
+            <Link
+              href="/forget-password"
+              className="mt-2 text-sm font-semibold hover:underline block text-right"
             >
-              E-posta
-            </Label>
-            <Input
-              id="email"
-              type="email"
-              className="mt-1 rounded-md border border-gray-200 focus:border-black focus:ring-0"
-            />
-          </div>
+              Şifrenizi mi unuttunuz?
+            </Link>
 
-          <div className="mb-6">
-            <Label
-              htmlFor="password"
-              className="text-xs font-semibold text-gray-600 uppercase tracking-wide"
+            <Button
+              type="submit"
+              className={`w-full rounded-full bg-[#7B0323] hover:bg-gray-900 text-white py-6 text-lg font-semibold mt-4 ${
+                isLoading ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+              disabled={isLoading}
             >
-              Şifre
-            </Label>
-            <Input
-              id="password"
-              type="password"
-              className="mt-1 rounded-md border border-gray-200 focus:border-black focus:ring-0"
-            />
-          </div>
+              {isLoading ? "Giriş yapılıyor..." : "Giriş Yap"}
+            </Button>
 
-          <Button className="w-full rounded-full bg-[#7B0323] hover:bg-gray-900 text-white py-6 text-lg font-semibold">
-            Giriş Yap
-          </Button>
-
-          <Link
-            href="forget-password"
-            className="mt-4 text-sm font-semibold hover:underline"
-          >
-            Şifrenizi mi unuttunuz?
-          </Link>
+            {loginMessage && (
+              <p
+                className={`text-center mt-2 text-sm ${
+                  isSuccess ? "text-green-500" : "text-red-500"
+                }`}
+              >
+                {loginMessage}
+              </p>
+            )}
+          </form>
         </div>
 
         {/* Sağ taraf - Kayıt */}
