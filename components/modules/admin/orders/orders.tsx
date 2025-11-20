@@ -1,17 +1,17 @@
 "use client";
 
 import React, { useState, useEffect, useMemo } from "react";
-import Sidebar from "@/components/admin/sideBar";
+import Sidebar from "@/components/modules/admin/sideBar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import DefaultPagination from "@/components/layout/pagination";
 import { Loader, Truck, CheckCircle, XCircle, Package } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
-import Loading from "@/components/layout/loading";
 import OrderDetailDialog from "./orderDetailDialog";
 import { Dialog } from "@/components/ui/dialog";
 import { FormattedOrder } from "@/types/order";
+import { Spinner } from "@/components/ui/spinner";
 
 export default function Orders() {
   const isMobile = useIsMobile();
@@ -176,7 +176,7 @@ export default function Orders() {
     [filteredOrders, currentPage]
   );
 
-  if (loading) return <Loading />;
+  if (loading) return <Spinner />;
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-gray-50 text-gray-900">
