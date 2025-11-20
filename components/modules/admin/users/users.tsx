@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, ChangeEvent } from "react";
-import Sidebar from "@/components/admin/sideBar";
+import Sidebar from "@/components/modules/admin/sideBar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import DefaultPagination from "@/components/layout/pagination";
@@ -15,7 +15,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { useIsMobile } from "@/hooks/use-mobile";
-import Loading from "@/components/layout/loading";
+import { Spinner } from "@/components/ui/spinner";
 
 interface Address {
   id: number;
@@ -147,7 +147,7 @@ export default function Users(): React.JSX.Element {
     currentPage * 15
   );
 
-  if (loading) return <Loading />;
+  if (loading) return <Spinner />;
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-gray-50 text-gray-900">
