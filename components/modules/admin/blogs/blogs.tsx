@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, ChangeEvent } from "react";
-import Sidebar from "@/components/admin/sideBar";
+import Sidebar from "@/components/modules/admin/sideBar";
 import AddBlogDialog from "./addBlog";
 import UpdateBlogDialog from "./updateBlog";
 import { Button } from "@/components/ui/button";

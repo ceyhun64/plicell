@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import Sidebar from "@/components/admin/sideBar";
+import Sidebar from "@/components/modules/admin/sideBar";
 import {
   Card,
   CardHeader,
@@ -24,7 +24,7 @@ import { Separator } from "@/components/ui/separator";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import Loading from "@/components/layout/loading";
+import { Spinner } from "@/components/ui/spinner";
 
 interface User {
   id: number;
@@ -223,7 +223,7 @@ export default function AdminDashboard() {
 
   // ---- LOADING DURUMU ----
   if (loading) {
-    return <Loading />;
+    return <Spinner />;
   }
 
   // ---- DASHBOARD UI ----

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, ChangeEvent } from "react";
-import Sidebar from "@/components/admin/sideBar";
+import Sidebar from "@/components/modules/admin/sideBar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
