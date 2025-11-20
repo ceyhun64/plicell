@@ -128,7 +128,7 @@ export default function Vertical() {
       {/* Banner */}
       <div className="relative w-full h-40 md:h-60 mb-0 md:mb-6 overflow-hidden rounded-xs">
         <Image
-          src="/categoryBanners/vertical4.jpg"
+          src="/categoryBanners/vertical.jpg"
           alt="Dikey Perde Banner"
           fill
           className="object-cover"
