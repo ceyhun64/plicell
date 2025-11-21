@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react"; // useState ve useEffect eklendi
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
@@ -113,9 +113,12 @@ export default function CategoriesSection() {
     // Normalde API'den veri çekimi burada olur.
     async function fetchCategories() {
       try {
-        // Simülasyon için 1 saniyelik gecikme (Gerçek API çağrısı yerine)
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        setCategories(initialCategories); // Veriler yüklenmiş gibi varsayalım
+        // !!! GECİKME KALDIRILDI !!!
+        // await new Promise((resolve) => setTimeout(resolve, 1000));
+
+        // Gerçek API çağrısı veya yerel veri ataması
+        // (API çağrısı yoksa, setLoading(false) hemen çalışır.)
+        setCategories(initialCategories);
       } catch (error) {
         console.error("Kategoriler yüklenirken hata oluştu:", error);
         setCategories(initialCategories); // Hata durumunda bile varsayılan veriyi göster
