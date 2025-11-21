@@ -11,7 +11,7 @@ export default function KvkkPage() {
         <h1 className="text-4xl font-bold text-gray-900">
           KVKK Aydınlatma Metni
         </h1>
-        <p className="text-gray-500">yazan NowArt - 22 Nisan 2025</p>
+        <p className="text-gray-500">yazan Moda Perde - 22 Nisan 2025</p>
       </div>
 
       {/* İçerik */}
@@ -29,14 +29,14 @@ export default function KvkkPage() {
           <h2 className="text-2xl font-semibold text-gray-900">
             1. Veri Sorumlusunun Kimliği
           </h2>
-          <div className="mt-3 bg-indigo-50 p-6 rounded-xs shadow-sm border border-indigo-100">
+          <div className="mt-3 bg-rose-50 p-6 rounded-xs shadow-sm border border-rose-100">
             <p className="font-medium">
-              Şirket Adı: <span className="font-normal">NowArt</span>
+              Şirket Adı: <span className="font-normal">Moda Perde</span>
             </p>
             <p className="font-medium">
               Adres:{" "}
               <span className="font-normal">
-                HALİLİYE / ŞANLIURFA, BAMYASUYU MAH. KÖSEOĞLU SK. NO: 6B
+                Mustafa Kökmen Blv. 91, 27700 Gaziantep, Nizip Türkiye
               </span>
             </p>
             <p className="font-medium">
@@ -44,10 +44,10 @@ export default function KvkkPage() {
             </p>
             <p className="font-medium">
               E-posta:{" "}
-              <span className="font-normal">info@nowartplicell.com</span>
+              <span className="font-normal">info@modaperde.com</span>
             </p>
             <p className="font-medium">
-              Web Site: <span className="font-normal">nowartplicell.com</span>
+              Web Site: <span className="font-normal">modaperde.com</span>
             </p>
           </div>
         </section>
@@ -178,33 +178,33 @@ export default function KvkkPage() {
       </div>
 
       {/* İletişim Kartı */}
-      <div className="bg-indigo-50 p-8 rounded-xs shadow-lg space-y-4 border border-indigo-200">
+      <div className="bg-rose-50 p-8 rounded-xs shadow-lg space-y-4 border border-rose-200">
         <h2 className="text-2xl font-bold text-gray-900 mb-4">İletişim</h2>
         <div className="space-y-3 text-gray-700">
           <div className="flex items-start gap-3">
-            <MapPin className="w-5 h-5 text-indigo-500" />
+            <MapPin className="w-5 h-5 text-rose-500" />
             <div>
-              <p>HALİLİYE / ŞANLIURFA, BAMYASUYU MAH. KÖSEOĞLU SK. NO: 6B</p>
+              <p>Mustafa Kökmen Blv. 91, 27700 Gaziantep, Nizip Türkiye</p>
             </div>
           </div>
 
           <div className="flex items-center gap-3">
-            <Phone className="w-5 h-5 text-indigo-500" />
+            <Phone className="w-5 h-5 text-rose-500" />
             <span>+90 533 387 40 74</span>
           </div>
 
           <div className="flex items-center gap-3">
-            <Globe className="w-5 h-5 text-indigo-500" />
-            <span>nowartplicell.com</span>
+            <Globe className="w-5 h-5 text-rose-500" />
+            <span>modaperde.com</span>
           </div>
 
           <div className="flex items-center gap-3">
-            <Mail className="w-5 h-5 text-indigo-500" />
-            <span>info@nowartplicell.com</span>
+            <Mail className="w-5 h-5 text-rose-500" />
+            <span>info@modaperde.com</span>
           </div>
 
           <div className="flex items-center gap-3">
-            <ShieldCheck className="w-5 h-5 text-indigo-500" />
+            <ShieldCheck className="w-5 h-5 text-rose-500" />
             <span>
               Kişisel verilerinizin korunması için alınan güvenlik tedbirleri
               uygulanmaktadır.

@@ -48,7 +48,7 @@ export default function PlisePerdeOlcusuPage() {
         <h1 className="text-4xl font-bold text-gray-900">
           Plise Perde Ölçüsü Nasıl Alınır?
         </h1>
-        <p className="text-gray-500">yazan NowArt - 22 Nisan 2025</p>
+        <p className="text-gray-500">yazan Moda Perde - 22 Nisan 2025</p>
       </div>
 
       {/* Tanıtım */}
@@ -67,7 +67,7 @@ export default function PlisePerdeOlcusuPage() {
             key={idx}
             className="bg-gray-50 p-4 rounded-xs shadow-sm flex items-start gap-4 hover:shadow-md transition-shadow"
           >
-            <CircleCheck className="text-indigo-500 w-6 h-6 mt-1 flex-shrink-0" />
+            <CircleCheck className="text-rose-500 w-6 h-6 mt-1 flex-shrink-0" />
             <div>
               <h3 className="text-lg font-semibold text-gray-800">
                 {step.title}
@@ -79,23 +79,23 @@ export default function PlisePerdeOlcusuPage() {
       </div>
 
       {/* İletişim */}
-      <div className="bg-indigo-50 p-8 rounded-xs shadow-lg space-y-4 border border-indigo-200">
+      <div className="bg-rose-50 p-8 rounded-xs shadow-lg space-y-4 border border-rose-200">
         <h2 className="text-2xl font-bold text-gray-900 mb-4">
           Yardım ve Sipariş
         </h2>
         <p className="text-gray-700">
           Ölçümden emin değilseniz, profesyonel destek almak için bizimle
-          iletişime geçebilirsiniz. NowArt olarak size doğru ölçü ve en uygun
+          iletişime geçebilirsiniz. Moda Perde olarak size doğru ölçü ve en uygun
           fiyatlarla kaliteli plise perdeler sunuyoruz.
         </p>
         <div className="space-y-2 text-gray-700">
           <div className="flex items-center gap-3">
-            <Phone className="w-5 h-5 text-indigo-500" />
+            <Phone className="w-5 h-5 text-rose-500" />
             <span> +90 533 387 40 74</span>
           </div>
           <div className="flex items-center gap-3">
-            <Globe className="w-5 h-5 text-indigo-500" />
-            <span> nowartplicell.com</span>
+            <Globe className="w-5 h-5 text-rose-500" />
+            <span> modaperde.com</span>
           </div>
         </div>
       </div>

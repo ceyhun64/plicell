@@ -74,7 +74,7 @@ export default function FaqPage() {
             onClick={() => toggleIndex(index)}
           >
             <div className="flex items-start gap-4">
-              <HelpCircle className="w-6 h-6 text-[#92e676] mt-1 flex-shrink-0" />
+              <HelpCircle className="w-6 h-6 text-[#7B0323] mt-1 flex-shrink-0" />
               <div>
                 <h3 className="text-lg font-semibold text-stone-800 mb-2">
                   {faq.question}
@@ -91,18 +91,18 @@ export default function FaqPage() {
       </div>
 
       {/* Sağ: Bize Ulaşın */}
-      <div className="flex flex-col justify-center items-start bg-gradient-to-br from-blue-50 to-blue-100 p-10 rounded-xs shadow-lg border border-indigo-200">
+      <div className="flex flex-col justify-center items-start bg-gradient-to-br from-rose-50 to-rose-100 p-10 rounded-xs shadow-lg border border-rose-200">
         <div className="flex items-center gap-3 mb-4">
-          <Headset className="w-6 h-6 text-[#92e676]" />
-          <h3 className="text-2xl font-bold text-blue-900">Sorunuz mu var?</h3>
+          <Headset className="w-6 h-6 text-[#7B0323]" />
+          <h3 className="text-2xl font-bold text-rose-900">Sorunuz mu var?</h3>
         </div>
-        <p className="text-indigo-700 mb-6">
+        <p className="text-rose-700 mb-6">
           Yardıma ihtiyacınız olan bir sorun veya sorunuz varsa, aşağıdaki
           butona tıklayarak Müşteri Hizmetleri temsilcimizle iletişime
           geçebilirsiniz.
         </p>
         <Link href="/contact">
-          <Button className="bg-[#92e676] hover:bg-green-600 text-white px-8 py-4 shadow-md transition-all transform hover:-translate-y-1 hover:shadow-xl">
+          <Button className="rounded-full bg-gradient-to-br from-[#7B0323] to-[#9F1B40] hover:from-[#7B0323]/90 hover:to-[#9F1B40]/90 text-white px-8 py-4 shadow-md transition-all transform hover:-translate-y-1 hover:shadow-xl">
             Bize Ulaşın
           </Button>
         </Link>

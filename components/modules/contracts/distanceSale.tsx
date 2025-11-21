@@ -11,7 +11,7 @@ export default function DistanceSalesContract() {
         <h1 className="text-4xl font-bold text-gray-900">
           Mesafeli Satış Sözleşmesi
         </h1>
-        <p className="text-gray-500">yazan NowArt - 05 Haziran 2025</p>
+        <p className="text-gray-500">yazan Moda Perde - 05 Haziran 2025</p>
       </div>
 
       {/* İçerik */}
@@ -22,16 +22,16 @@ export default function DistanceSalesContract() {
             Bu sözleşme, Satıcı ile Alıcı arasında elektronik ortamda
             kurulmuştur.
           </p>
-          <div className="mt-3 bg-indigo-50 p-6 rounded-xs shadow-sm border border-indigo-100">
+          <div className="mt-3 bg-rose-50 p-6 rounded-xs shadow-sm border border-rose-100">
             <p className="font-medium">Satıcı Bilgileri:</p>
             <ul className="list-disc list-inside mt-1 ml-4 space-y-1">
-              <li>Unvan: NowArtPlicell</li>
+              <li>Unvan: Moda Perde</li>
               <li>
-                Adres: HALİLİYE / ŞANLIURFA, BAMYASUYU MAH. KÖSEOĞLU SK. NO: 6B
+                Adres: Mustafa Kökmen Blv. 91, 27700 Gaziantep, Nizip Türkiye
               </li>
               <li>Telefon: +90 533 387 40 74</li>
-              <li>E-posta: info@nowartplicell.com</li>
-              <li>Web Sitesi: nowartplicell.com</li>
+              <li>E-posta: info@modaperde.com</li>
+              <li>Web Sitesi: modaperde.com</li>
             </ul>
             <p className="mt-2 font-medium">Alıcı Bilgileri:</p>
             <p>
@@ -70,7 +70,7 @@ export default function DistanceSalesContract() {
           </h2>
           <ul className="list-disc list-inside mt-2 ml-4 space-y-1">
             <li>
-              Ödeme, kredi kartı, havale/EFT veya Satıcı tarafından belirlenen
+              Ödeme, krosei kartı, havale/EFT veya Satıcı tarafından belirlenen
               diğer yöntemlerle yapılır.
             </li>
             <li>
@@ -151,35 +151,35 @@ export default function DistanceSalesContract() {
       </div>
 
       {/* İletişim Kartı */}
-      <div className="bg-indigo-50 p-8 rounded-xs shadow-lg space-y-4 border border-indigo-200">
+      <div className="bg-rose-50 p-8 rounded-xs shadow-lg space-y-4 border border-rose-200">
         <h2 className="text-2xl font-bold text-gray-900 mb-4">
           Satıcı İletişim
         </h2>
         <div className="space-y-3 text-gray-700">
           <div className="flex items-start gap-3">
-            <MapPin className="w-5 h-5 text-indigo-500" />
+            <MapPin className="w-5 h-5 text-rose-500" />
             <div>
-              <p>HALİLİYE / ŞANLIURFA, BAMYASUYU MAH. KÖSEOĞLU SK. NO: 6B</p>
+              <p>Mustafa Kökmen Blv. 91, 27700 Gaziantep, Nizip Türkiye</p>
             </div>
           </div>
 
           <div className="flex items-center gap-3">
-            <Phone className="w-5 h-5 text-indigo-500" />
+            <Phone className="w-5 h-5 text-rose-500" />
             <span>+90 533 387 40 74</span>
           </div>
 
           <div className="flex items-center gap-3">
-            <Globe className="w-5 h-5 text-indigo-500" />
-            <span>nowartplicell.com</span>
+            <Globe className="w-5 h-5 text-rose-500" />
+            <span>modaperde.com</span>
           </div>
 
           <div className="flex items-center gap-3">
-            <Mail className="w-5 h-5 text-indigo-500" />
-            <span>info@nowartplicell.com</span>
+            <Mail className="w-5 h-5 text-rose-500" />
+            <span>info@modaperde.com</span>
           </div>
 
           <div className="flex items-center gap-3">
-            <Package className="w-5 h-5 text-indigo-500" />
+            <Package className="w-5 h-5 text-rose-500" />
             <span>
               Ürünler, sözleşme ve teslim şartlarına uygun olarak
               gönderilecektir.

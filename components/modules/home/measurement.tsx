@@ -21,8 +21,8 @@ export default function MeasurementSteps() {
     isLast: boolean;
   }) => (
     <div className="flex flex-col items-center relative text-center sm:flex-1 group">
-      <div className="relative flex flex-col items-center text-center p-6 rounded-xs border border-white/20 backdrop-blur-lg bg-white/20 shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-500">
-        <div className="w-14 h-14 flex items-center justify-center mb-4 rounded-full bg-amber-950/40 shadow-lg text-white font-bold text-lg">
+      <div className="   relative flex flex-col items-center text-center p-6  hover:shadow-2xl hover:scale-105 transition-all duration-500 backdrop-blur-xl bg-white/60  rounded-xs shadow-2xl border border-white/40 space-y-6">
+        <div className="w-14 h-14 flex items-center justify-center mb-4 rounded-full bg-gradient-to-br from-amber-950/10 to-amber-950/10 shadow-lg text-[#7B0323] font-bold text-lg">
           {index + 1}
         </div>
         <p className="text-sm text-[#7B0323]/90 mt-1">{step}</p>
@@ -61,7 +61,7 @@ export default function MeasurementSteps() {
   );
 
   return (
-    <section className="max-w-8xl mx-auto px-4 py-16 bg-gradient-to-br from-amber-950/10 via-white to-amber-950/10  md:mb-24">
+    <section className="max-w-8xl mx-auto px-4 py-16 bg-gradient-to-b from-white via-amber-950/10 to-white md:mb-24">
       <h2 className="text-3xl md:text-4xl font-bold text-gray-900 text-center mb-12 drop-shadow-lg font-serif">
         Ölçü Nasıl Alınır?
       </h2>

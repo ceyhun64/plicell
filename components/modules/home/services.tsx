@@ -28,7 +28,7 @@ const whyChooseUs = [
   },
 ];
 const CardItem = ({ icon: Icon, title, desc }: any) => (
-    <div className="relative flex flex-col items-center text-center p-6 rounded-lg border border-white/20 backdrop-blur-md bg-white/10 shadow-lg hover:shadow-2xl hover:scale-105 transition-all duration-500">
+    <div className="relative flex flex-col items-center text-center p-6  hover:shadow-2xl hover:scale-105 transition-all duration-500 backdrop-blur-xl bg-white/60  rounded-xs shadow-2xl border border-white/40 space-y-6">
       <div className="w-16 h-16 flex items-center justify-center mb-4 rounded-full bg-gradient-to-br from-amber-950/10 to-amber-950/10 shadow-inner">
         <Icon className="w-8 h-8 text-[#7B0323]" />
       </div>
@@ -41,7 +41,7 @@ const CardItem = ({ icon: Icon, title, desc }: any) => (
   );
 export default function ShopServices() {
   return (
-    <section className="bg-gradient-to-br from-amber-950/10 via-white to-amber-950/10 py-16 px-6 md:px-32">
+    <section className="bg-gradient-to-b from-white via-amber-950/10 to-white py-16 px-6 md:px-32 ">
       {/* Başlık */}
       <div>
         <h2 className="text-3xl md:text-4xl font-bold text-gray-800 text-center mb-12 drop-shadow-lg font-serif">

@@ -11,7 +11,7 @@ export default function PlisePerdeAdvantages() {
         <h1 className="text-4xl font-bold text-gray-900">
           Plise Perde Nedir? Avantajları Nelerdir?
         </h1>
-        <p className="text-gray-500">yazan NowArt - 25 Mart 2025</p>
+        <p className="text-gray-500">yazan Moda Perde - 25 Mart 2025</p>
       </div>
 
       {/* İçerik */}
@@ -118,7 +118,7 @@ export default function PlisePerdeAdvantages() {
         <p>
           Plise perdeler, modern görünümü, enerji tasarrufu sağlaması, kolay
           kullanımı ve geniş kullanım alanıyla günümüzün en popüler perde
-          modellerindendir. NowArt olarak üreticiden doğrudan satış yaparak en
+          modellerindendir. Moda Perde olarak üreticiden doğrudan satış yaparak en
           uygun fiyatlarla yüksek kaliteli plise perdeler sunuyoruz. Siz de
           yaşam alanlarınıza modern bir dokunuş katmak için hemen sipariş
           verebilirsiniz!
@@ -126,16 +126,16 @@ export default function PlisePerdeAdvantages() {
       </div>
 
       {/* İletişim Bilgileri */}
-      <div className="bg-indigo-50 p-8 rounded-xs shadow-lg space-y-4 border border-indigo-200">
+      <div className="bg-rose-50 p-8 rounded-xs shadow-lg space-y-4 border border-rose-200">
         <h2 className="text-2xl font-bold text-gray-900 mb-4">İletişim</h2>
         <div className="space-y-2 text-gray-700">
           <div className="flex items-center gap-3">
-            <Phone className="w-5 h-5 text-indigo-500" />
+            <Phone className="w-5 h-5 text-rose-500" />
             <span>+90 533 387 40 74</span>
           </div>
           <div className="flex items-center gap-3">
-            <Globe className="w-5 h-5 text-indigo-500" />
-            <span>nowartplicell.com</span>
+            <Globe className="w-5 h-5 text-rose-500" />
+            <span>modaperde.com</span>
           </div>
         </div>
       </div>

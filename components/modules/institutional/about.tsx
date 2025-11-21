@@ -66,72 +66,72 @@ export default function AboutPage() {
   );
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-16 space-y-24 font-sans">
-      {/* Başlık */}
-      <header className="text-center space-y-3">
-        <h1 className="text-4xl md:text-5xl font-bold text-gray-900 font-serif">
-          Hakkımızda
-        </h1>
-        <p className="text-gray-500 text-sm md:text-base">
-          Moda Perde - 20 Kasım 2025
-        </p>
-      </header>
+    <div className="bg-gradient-to-b from-white via-amber-950/5 to-white">
+      <div className="max-w-7xl mx-auto px-6 py-16 space-y-24 font-sans ">
+        {/* Başlık */}
+        <header className="text-center space-y-3">
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 font-serif">
+            Hakkımızda
+          </h1>
+          <p className="text-gray-500 text-sm md:text-base">Moda Perde</p>
+        </header>
 
-      {/* Hakkımızda bölümü */}
-      <section className="space-y-24 text-gray-700">
-        {sections.map((sec, idx) => (
-          <div
-            key={idx}
-            className={`grid gap-10 md:grid-cols-2 items-center ${
-              sec.reverse ? "md:flex-row-reverse" : ""
-            }`}
-          >
-            <ImageBlock src={sec.image} alt={sec.alt} />
-            <div className="flex flex-col justify-center space-y-6">
-              <h2 className="text-3xl font-semibold text-gray-900">
-                {sec.title}
-              </h2>
-              {sec.text && (
-                <p className="text-base md:text-lg leading-relaxed">
-                  {sec.text}
-                </p>
-              )}
-              {sec.list && (
-                <ul className="list-disc list-inside space-y-2 ml-4 text-gray-700">
-                  {sec.list.map((item, i) => (
-                    <li key={i}>{item}</li>
-                  ))}
-                </ul>
-              )}
-            </div>
-          </div>
-        ))}
-      </section>
-
-      {/* İletişim Kartları */}
-      <section className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {[
-          {
-            icon: MapPin,
-            text: "Şenevler, Adnan Menderes Cd. Helin Apt. Altı, 63320 Karaköprü/Şanlıurfa",
-          },
-          { icon: Phone, text: "+90 533 387 40 74" },
-          { icon: Globe, text: "modaperde.com" },
-          { icon: Mail, text: "info@modaperde.com" },
-          { icon: Instagram, text: "modaperde" },
-        ].map((item, idx) => {
-          const Icon = item.icon;
-          return (
+        {/* Hakkımızda bölümü */}
+        <section className="space-y-24 text-gray-700">
+          {sections.map((sec, idx) => (
             <div
               key={idx}
-              className="flex items-center gap-3 p-6 rounded-2xl shadow-md hover:shadow-xl transition-shadow bg-white"
+              className={`grid gap-10 md:grid-cols-2 items-center ${
+                sec.reverse ? "md:flex-row-reverse" : ""
+              }`}
             >
-              <Icon className="w-6 h-6 text-[#7B0323]" />
-              <span className="text-gray-700 font-medium">{item.text}</span>
+              <ImageBlock src={sec.image} alt={sec.alt} />
+              <div className="flex flex-col justify-center space-y-6">
+                <h2 className="text-3xl font-semibold text-gray-900">
+                  {sec.title}
+                </h2>
+                {sec.text && (
+                  <p className="text-base md:text-lg leading-relaxed">
+                    {sec.text}
+                  </p>
+                )}
+                {sec.list && (
+                  <ul className="list-disc list-inside space-y-2 ml-4 text-gray-700">
+                    {sec.list.map((item, i) => (
+                      <li key={i}>{item}</li>
+                    ))}
+                  </ul>
+                )}
+              </div>
             </div>
-          );
-        })}
-      </section>
+          ))}
+        </section>
+
+        {/* İletişim Kartları */}
+        <section className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {[
+            {
+              icon: MapPin,
+              text: "Mustafa Kökmen Blv. 91, 27700 Gaziantep, Nizip Türkiye",
+            },
+            { icon: Phone, text: "+90 533 387 40 74" },
+            { icon: Globe, text: "modaperde.com" },
+            { icon: Mail, text: "info@modaperde.com" },
+            { icon: Instagram, text: "nataliaperde" },
+          ].map((item, idx) => {
+            const Icon = item.icon;
+            return (
+              <div
+                key={idx}
+                className="flex items-center gap-3 p-6 rounded-2xl shadow-md hover:shadow-xl transition-shadow bg-white"
+              >
+                <Icon className="w-6 h-6 text-[#7B0323]" />
+                <span className="text-gray-700 font-medium">{item.text}</span>
+              </div>
+            );
+          })}
+        </section>
+      </div>
     </div>
   );
 }

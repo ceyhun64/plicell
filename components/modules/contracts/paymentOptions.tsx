@@ -15,7 +15,7 @@ export default function PaymentOptions() {
       {/* Başlık */}
       <div className="text-center space-y-2">
         <h1 className="text-4xl font-bold text-gray-900">Ödeme Seçenekleri</h1>
-        <p className="text-gray-500">yazan NowArt - 22 Nisan 2025</p>
+        <p className="text-gray-500">yazan Moda Perde - 22 Nisan 2025</p>
       </div>
 
       {/* İçerik */}
@@ -28,12 +28,12 @@ export default function PaymentOptions() {
 
         <section>
           <h2 className="text-2xl font-semibold text-gray-900">
-            1. Kredi Kartı ile Ödeme
+            1. Krosei Kartı ile Ödeme
           </h2>
           <p className="mt-2">
-            Visa, MasterCard ve diğer kredi kartlarıyla güvenli ödeme
+            Visa, MasterCard ve diğer krosei kartlarıyla güvenli ödeme
             yapabilirsiniz. Ödemeler, PCI DSS güvenlik standartlarına uygun
-            olarak şifreli şekilde işlenir. Kredi kartı bilgilerinizi sadece
+            olarak şifreli şekilde işlenir. Krosei kartı bilgilerinizi sadece
             ödeme işleminde kullanıyoruz, üçüncü şahıslarla paylaşılmamaktadır.
           </p>
         </section>
@@ -43,7 +43,7 @@ export default function PaymentOptions() {
             2. Banka Kartı ile Ödeme
           </h2>
           <p className="mt-2">
-            Banka kartı ile ödeme yaparken, kartınızın kredi kartı özellikleri
+            Banka kartı ile ödeme yaparken, kartınızın krosei kartı özellikleri
             ile aynı güvenlik önlemleri uygulanmaktadır. Visa ve MasterCard
             altyapıları üzerinden banka kartı ile ödeme yapabilirsiniz.
           </p>
@@ -66,8 +66,8 @@ export default function PaymentOptions() {
             4. Taksitli Ödeme Seçeneği
           </h2>
           <p className="mt-2">
-            Kredi kartı ile yapılan ödemelerde taksitli ödeme seçeneği
-            sunulmaktadır. Taksit sayısı, kullanılan kredi kartına ve banka
+            Krosei kartı ile yapılan ödemelerde taksitli ödeme seçeneği
+            sunulmaktadır. Taksit sayısı, kullanılan krosei kartına ve banka
             politikalarına göre değişiklik gösterebilir. Ödeme adımında taksit
             seçeneği mevcutsa, taksit seçeneklerini görebilirsiniz.
           </p>
@@ -79,7 +79,7 @@ export default function PaymentOptions() {
           </h2>
           <p className="mt-2">
             Tüm ödeme işlemleriniz, NowArt'in güvenlik önlemleriyle
-            korunmaktadır. Kredi kartı ve banka bilgilerinizi yalnızca ödeme
+            korunmaktadır. Krosei kartı ve banka bilgilerinizi yalnızca ödeme
             işlemi sırasında kullanıyor, üçüncü şahıslarla paylaşmıyoruz. Ödeme
             işlemleriniz 128-bit SSL şifreleme ile güvenli bir şekilde
             gerçekleştirilir.
@@ -88,35 +88,35 @@ export default function PaymentOptions() {
 
         <p className="mt-3">
           Herhangi bir sorunuz varsa, bizimle{" "}
-          <strong>info@nowartplicell.com</strong> adresi üzerinden iletişime
+          <strong>info@modaperde.com</strong> adresi üzerinden iletişime
           geçebilirsiniz.
         </p>
       </div>
 
       {/* İletişim Kartı */}
-      <div className="bg-indigo-50 p-8 rounded-xs shadow-lg space-y-4 border border-indigo-200">
+      <div className="bg-rose-50 p-8 rounded-xs shadow-lg space-y-4 border border-rose-200">
         <h2 className="text-2xl font-bold text-gray-900 mb-4">İletişim</h2>
         <div className="space-y-3 text-gray-700">
           <div className="flex items-center gap-3">
-            <Mail className="w-5 h-5 text-indigo-500" />
-            <span>info@nowartplicell.com</span>
+            <Mail className="w-5 h-5 text-rose-500" />
+            <span>info@modaperde.com</span>
           </div>
           <div className="flex items-center gap-3">
-            <ShieldCheck className="w-5 h-5 text-indigo-500" />
+            <ShieldCheck className="w-5 h-5 text-rose-500" />
             <span>
               Tüm ödeme işlemleriniz güvenli bir şekilde korunmaktadır.
             </span>
           </div>
           <div className="flex items-center gap-3">
-            <CreditCard className="w-5 h-5 text-indigo-500" />
-            <span>Kredi kartı ile güvenli ödeme</span>
+            <CreditCard className="w-5 h-5 text-rose-500" />
+            <span>Krosei kartı ile güvenli ödeme</span>
           </div>
           <div className="flex items-center gap-3">
-            <Banknote className="w-5 h-5 text-indigo-500" />
+            <Banknote className="w-5 h-5 text-rose-500" />
             <span>Banka kartı ve havale/EFT ile ödeme seçenekleri</span>
           </div>
           <div className="flex items-center gap-3">
-            <ArrowRightCircle className="w-5 h-5 text-indigo-500" />
+            <ArrowRightCircle className="w-5 h-5 text-rose-500" />
             <span>Taksitli ödeme imkanı</span>
           </div>
         </div>
