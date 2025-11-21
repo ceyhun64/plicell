@@ -2,15 +2,8 @@
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Funnel, ChevronDown, ChevronUp } from "lucide-react";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
-import { useRouter } from "next/navigation"; // app router için
+import { usePathname, useRouter } from "next/navigation";
 
 interface MenuItem {
   label: string;
@@ -19,15 +12,12 @@ interface MenuItem {
 }
 
 interface FilterProps {
-  selectedCategory: string;
-  selectedSubCategory: string | null;
-  onSelectCategory: (cat: string, sub?: string | null) => void;
   colorFilter: string;
   setColorFilter: (color: string) => void;
   maxPrice: number;
   setMaxPrice: (price: number) => void;
-  minPrice: number; // <- Bu artık FilterProps içinde mevcut
-  setMinPrice: (price: number) => void; // <- Bu da props'lardan geliyor
+  minPrice: number;
+  setMinPrice: (price: number) => void;
 }
 
 const productCategories: MenuItem[] = [
@@ -36,18 +26,13 @@ const productCategories: MenuItem[] = [
   { label: "Ahşap Jaluzi", href: "/products/wooden" },
   { label: "Metal Jaluzi", href: "/products/metal" },
   { label: "Perde Aksesuarları", href: "/products/accessories" },
-
   {
     label: "Stor",
     href: "/products/roller",
     subItems: [
-      {
-        label: "Lazer Kesim Stor",
-        href: "/products/roller/laser-cut",
-      },
+      { label: "Lazer Kesim Stor", href: "/products/roller/laser-cut" },
     ],
   },
-
   { label: "Zebra", href: "/products/zebra" },
   { label: "Rüstik", href: "/products/rustic" },
   { label: "Tüller", href: "/products/sheer" },
@@ -56,43 +41,37 @@ const productCategories: MenuItem[] = [
 ];
 
 const Filter: React.FC<FilterProps> = ({
-  selectedCategory,
-  selectedSubCategory,
-  onSelectCategory,
   colorFilter,
   setColorFilter,
   maxPrice,
   setMaxPrice,
-  minPrice, // ✨ Yeni: minPrice'ı props'lardan alıyoruz
-  setMinPrice, //
+  minPrice,
+  setMinPrice,
 }) => {
-  const [openCategory, setOpenCategory] = React.useState<string | null>(null);
+  const [openCategory, setOpenCategory] = useState<string | null>(null);
   const [scrolled, setScrolled] = useState(false);
   const router = useRouter();
+  const pathname = usePathname(); // Mevcut sayfa
 
-  // Scroll event for shadow / blur
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 10);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
   const toggleCategory = (label: string) => {
-    if (openCategory === label) setOpenCategory(null);
-    else setOpenCategory(label);
+    setOpenCategory((prev) => (prev === label ? null : label));
   };
 
   const handleCategoryClick = (item: MenuItem) => {
-    const slug = item.href.split("/products/")[1];
     if (!item.subItems) {
-      // SubItem yoksa direkt yönlendir
       router.push(item.href);
     } else {
       toggleCategory(item.label);
     }
   };
 
-  const handleSubCategoryClick = (parent: MenuItem, sub: MenuItem) => {
-    // Sub kategori varsa yönlendir
+  const handleSubCategoryClick = (sub: MenuItem) => {
     router.push(sub.href);
   };
 
@@ -109,11 +88,12 @@ const Filter: React.FC<FilterProps> = ({
       </h2>
 
       <div className="flex flex-col gap-2 font-sans">
-        {/* Kategoriler */}
         {productCategories.map((category) => {
-          const slug = category.href.split("/products/")[1];
-          const isSelected = selectedCategory === slug && !selectedSubCategory;
-          const isOpen = openCategory === category.label;
+          const isSelected =
+            pathname === category.href ||
+            (category.subItems?.some((sub) => sub.href === pathname) ?? false);
+
+          const isOpen = openCategory === category.label || isSelected;
 
           return (
             <div key={category.label} className="flex flex-col gap-1">
@@ -142,24 +122,20 @@ const Filter: React.FC<FilterProps> = ({
               {category.subItems && isOpen && (
                 <div className="ml-4 flex flex-col gap-1 mt-1">
                   {category.subItems.map((sub) => {
-                    const subSlug = sub.href.split("/products/")[1];
-                    const isSubSelected =
-                      selectedCategory === slug &&
-                      selectedSubCategory === subSlug;
-
+                    const isSubSelected = pathname === sub.href;
                     return (
                       <Button
                         key={sub.label}
                         variant="outline"
                         size="sm"
-                        onClick={() => handleSubCategoryClick(category, sub)}
+                        onClick={() => handleSubCategoryClick(sub)}
                         className={`w-full text-sm justify-between hover:bg-[#7B0323] hover:text-white transition-all ${
                           isSubSelected
                             ? "bg-[#7B0323] text-white"
                             : "text-[#7B0323]"
                         }`}
                       >
-                        <span>{sub.label}</span>
+                        {sub.label}
                       </Button>
                     );
                   })}
@@ -169,34 +145,9 @@ const Filter: React.FC<FilterProps> = ({
           );
         })}
 
-        {/* Renk Seçimi */}
-        {/* <div className="mt-4">
-          <h2 className="text-lg font-semibold mb-2">Renk Seç</h2>
-          <Select onValueChange={(v) => setColorFilter(v)} value={colorFilter}>
-            <SelectTrigger className="w-full rounded-xs">
-              <SelectValue placeholder="Renk Seç" />
-            </SelectTrigger>
-            <SelectContent className="rounded-xs">
-              <SelectItem className="rounded-xs" value="all">
-                Tümü
-              </SelectItem>
-              <SelectItem className="rounded-xs" value="beyaz">
-                Beyaz
-              </SelectItem>
-              <SelectItem className="rounded-xs" value="krem">
-                Krem
-              </SelectItem>
-              <SelectItem className="rounded-xs" value="gri">
-                Gri
-              </SelectItem>
-            </SelectContent>
-          </Select>
-        </div> */}
-
         {/* Fiyat */}
         <div className="mt-4">
           <h2 className="text-lg font-semibold mb-2">Fiyat</h2>
-
           <Slider
             value={[minPrice, maxPrice]}
             onValueChange={([min, max]) => {
@@ -207,7 +158,6 @@ const Filter: React.FC<FilterProps> = ({
             step={10}
             className="w-full"
           />
-
           <div className="flex justify-between text-sm text-muted-foreground mt-2">
             <span>Min: {minPrice}₺</span>
             <span>Max: {maxPrice}₺</span>

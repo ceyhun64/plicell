@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
@@ -14,30 +14,34 @@ const heroes = [
       "Evinize şıklık ve konfor katacak en yeni perde koleksiyonumuzu keşfedin.",
     image: "/heroes/2.webp",
     buttonText: "Hemen İncele",
+    href: "/products",
   },
   {
     id: 2,
-    title: "Fon Perde ile Zarif Dokunuşlar",
+    title: "Zebra Perde ile Zarif Dokunuşlar",
     description:
       "Odanızın havasını değiştirecek şık ve modern fon perde seçeneklerimizi görün.",
     image: "/heroes/8.webp",
-    buttonText: "Fon Perdeleri Gör",
+    buttonText: "Zebra Perdeleri Gör",
+    href: "/products/zebra",
   },
   {
     id: 3,
-    title: "Blackout Perdelerle Konforlu Uyku",
+    title: "Fon Perdelerle Konforlu Uyku",
     description:
       "Işığı tamamen engelleyen blackout perdelerle hem estetik hem de fonksiyonel çözümler.",
     image: "/heroes/17.webp",
-    buttonText: "Blackout Koleksiyonu",
+    buttonText: "Fon Koleksiyonu",
+    href: "/products/drapes",
   },
   {
     id: 4,
-    title: "Tül ve Stor Perdelerle Ferah Mekanlar",
+    title: "Tül Perdelerle Ferah Mekanlar",
     description:
       "Doğal ışığı korurken dekoratif dokunuşlar sağlayan tül ve stor perdelerimizi keşfedin.",
     image: "/heroes/9.webp",
-    buttonText: "Tül & Stor Perdeler",
+    buttonText: "Tül Perdeleri Gör",
+    href: "/products/sheer",
   },
 ];
 
@@ -78,11 +82,13 @@ export default function HeroSection() {
             priority={index === 0}
             quality={100}
           />
-          {/* Modern gradient overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent"></div>
 
           {/* Text blok */}
-          <div className="absolute bottom-8 left-4 sm:left-8 p-6 sm:p-12 max-w-xs sm:max-w-lg rounded-xs text-white backdrop-blur-sm bg-white/5 flex flex-col items-start">
+          <Link
+            href={slide.href}
+            className="absolute bottom-8 left-4 sm:left-8 p-6 sm:p-12 max-w-xs sm:max-w-lg rounded-xs text-white backdrop-blur-sm bg-white/5 flex flex-col items-start"
+          >
             <h1 className="scroll-m-20 text-3xl sm:text-5xl lg:text-7xl font-extrabold tracking-tight text-left font-[Playfair_Display] drop-shadow-lg">
               {slide.title}
             </h1>
@@ -93,12 +99,12 @@ export default function HeroSection() {
             <Button className="cursor-pointer mt-4 bg-[#7B0323] hover:bg-[#7B0323]/70 text-white py-3 sm:py-4 px-5 sm:px-8 rounded-full text-sm sm:text-lg font-semibold shadow-lg">
               {slide.buttonText}
             </Button>
-          </div>
+          </Link>
         </div>
       ))}
 
       {/* Navigation Buttons */}
-      <div className="absolute top-2/3 md:top-1/2 left-[-2] md:left-3  transform -translate-y-1/2 ">
+      <div className="absolute top-2/3 md:top-1/2 left-[-2] md:left-3 transform -translate-y-1/2">
         <Button
           variant="ghost"
           size="icon"
@@ -109,7 +115,7 @@ export default function HeroSection() {
           <ChevronLeft size={28} />
         </Button>
       </div>
-      <div className="absolute top-2/3 md:top-1/2 right-[-2] md:right-3 transform -translate-y-1/2 ">
+      <div className="absolute top-2/3 md:top-1/2 right-[-2] md:right-3 transform -translate-y-1/2">
         <Button
           variant="ghost"
           size="icon"

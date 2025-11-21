@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Select,
   SelectTrigger,
@@ -7,7 +7,7 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 
 interface FilterProps {
   selectedCategory: string;
@@ -20,7 +20,6 @@ const productCategories = [
   { label: "Ahşap Jaluzi", href: "/products/wooden" },
   { label: "Metal Jaluzi", href: "/products/metal" },
   { label: "Perde Aksesuarları", href: "/products/accessories" },
-
   {
     label: "Stor Perde",
     href: "/products/roller",
@@ -28,7 +27,6 @@ const productCategories = [
       { label: "Lazer Kesim Stor", href: "/products/roller/laser-cut" },
     ],
   },
-
   { label: "Zebra Perde", href: "/products/zebra" },
   { label: "Rüstik", href: "/products/rustic" },
   { label: "Tüller", href: "/products/sheer" },
@@ -41,15 +39,44 @@ const MobileFilter: React.FC<FilterProps> = ({
   onSelectCategory,
 }) => {
   const router = useRouter();
+  const pathname = usePathname();
+  const [currentSelection, setCurrentSelection] =
+    useState<string>(selectedCategory);
+
+  // Sayfa değiştiğinde otomatik olarak seçili kategori ayarlansın
+  useEffect(() => {
+    const matchedCategory = productCategories.find((cat) => {
+      if (cat.href === pathname) return true;
+      if (cat.subItems?.some((sub) => sub.href === pathname)) return true;
+      return false;
+    });
+
+    if (matchedCategory) {
+      // Eğer alt kategori eşleşiyorsa alt kategoriyi seç
+      const matchedSub = matchedCategory.subItems?.find(
+        (sub) => sub.href === pathname
+      );
+      const slug = matchedSub
+        ? matchedSub.href.split("/products/")[1]
+        : matchedCategory.href.split("/products/")[1] || "all";
+
+      setCurrentSelection(slug);
+      onSelectCategory(slug);
+    } else {
+      setCurrentSelection("all");
+      onSelectCategory("all");
+    }
+  }, [pathname, onSelectCategory]);
 
   const handleCategoryChange = (value: string) => {
+    setCurrentSelection(value);
     onSelectCategory(value);
     router.push(`/products/${value === "all" ? "" : value}`);
   };
 
   return (
     <div className="md:hidden flex-1">
-      <Select value={selectedCategory} onValueChange={handleCategoryChange}>
+      <Select value={currentSelection} onValueChange={handleCategoryChange}>
         <SelectTrigger className="w-full bg-white/80 backdrop-blur-sm border-none rounded-xs shadow-sm hover:shadow-md transition-all">
           <SelectValue placeholder="Kategori Seç" />
         </SelectTrigger>
@@ -57,21 +84,17 @@ const MobileFilter: React.FC<FilterProps> = ({
           {productCategories.map((cat) => {
             const slug = cat.href.split("/products/")[1] || "all";
 
-            // Ana kategori
             return (
               <React.Fragment key={slug}>
                 <SelectItem value={slug}>{cat.label}</SelectItem>
-
-                {/* Alt kategoriler */}
-                {cat.subItems &&
-                  cat.subItems.map((sub) => {
-                    const subSlug = sub.href.split("/products/")[1];
-                    return (
-                      <SelectItem key={subSlug} value={subSlug}>
-                        └ {sub.label}
-                      </SelectItem>
-                    );
-                  })}
+                {cat.subItems?.map((sub) => {
+                  const subSlug = sub.href.split("/products/")[1];
+                  return (
+                    <SelectItem key={subSlug} value={subSlug}>
+                      └ {sub.label}
+                    </SelectItem>
+                  );
+                })}
               </React.Fragment>
             );
           })}
