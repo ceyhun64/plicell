@@ -29,7 +29,7 @@ export default function DistanceSalesContract() {
               <li>
                 Adres: HALİLİYE / ŞANLIURFA, BAMYASUYU MAH. KÖSEOĞLU SK. NO: 6B
               </li>
-              <li>Telefon: +90 530 130 30 84</li>
+              <li>Telefon: +90 533 387 40 74</li>
               <li>E-posta: info@nowartplicell.com</li>
               <li>Web Sitesi: nowartplicell.com</li>
             </ul>
@@ -165,7 +165,7 @@ export default function DistanceSalesContract() {
 
           <div className="flex items-center gap-3">
             <Phone className="w-5 h-5 text-indigo-500" />
-            <span>+90 530 130 30 84</span>
+            <span>+90 533 387 40 74</span>
           </div>
 
           <div className="flex items-center gap-3">

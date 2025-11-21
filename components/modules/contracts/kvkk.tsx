@@ -40,7 +40,7 @@ export default function KvkkPage() {
               </span>
             </p>
             <p className="font-medium">
-              Telefon: <span className="font-normal">+90 530 130 30 84</span>
+              Telefon: <span className="font-normal">+90 533 387 40 74</span>
             </p>
             <p className="font-medium">
               E-posta:{" "}
@@ -190,7 +190,7 @@ export default function KvkkPage() {
 
           <div className="flex items-center gap-3">
             <Phone className="w-5 h-5 text-indigo-500" />
-            <span>+90 530 130 30 84</span>
+            <span>+90 533 387 40 74</span>
           </div>
 
           <div className="flex items-center gap-3">

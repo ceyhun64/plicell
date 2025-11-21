@@ -113,12 +113,12 @@ export default function AboutPage() {
         {[
           {
             icon: MapPin,
-            text: "BAMYASUYU MAH. KÖSEOĞLU SK. NO: 6B HALİLİYE / ŞANLIURFA",
+            text: "Şenevler, Adnan Menderes Cd. Helin Apt. Altı, 63320 Karaköprü/Şanlıurfa",
           },
-          { icon: Phone, text: "+90 530 130 30 84" },
-          { icon: Globe, text: "Modaplicell.com" },
-          { icon: Mail, text: "info@Modaplicell.com" },
-          { icon: Instagram, text: "Modaplicell" },
+          { icon: Phone, text: "+90 533 387 40 74" },
+          { icon: Globe, text: "modaperde.com" },
+          { icon: Mail, text: "info@modaperde.com" },
+          { icon: Instagram, text: "modaperde" },
         ].map((item, idx) => {
           const Icon = item.icon;
           return (

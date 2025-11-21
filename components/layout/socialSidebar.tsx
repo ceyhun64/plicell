@@ -7,13 +7,13 @@ import { Instagram, Facebook, Phone } from "lucide-react";
 
 export default function SocialSidebar() {
   const [isOpen, setIsOpen] = useState(true);
-  const whatsappNumber = "+905301303084";
+  const whatsappNumber = "+90 533 387 40 74";
   const whatsappLink = `https://wa.me/${whatsappNumber.replace(/[^\d]/g, "")}`;
 
   const socialIcons = [
     {
       name: "Instagram",
-      link: "https://www.instagram.com/nowartplicell/",
+      link: "https://www.instagram.com/nataliaperde?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==",
       icon: <Instagram size={24} />,
       bg: "bg-gradient-to-tr from-[#feda75] via-[#fa7e1e] to-[#d62976]",
     },
@@ -49,26 +49,26 @@ export default function SocialSidebar() {
       icon: <Phone size={24} />,
       bg: "bg-[#075E54]",
     },
-    {
-      name: "TikTok",
-      link: "https://www.tiktok.com/@nowart.plicell?_r=1&_t=ZS-911855IDXLM",
-      icon: (
-        <svg
-          width="24px"
-          height="24px"
-          viewBox="0 0 24 24"
-          role="img"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <title>TikTok icon</title>
-          <path
-            fill="currentColor"
-            d="M12 2c.43 2.69 2.25 4.8 5 5v3.11a8.26 8.26 0 01-4.05-1.11v6.63a5.56 5.56 0 11-5.56-5.56c.38 0 .75.04 1.11.11v3.23a2.33 2.33 0 00-1.11-.29 2.45 2.45 0 102.45 2.45V2h2.16z"
-          />
-        </svg>
-      ),
-      bg: "bg-black",
-    },
+    // {
+    //   name: "TikTok",
+    //   link: "https://www.tiktok.com/@nowart.plicell?_r=1&_t=ZS-911855IDXLM",
+    //   icon: (
+    //     <svg
+    //       width="24px"
+    //       height="24px"
+    //       viewBox="0 0 24 24"
+    //       role="img"
+    //       xmlns="http://www.w3.org/2000/svg"
+    //     >
+    //       <title>TikTok icon</title>
+    //       <path
+    //         fill="currentColor"
+    //         d="M12 2c.43 2.69 2.25 4.8 5 5v3.11a8.26 8.26 0 01-4.05-1.11v6.63a5.56 5.56 0 11-5.56-5.56c.38 0 .75.04 1.11.11v3.23a2.33 2.33 0 00-1.11-.29 2.45 2.45 0 102.45 2.45V2h2.16z"
+    //       />
+    //     </svg>
+    //   ),
+    //   bg: "bg-black",
+    // },
   ];
 
   return (

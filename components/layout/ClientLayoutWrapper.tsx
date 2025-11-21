@@ -19,7 +19,7 @@ export default function ClientLayoutWrapper({
   return (
     <>
       {children}
-      {/* {showSidebar && <SocialSidebar />} */}
+      {showSidebar && <SocialSidebar />}
     </>
   );
 }

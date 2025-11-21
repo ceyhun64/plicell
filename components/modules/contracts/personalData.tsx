@@ -86,7 +86,7 @@ export default function PersonalDataConsent() {
           </div>
           <div className="flex items-center gap-3">
             <Phone className="w-5 h-5 text-indigo-500" />
-            <span>+90 530 130 30 84</span>
+            <span>+90 533 387 40 74</span>
           </div>
           <div className="flex items-center gap-3">
             <Globe className="w-5 h-5 text-indigo-500" />

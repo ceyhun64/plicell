@@ -229,7 +229,7 @@ const CartDropdown = forwardRef(
 
         <SheetContent
           side="right"
-          className="z-[2000] p-4 w-full max-w-sm h-full fixed top-0 right-0 bg-white/90 backdrop-blur-md border-l border-gray-100 flex flex-col overflow-hidden"
+          className="z-[2000] p-4 w-full max-w-sm h-full fixed top-0 right-0 bg-white/85 backdrop-blur-md border-l border-gray-100 flex flex-col overflow-hidden"
         >
           {/* Header */}
           <SheetHeader className="pb-2 border-b border-gray-100 mb-2">

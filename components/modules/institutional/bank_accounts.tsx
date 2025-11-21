@@ -103,7 +103,7 @@ export default function BankAccountsPage() {
         </p>
         <div className="flex flex-col md:flex-row gap-4 text-indigo-900">
           <div className="flex items-center gap-3">
-            <Phone className="w-5 h-5 text-[#92e676]" /> +90 530 130 30 84
+            <Phone className="w-5 h-5 text-[#92e676]" /> +90 533 387 40 74
           </div>
           <div className="flex items-center gap-3">
             <Globe className="w-5 h-5 text-[#92e676]" /> info@nowartplicell.com

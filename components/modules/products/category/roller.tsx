@@ -176,7 +176,7 @@ export default function Vertical() {
               {filteredProducts.length > 0 ? (
                 <div
                   className={cn(
-                    "grid gap-6 font-sans",
+                      "grid gap-2 md:gap-6 font-sans",
                     // Dinamik grid sınıfı ataması:
                     getGridClasses(gridCols)
                   )}

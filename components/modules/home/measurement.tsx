@@ -61,12 +61,12 @@ export default function MeasurementSteps() {
   );
 
   return (
-    <section className="max-w-8xl mx-auto px-4 py-16 bg-gradient-to-br from-amber-950/10 via-white to-amber-950/10  mb-24">
+    <section className="max-w-8xl mx-auto px-4 py-16 bg-gradient-to-br from-amber-950/10 via-white to-amber-950/10  md:mb-24">
       <h2 className="text-3xl md:text-4xl font-bold text-gray-900 text-center mb-12 drop-shadow-lg font-serif">
         Ölçü Nasıl Alınır?
       </h2>
 
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-16 relative px-4 sm:px-12">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-2 md:gap-16 relative px-4 sm:px-12">
         {measureSteps.map((step, idx) => (
           <CardItem
             key={idx}

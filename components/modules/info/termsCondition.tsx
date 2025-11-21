@@ -23,7 +23,7 @@ export default function TermsConditionsPage() {
     {
       title: "Sipariş İptali ve Değişikliği",
       description:
-        "Sipariş edilen ürün üzerinde deforme, çizik, leke, yırtılma veya üretimle alakalı herhangi bir sorun tespit edilmesi halinde işlem başlatılabilir. Taleplerinizi info@nowartplicell.com e-posta adresine veya +90 530 130 30 84 numarasına iletebilirsiniz.",
+        "Sipariş edilen ürün üzerinde deforme, çizik, leke, yırtılma veya üretimle alakalı herhangi bir sorun tespit edilmesi halinde işlem başlatılabilir. Taleplerinizi info@nowartplicell.com e-posta adresine veya +90 533 387 40 74 numarasına iletebilirsiniz.",
     },
     {
       title: "Teslimat ve Kargo",
@@ -98,7 +98,7 @@ export default function TermsConditionsPage() {
           </div>
           <div className="flex items-center gap-3">
             <Phone className="w-5 h-5 text-indigo-500" />
-            <span> +90 530 130 30 84</span>
+            <span> +90 533 387 40 74</span>
           </div>
           <div className="flex items-center gap-3">
             <Globe className="w-5 h-5 text-indigo-500" />

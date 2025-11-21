@@ -20,7 +20,7 @@ const CartItemDropdown: React.FC<CartItemDropdownProps> = ({
 
   return (
     <div className="flex items-center justify-between p-4 bg-white/60 rounded-xs border border-gray-200 shadow-sm">
-      <div className="w-20 h-20 flex-shrink-0 rounded-xs overflow-hidden bg-gray-50 border border-gray-200">
+      <div className="w-20 h-20 flex-shrink-0 rounded-xs overflow-hidden bg-transparent ">
         <img
           src={item.product.mainImage}
           alt={item.product.title}

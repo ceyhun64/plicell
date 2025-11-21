@@ -13,14 +13,13 @@ export default function Contact() {
     email: "",
     message: "",
   });
+
   const [messageStatus, setMessageStatus] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
+  ) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,7 +31,7 @@ export default function Contact() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          recipients: ["info@nowartplicell.com"], // sabit alıcı
+          recipients: ["info@nowartplicell.com"],
           subject: "Web Sitesi İletişim Formu",
           message: `
 Ad Soyad: ${formData.name}
@@ -44,14 +43,14 @@ Mesaj: ${formData.message}
       });
 
       const data = await res.json();
+
       if (!res.ok) {
         setMessageStatus(data.error || "Bir hata oluştu, tekrar deneyin.");
       } else {
         setMessageStatus("Mesajınız başarıyla gönderildi!");
         setFormData({ name: "", phone: "", email: "", message: "" });
       }
-    } catch (err) {
-      console.error("Mail gönderim hatası:", err);
+    } catch {
       setMessageStatus("Sunucu hatası, tekrar deneyin.");
     } finally {
       setIsLoading(false);
@@ -59,42 +58,46 @@ Mesaj: ${formData.message}
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-16 md:py-32 grid grid-cols-1 lg:grid-cols-2 gap-12">
-      {/* Sol: Bilgiler */}
-      <div className="space-y-8">
-        <h2 className="text-3xl font-bold text-gray-900">İletişim</h2>
-        <p className="text-gray-600">
-          Bize ulaşmak için aşağıdaki bilgileri kullanabilir veya formu
-          doldurabilirsiniz.
-        </p>
+    <div className="bg-gradient-to-b from-white via-amber-950/5 to-white py-20">
+      <div className="max-w-7xl mx-auto px-4 md:px-6 grid grid-cols-1 lg:grid-cols-2 gap-16">
+        {/* Left Section */}
+        <div className="space-y-8 animate-fadeIn">
+          <h2 className="text-4xl font-extrabold text-gray-900 tracking-tight">
+            İletişime Geçin
+          </h2>
+          <p className="text-gray-600 leading-relaxed">
+            Bizimle iletişime geçmek için formu doldurabilir veya aşağıdaki
+            bilgileri kullanabilirsiniz.
+          </p>
 
-        <div className="space-y-4">
-          <div className="flex items-start gap-4">
-            <MapPin className="w-6 h-6 text-[#92e676] mt-1" />
-            <p className="text-gray-700">
-              BAMYASUYU MAH. KÖSEOĞLU SK. NO: 6B <br />
-              HALİLİYE / ŞANLIURFA
-            </p>
-          </div>
-          <div className="flex items-center gap-4">
-            <Phone className="w-6 h-6 text-[#92e676]" />
-            <p className="text-gray-700">+90 530 130 30 84</p>
-          </div>
-          <div className="flex items-center gap-4">
-            <Mail className="w-6 h-6 text-[#92e676]" />
-            <p className="text-gray-700">info@nowartplicell.com</p>
+          <div className="space-y-6">
+            <div className="flex items-start gap-4">
+              <MapPin className="w-6 h-6 text-[#7B0323]" />
+              <p className="text-gray-700 leading-tight">
+                Şenevler, Adnan Menderes Cd. Helin Apt. Altı, 63320
+                Karaköprü/Şanlıurfa
+              </p>
+            </div>
+
+            <div className="flex items-center gap-4">
+              <Phone className="w-6 h-6 text-[#7B0323]" />
+              <p className="text-gray-700">+90 533 387 40 74</p>
+            </div>
+
+            <div className="flex items-center gap-4">
+              <Mail className="w-6 h-6 text-[#7B0323]" />
+              <p className="text-gray-700">info@modaperde.com</p>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Sağ: Form */}
-      <div>
+        {/* Right Section (Form) */}
         <form
           onSubmit={handleSubmit}
-          className="bg-blue-50 p-8 rounded-xl shadow-md space-y-4 border border-blue-200"
+          className="bg-white p-6 md:p-10 rounded-xs shadow-lg border border-rose-100 space-y-6 animate-fadeIn delay-150"
         >
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="relative">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+            <div className="relative ">
               <User className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
               <Input
                 name="name"
@@ -102,9 +105,10 @@ Mesaj: ${formData.message}
                 value={formData.name}
                 onChange={handleChange}
                 required
-                className="pl-10 border border-blue-200"
+                className="pl-10"
               />
             </div>
+
             <div className="relative">
               <Phone className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
               <Input
@@ -114,7 +118,7 @@ Mesaj: ${formData.message}
                 value={formData.phone}
                 onChange={handleChange}
                 required
-                className="pl-10 border border-blue-200"
+                className="pl-10"
               />
             </div>
           </div>
@@ -128,7 +132,7 @@ Mesaj: ${formData.message}
               value={formData.email}
               onChange={handleChange}
               required
-              className="pl-10 border border-blue-200"
+              className="pl-10"
             />
           </div>
 
@@ -138,26 +142,23 @@ Mesaj: ${formData.message}
             value={formData.message}
             onChange={handleChange}
             required
-            rows={6}
-            className="border border-blue-200"
+            className="min-h-[140px]"
           />
 
           <Button
             type="submit"
             disabled={isLoading}
-            className={`w-full bg-[#92e676] hover:bg-green-400 text-white shadow-md transition-all transform hover:-translate-y-1 hover:shadow-xl ${
-              isLoading ? "opacity-50 cursor-not-allowed" : ""
-            }`}
+            className="w-full rounded-full py-6 text-lg bg-gradient-to-br from-[#7B0323] to-[#9F1B40]"
           >
             {isLoading ? "Gönderiliyor..." : "Gönder"}
           </Button>
 
           {messageStatus && (
             <p
-              className={`text-center mt-2 text-sm ${
-                messageStatus.toLowerCase().includes("başarı")
+              className={`text-center mt-2 text-sm font-medium ${
+                messageStatus.includes("başarı")
                   ? "text-green-600"
-                  : "text-red-500"
+                  : "text-red-600"
               }`}
             >
               {messageStatus}
