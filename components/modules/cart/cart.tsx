@@ -32,27 +32,20 @@ export interface CartItemType {
 export default function Cart() {
   const [cartItems, setCartItems] = useState<CartItemType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const fetchCart = async () => {
     setIsLoading(true);
     try {
       const res = await fetch("/api/cart", { credentials: "include" });
 
-      if (res.status === 401) {
-        setIsLoggedIn(false);
-        setCartItems([]);
-        return;
-      }
-
       if (!res.ok) throw new Error("Sepet verisi alınamadı");
 
-      setIsLoggedIn(true);
       const data = await res.json();
       setCartItems(data);
     } catch (error) {
       console.error("Sepet çekme hatası:", error);
       toast.error("Sepet yüklenirken bir hata oluştu.");
+      setCartItems([]);
     } finally {
       setIsLoading(false);
     }
@@ -137,26 +130,16 @@ export default function Cart() {
   );
 
   return (
-    <div className="container mx-auto px-3 md:px-40 py-8  md:py-16 mb-12">
-      {isLoggedIn && cartItems.length > 0 && (
+    <div className="container mx-auto px-3 md:px-40 py-8 md:py-16 mb-12">
+      {/* Başlık sadece sepet doluysa */}
+      {cartItems.length > 0 && (
         <h2 className="relative text-3xl md:text-4xl font-bold text-gray-800 text-center mb-12 font-serif">
           <span className="absolute inset-0 -z-10 bg-pink-200 rounded-lg opacity-20 blur-xl"></span>
           Sepetim
         </h2>
       )}
-      {!isLoggedIn ? (
-        <div className="flex flex-col items-center justify-center mt-16 space-y-4 text-gray-500">
-          <ShoppingBag className="h-12 w-12 text-gray-400 animate-bounce" />
-          <p className="text-lg font-semibold">
-            Sepetinizi görmek için giriş yapın
-          </p>
-          <Link href="/login">
-            <Button variant="outline" className="mt-2 rounded-xs">
-              Giriş Yap
-            </Button>
-          </Link>
-        </div>
-      ) : cartItems.length === 0 ? (
+
+      {cartItems.length === 0 ? (
         <EmptyCart />
       ) : (
         <div className="flex flex-col md:flex-row gap-8">
