@@ -1,12 +1,10 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import Image from "next/image";
 import Link from "next/link";
-import { Heart } from "lucide-react";
 import ProductCard from "../products/productCard";
+import { Skeleton } from "@/components/ui/skeleton"; // Skeleton bileşeni eklendi
 
 interface ProductData {
   id: number;
@@ -24,6 +22,20 @@ interface ProductData {
   roomId?: number;
 }
 
+// Ürün kartları için bir iskelet bileşeni oluşturalım
+// Bu, ProductCard'ın beklenen boyutuna benzemelidir
+const ProductCardSkeleton = () => (
+  <div className="flex flex-col space-y-3 p-2">
+    {/* Resim Yerine Geçen İskelet */}
+    <Skeleton className="h-[250px] w-full rounded-xs md:h-[350px]" />
+    {/* Başlık Yerine Geçen İskelet */}
+    <div className="space-y-2">
+      <Skeleton className="h-4 w-3/4" />
+      <Skeleton className="h-4 w-1/2" />
+    </div>
+  </div>
+);
+
 export default function Products() {
   const [products, setProducts] = useState<ProductData[]>([]);
   const [loading, setLoading] = useState(true);
@@ -31,6 +43,8 @@ export default function Products() {
   useEffect(() => {
     async function fetchProducts() {
       try {
+        // Simülasyon için 1 saniyelik gecikme ekleyelim
+        await new Promise((resolve) => setTimeout(resolve, 1000));
         const res = await fetch("/api/products");
         const data = await res.json();
         console.log("data:", data);
@@ -46,8 +60,50 @@ export default function Products() {
     fetchProducts();
   }, []);
 
-  if (loading) return <p>Yükleniyor...</p>;
+  // Yüklenme durumunda iskeletler gösterilir
+  // Yüklenme durumunda iskeletler gösterilir
+  if (loading) {
+    // Toplam 9 adet ürün kartı iskeleti göstereceğiz
+    const skeletonCount = 9;
 
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-white via-amber-950/20 to-white text-gray-900 font-sans flex flex-col items-center justify-center px-2 py-12 lg:p-16">
+               
+        <div className="container mx-auto flex flex-col lg:flex-row gap-12 lg:gap-24 items-start">
+                    {/* Sol metin ve buton İskeletleri */}         
+          <div className="flex-1 flex flex-col justify-center items-center lg:items-start text-center lg:text-left lg:sticky top-30 self-start max-w-md w-full">
+            {/* w-full mobil cihazlarda tam genişlik sağlamak için eklendi */} 
+                     
+            {/* Başlık İskeleti: Mobil cihazlarda daha kısa bir başlık uzunluğunu simüle edebiliriz */}
+                       
+            <Skeleton className="h-8 w-full md:h-10 md:w-3/4 mb-4" />           
+            {/* Paragraf İskeletleri: Mobil cihazlarda da doğal görünüm için */}
+                       
+            <div className="space-y-2 mb-8 max-w-lg w-full">
+                            <Skeleton className="h-4 w-full" />
+                            <Skeleton className="h-4 w-11/12" />
+                            <Skeleton className="h-4 w-full" />
+                            <Skeleton className="h-4 w-5/6" />           
+            </div>
+                       
+            {/* Buton İskeleti: Mobil cihazlarda merkezlenmiş ve tam genişlikte görünebilir */}
+            <div className="w-full flex justify-center lg:justify-start">
+              {/* Butonu mobil cihazlarda merkezlemek için sarmalayıcı div eklendi */}
+                  <Skeleton className="h-12 w-40 rounded-full" />     
+            </div>
+          </div>
+          {/* Ürün kartları İskeletleri: Zaten grid yapısı mobilde 2 sütun (sm:grid-cols-2) olarak ayarlıydı */}
+          <div className="flex-2 grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-8 w-full">
+            {Array.from({ length: skeletonCount }).map((_, index) => (
+              <ProductCardSkeleton key={index} />
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Yükleme bittiğinde normal içerik gösterilir
   return (
     <div className="min-h-screen bg-gradient-to-b from-white via-amber-950/20 to-white text-gray-900 font-sans flex flex-col items-center justify-center px-2 py-12 lg:p-16">
       <div className="container mx-auto flex flex-col lg:flex-row gap-12 lg:gap-24 items-start">

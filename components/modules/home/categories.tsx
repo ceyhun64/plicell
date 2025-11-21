@@ -1,11 +1,21 @@
 "use client";
-import React from "react";
+import React, { useState, useEffect } from "react"; // useState ve useEffect eklendi
 import Link from "next/link";
 import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
 import { motion } from "framer-motion";
+import { Skeleton } from "@/components/ui/skeleton";
 
-const categories = [
+// Kategori verilerinin tipini tanımlayalım
+interface CategoryData {
+  id: number;
+  name: string;
+  desc: string;
+  image: string;
+  href: string;
+}
+
+const initialCategories: CategoryData[] = [
   {
     id: 1,
     name: "Dikey Perde",
@@ -78,7 +88,73 @@ const categories = [
   },
 ];
 
+// --- İSKELET BİLEŞENİ TANIMLAMA ---
+const CategoryCardSkeleton = () => (
+  // PremiumCategoryCard'ın boyutlarını taklit eder
+  <div className="rounded-xs shadow-xl p-0 m-0 bg-transparent border-none">
+    <div className="relative w-full aspect-[5/3] overflow-hidden rounded-xs">
+      <Skeleton className="w-full h-full" />
+    </div>
+    {/* Metin için yer tutucu iskelet */}
+    <div className="absolute inset-0 flex flex-col items-end justify-end pr-4 pb-4">
+      {/* Kategori Adı İskeleti */}
+      <Skeleton className="h-6 w-32" />
+    </div>
+  </div>
+);
+// ------------------------------------
+
 export default function CategoriesSection() {
+  // Yükleme durumunu simüle etmek için state eklendi
+  const [loading, setLoading] = useState(true);
+  const [categories, setCategories] = useState<CategoryData[]>([]);
+
+  useEffect(() => {
+    // Normalde API'den veri çekimi burada olur.
+    async function fetchCategories() {
+      try {
+        // Simülasyon için 1 saniyelik gecikme (Gerçek API çağrısı yerine)
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        setCategories(initialCategories); // Veriler yüklenmiş gibi varsayalım
+      } catch (error) {
+        console.error("Kategoriler yüklenirken hata oluştu:", error);
+        setCategories(initialCategories); // Hata durumunda bile varsayılan veriyi göster
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchCategories();
+  }, []);
+
+  // Kart sayısı sabit olduğu için 10 adet iskelet kullanabiliriz
+  const SKELETON_COUNT = 10;
+  const skeletons = Array.from({ length: SKELETON_COUNT }).map((_, index) => (
+    <CategoryCardSkeleton key={index} />
+  ));
+
+  // Yükleme durumunda iskeletleri görüntüle
+  if (loading) {
+    return (
+      <section className="container mx-auto px-4 md:px-12 py-12 max-w-8xl space-y-6">
+        {/* 1. Satır — 3 İskelet */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+          {skeletons.slice(0, 3)}
+        </div>
+
+        {/* 2. Satır — 4 İskelet */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+          {skeletons.slice(3, 7)}
+        </div>
+
+        {/* 3. Satır — 3 İskelet */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+          {skeletons.slice(7, 10)}
+        </div>
+      </section>
+    );
+  }
+
+  // Yükleme bittiğinde normal içerik gösterilir
   return (
     <section className="container mx-auto px-4 md:px-12 py-12 max-w-8xl space-y-6">
       {/* 1. Satır — 3 */}
