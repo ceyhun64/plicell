@@ -147,9 +147,6 @@ export default function AllProducts() {
           {/* Left Sidebar */}
           <aside className="hidden md:block md:w-64 flex-shrink-0">
             <Filter
-              selectedCategory="vertical"
-              selectedSubCategory={null}
-              onSelectCategory={() => {}}
               colorFilter={colorFilter}
               setColorFilter={setColorFilter}
               maxPrice={maxPrice}

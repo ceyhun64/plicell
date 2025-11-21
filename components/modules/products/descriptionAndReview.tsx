@@ -232,7 +232,7 @@ export default function ProductTabs({ productId }: ProductTabsProps) {
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 rounded-full"
+                    className="bg-[#7B0323] text-white py-2 px-4 hover:bg-[#7B0323]/90 rounded-full"
                   >
                     {isSubmitting ? "Gönderiliyor..." : "Gönder"}
                   </button>
