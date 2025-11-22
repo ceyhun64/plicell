@@ -17,7 +17,7 @@ export default function Success() {
   }, [router]);
 
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center bg-green-50">
+    <div className="min-h-screen flex flex-col justify-center items-center bg-gradient-to-b from-white via-green-950/20 to-white p-4">
       <div className="bg-white shadow-lg rounded-xs p-10 text-center max-w-md">
         {/* Büyük ikon */}
         <CheckCircle className="text-green-600 w-24 h-24 mx-auto mb-4" />
@@ -33,7 +33,7 @@ export default function Success() {
 
         <button
           onClick={() => router.push("/")}
-          className="bg-green-600 text-white px-6 py-3 rounded-xs font-semibold hover:bg-green-700 transition"
+          className="bg-green-600 text-white px-6 py-3 rounded-full font-semibold hover:bg-green-700 transition"
         >
           Ana Sayfaya Dön
         </button>

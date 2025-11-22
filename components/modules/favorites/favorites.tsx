@@ -1,44 +1,14 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import ProductCard from "./productCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
-interface Favorite {
-  id: number;
-  productId: number;
-}
+import { useFavorite } from "@/contexts/favoriteContext";
 
 export default function Favorites() {
-  const [favorites, setFavorites] = useState<Favorite[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchFavorites = async () => {
-      try {
-        const res = await fetch("/api/favorites", {
-          method: "GET",
-          credentials: "include",
-        });
-        if (!res.ok) throw new Error("Favoriler alınamadı");
-        const favData: Favorite[] = await res.json();
-        setFavorites(favData);
-      } catch (err) {
-        console.error(err);
-        setFavorites([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchFavorites();
-  }, []);
-
-  const handleRemove = (productId: number) => {
-    setFavorites((prev) => prev.filter((f) => f.productId !== productId));
-  };
+  const { favorites, removeFavorite, loading } = useFavorite();
 
   const FavoriteSkeleton = () => (
     <div className="flex flex-col gap-3 rounded-xs border border-gray-200 shadow-md p-3">
@@ -84,13 +54,15 @@ export default function Favorites() {
         </div>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-          {favorites.map((fav) => (
-            <ProductCard
-              key={fav.productId}
-              id={fav.productId}
-              onRemove={handleRemove}
-            />
-          ))}
+          {favorites
+            .filter((productId) => productId != null) // null veya undefined olanları at
+            .map((productId) => (
+              <ProductCard
+                key={productId}
+                id={productId}
+                onRemove={removeFavorite}
+              />
+            ))}
         </div>
       )}
     </div>

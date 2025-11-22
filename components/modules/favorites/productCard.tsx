@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Heart } from "lucide-react";
 import Link from "next/link";
 import React, { useState, useEffect, useRef } from "react";
+import { useFavorite } from "@/contexts/favoriteContext";
 
 interface ProductData {
   id: number;
@@ -17,13 +18,9 @@ interface ProductData {
   room?: string;
 }
 
-interface Favorite {
-  productId: number;
-}
-
 interface ProductCardProps {
   id: number;
-  onRemove: (productId: number) => void;
+  onRemove?: (productId: number) => void; // opsiyonel, Favorites sayfası için
 }
 
 const roomColors: Record<string, string> = {
@@ -39,9 +36,11 @@ const roomColors: Record<string, string> = {
 export default function ProductCard({ id, onRemove }: ProductCardProps) {
   const [product, setProduct] = useState<ProductData | null>(null);
   const [currentImage, setCurrentImage] = useState("");
-  const [favorited, setFavorited] = useState(false);
-  const [user, setUser] = useState(null);
   const imageRef = useRef<HTMLDivElement>(null);
+
+  // Favorite context
+  const { favorites, addFavorite, removeFavorite, isFavorited } = useFavorite();
+  const favorited = isFavorited(id);
 
   // Ürünü çek
   useEffect(() => {
@@ -59,71 +58,15 @@ export default function ProductCard({ id, onRemove }: ProductCardProps) {
     fetchProduct();
   }, [id]);
 
-  // Kullanıcı kontrolü
-  useEffect(() => {
-    const checkUser = async () => {
-      try {
-        const res = await fetch("/api/account/check");
-        const data = await res.json();
-        setUser(data.user || null);
-      } catch {
-        setUser(null);
-      }
-    };
-    checkUser();
-  }, []);
-
-  // Favori kontrolü
-  useEffect(() => {
-    if (!user || !product) return;
-    const checkFavorite = async () => {
-      try {
-        const res = await fetch("/api/favorites", { credentials: "include" });
-        if (!res.ok) return;
-        const data: Favorite[] = await res.json();
-        const fav = data.find((f) => f.productId === product.id);
-        if (fav) setFavorited(true);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    checkFavorite();
-  }, [user, product]);
-
-  const toggleFavorite = async (e: React.MouseEvent) => {
+  const toggleFavorite = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (!user) return alert("Favori eklemek için giriş yapmalısınız");
 
-    try {
-      if (!favorited) {
-        const res = await fetch("/api/favorites", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ productId: id }),
-          credentials: "include",
-        });
-        if (res.ok) {
-          setFavorited(true);
-          window.dispatchEvent(
-            new CustomEvent("favoriteChanged", { detail: 1 })
-          );
-        }
-      } else {
-        const res = await fetch(`/api/favorites/${id}`, {
-          method: "DELETE",
-          credentials: "include",
-        });
-        if (res.ok) {
-          setFavorited(false);
-          onRemove(id);
-          window.dispatchEvent(
-            new CustomEvent("favoriteChanged", { detail: -1 })
-          );
-        }
-      }
-    } catch (err) {
-      console.error(err);
+    if (favorited) {
+      removeFavorite(id);
+      if (onRemove) onRemove(id);
+    } else {
+      addFavorite(id);
     }
   };
 

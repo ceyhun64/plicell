@@ -27,10 +27,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { GradientText } from "../ui/shadcn-io/gradient-text/indext";
+import { GradientText } from "../ui/shadcn-io/gradient-text/index";
 import CartDropdown from "./cartDropdown";
 import { getGuestCartCount } from "@/utils/cart";
-
+import { useFavorite } from "@/contexts/favoriteContext";
 export default function Navbar() {
   const links = [
     {
@@ -57,8 +57,7 @@ export default function Navbar() {
         { label: "Tüller", href: "/products/sheer" },
         { label: "Fon", href: "/products/drapes" },
         { label: "Plise", href: "/products/plicell" },
-                { label: "Perde Aksesuarları", href: "/products/accessories" },
-
+        { label: "Perde Aksesuarları", href: "/products/accessories" },
       ],
     },
     {
@@ -73,7 +72,6 @@ export default function Navbar() {
       label: "S.S.S",
       href: "/faq",
     },
-
   ];
 
   const [favoriteCount, setFavoriteCount] = useState(0);
@@ -85,6 +83,8 @@ export default function Navbar() {
     null
   );
   const cartDropdownRef = useRef<{ open: () => void }>(null);
+  const { favorites } = useFavorite();
+
   useEffect(() => {
     // Sayfa yüklendiğinde API’den favori sayısını al
     const fetchFavorites = async () => {
@@ -291,13 +291,17 @@ export default function Navbar() {
             </DropdownMenuContent>
           </DropdownMenu>
           {/* Favorites */}
-          <Link href="/favorites" aria-label="Favoriler">
+          <Link href="/favorites" aria-label="Favoriler" className="relative">
             <Button variant="ghost" size="icon-sm">
-              <Heart className="h-5 w-5" />{" "}
-              {/* İkon olarak kalp ekleyelim, örneğin: <Heart /> */}
-              {/* Eğer lucide-react Heart ikonu varsa: <Heart className="h-5 w-5" /> */}
+              <Heart className="h-5 w-5" />
             </Button>
+            {favorites.length > 0 && (
+              <span className="absolute -top-2 -right-1.5 h-5 w-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center">
+                {favorites.length}
+              </span>
+            )}
           </Link>
+
           <CartDropdown />
           {/* Mobile Menu Button */}
           <div className="md:hidden">

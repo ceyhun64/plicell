@@ -36,7 +36,7 @@ export default function OrderDetailDialog({
   if (!order) return null;
 
   const nextStatus = getNextStatus(order.status);
-
+  console.log("order:", order);
   const shippingAddress = order.addresses.find((a) => a.type === "shipping");
   const billingAddress = order.addresses.find((a) => a.type === "billing");
 
@@ -113,19 +113,11 @@ export default function OrderDetailDialog({
               <img
                 src={item.product.mainImage}
                 alt={item.product.title}
-                className="w-14 h-14 object-cover rounded-xs"
+                className="w-20 h-26 object-cover rounded-xs"
               />
               <div className="flex-1 min-w-0 text-sm space-y-0.5">
                 <p className="font-medium truncate">{item.product.title}</p>
-                <p className="text-gray-500 text-xs">
-                  Kategori: {item.product.category}
-                </p>
-                <p className="text-gray-500 text-xs">
-                  Birim: {item.unitPrice.toLocaleString("tr-TR")} ₺
-                </p>
-                <p className="text-gray-500 text-xs">
-                  Toplam: {item.totalPrice.toLocaleString("tr-TR")} ₺
-                </p>
+
                 {item.profile && (
                   <p className="text-gray-500 text-xs">
                     Profil: {item.profile}
@@ -166,6 +158,9 @@ export default function OrderDetailDialog({
               {addr ? (
                 <div className="p-3 bg-gray-50 border rounded-xs text-sm space-y-1">
                   <p>Adres Tipi: {addr.type}</p>
+                  <p>
+                    Alıcı: {addr.firstName} {addr.lastName}
+                  </p>
                   <p>Adres: {addr.address}</p>
                   <p>
                     Şehir / Ülke: {addr.city} / {addr.country}

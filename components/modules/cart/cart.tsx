@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { toast } from "sonner";
 import CartItem from "./cartItem";
 import CartSummary from "./cartSummary";
@@ -8,6 +8,13 @@ import { Button } from "../../ui/button";
 import { ShoppingBag } from "lucide-react";
 import { Spinner } from "@/components/ui/spinner";
 import Link from "next/link";
+
+import {
+  getCart,
+  updateGuestCartQuantity,
+  removeFromGuestCart,
+  GuestCartItem,
+} from "@/utils/cart";
 
 interface Product {
   id: number;
@@ -32,30 +39,91 @@ export interface CartItemType {
 export default function Cart() {
   const [cartItems, setCartItems] = useState<CartItemType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  const fetchCart = async () => {
-    setIsLoading(true);
+  const checkLogin = useCallback(async (): Promise<boolean> => {
     try {
+      const res = await fetch("/api/account/check", {
+        credentials: "include",
+      });
+
+      if (!res.ok) {
+        setIsLoggedIn(false);
+        return false;
+      }
+
+      const data = await res.json();
+      const logged = !!data?.user?.id;
+      setIsLoggedIn(logged);
+      return logged;
+    } catch {
+      setIsLoggedIn(false);
+      return false;
+    }
+  }, []);
+
+  const loadGuestCart = useCallback(() => {
+    try {
+      const cart = getCart();
+      const guestCart = cart.map((item: GuestCartItem) => ({
+        id: item.productId,
+        quantity: item.quantity,
+        product: {
+          id: item.productId,
+          title: item.title,
+          pricePerM2: item.pricePerM2,
+          mainImage: item.image,
+          category: "Plicell",
+        },
+        m2: item.m2,
+        width: item.width,
+        height: item.height,
+        profile: item.profile,
+        device: item.device,
+        note: item.note,
+      }));
+      setCartItems(guestCart);
+    } catch (err) {
+      setCartItems([]);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  const fetchCart = useCallback(async () => {
+    try {
+      setIsLoading(true);
       const res = await fetch("/api/cart", { credentials: "include" });
 
       if (!res.ok) throw new Error("Sepet verisi alınamadı");
 
       const data = await res.json();
       setCartItems(data);
-    } catch (error) {
-      console.error("Sepet çekme hatası:", error);
-      toast.error("Sepet yüklenirken bir hata oluştu.");
+    } catch {
       setCartItems([]);
     } finally {
       setIsLoading(false);
     }
-  };
-
-  useEffect(() => {
-    fetchCart();
   }, []);
 
+  useEffect(() => {
+    (async () => {
+      const logged = await checkLogin();
+      if (logged) fetchCart();
+      else loadGuestCart();
+    })();
+  }, [checkLogin, fetchCart, loadGuestCart]);
+
+  // ---------- Quantity Update ----------
   const handleQuantityChange = async (id: number, delta: number) => {
+    if (!isLoggedIn) {
+      // GUEST CART
+      updateGuestCartQuantity(id, delta);
+      loadGuestCart();
+      return;
+    }
+
+    // LOGGED-IN CART
     const item = cartItems.find((c) => c.id === id);
     if (!item) return;
 
@@ -77,7 +145,6 @@ export default function Cart() {
             c.id === id ? { ...c, quantity: updatedItem.quantity } : c
           )
         );
-        toast.success(`Miktar güncellendi: ${updatedItem.quantity}`);
       } else {
         toast.error(updatedItem.error || "Güncelleme başarısız");
       }
@@ -86,18 +153,23 @@ export default function Cart() {
     }
   };
 
+  // ---------- Remove ----------
   const handleRemove = async (id: number) => {
+    if (!isLoggedIn) {
+      removeFromGuestCart(id);
+      loadGuestCart();
+      return;
+    }
+
     try {
       const res = await fetch(`/api/cart/${id}`, {
         method: "DELETE",
         credentials: "include",
       });
-      const data = await res.json();
+
       if (res.ok) {
         setCartItems((prev) => prev.filter((c) => c.id !== id));
         toast.success("Ürün sepetten kaldırıldı");
-      } else {
-        toast.error(data.error || "Ürün kaldırılamadı");
       }
     } catch {
       toast.error("Ürün kaldırılamadı");
@@ -113,7 +185,6 @@ export default function Cart() {
 
   if (isLoading) return <Spinner />;
 
-  // 🔹 Boş sepet tasarımı
   const EmptyCart = () => (
     <div className="flex flex-col items-center justify-center mt-16 space-y-4 text-gray-500">
       <ShoppingBag className="h-12 w-12 text-gray-400 animate-bounce" />
@@ -131,7 +202,6 @@ export default function Cart() {
 
   return (
     <div className="container mx-auto px-3 md:px-40 py-8 md:py-16 mb-12">
-      {/* Başlık sadece sepet doluysa */}
       {cartItems.length > 0 && (
         <h2 className="relative text-3xl md:text-4xl font-bold text-gray-800 text-center mb-12 font-serif">
           <span className="absolute inset-0 -z-10 bg-pink-200 rounded-lg opacity-20 blur-xl"></span>

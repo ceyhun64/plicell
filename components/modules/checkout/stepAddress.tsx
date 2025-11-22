@@ -32,6 +32,8 @@ interface Address {
   zip?: string;
   phone?: string;
   country?: string;
+  tcno?: string;
+  
 }
 
 interface StepAddressProps {
@@ -65,6 +67,7 @@ export default function StepAddress({
     return <Spinner />;
   }
 
+  
   console.log("addresses", addresses);
   return (
     <Card>
@@ -135,7 +138,7 @@ export default function StepAddress({
 
         {/* Yeni adres formu */}
         {isAddingNewAddress && (
-          <div className="p-4 border rounded-xs bg-gray-50">
+          <div className="p-4 border rounded-md bg-gray-50">
             <AdresForm
               formData={newAddressForm}
               setFormData={setNewAddressForm}
@@ -150,7 +153,7 @@ export default function StepAddress({
           onClick={onNext}
           disabled={!selectedAddress || isAddingNewAddress || isSavingAddress}
         >
-          Kargo Seçimine Geç
+          Ödemeye Geç
         </Button>
       </CardFooter>
     </Card>

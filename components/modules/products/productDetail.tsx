@@ -654,7 +654,7 @@ export default function ProductDetailPage() {
                     ₺{totalPrice}
                   </p>
                   <span className="text-xs text-gray-500 mt-2">
-                    ({calculatedM2.toFixed(2)} m² x {quantity} adet) + KDV Dahil
+                    ({calculatedM2.toFixed(2)} m² x {quantity} adet)
                   </span>
                 </div>
 

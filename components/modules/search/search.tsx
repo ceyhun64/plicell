@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { X, Search, Trash } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Spinner } from "@/components/ui/spinner";
-import { GradientText } from "@/components/ui/shadcn-io/gradient-text/indext";
+import { GradientText } from "@/components/ui/shadcn-io/gradient-text/index";
 
 interface Product {
   id: number;

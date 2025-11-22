@@ -76,6 +76,7 @@ export default function StepPaymentCard({
             id="holderName"
             placeholder="Kart Üzerindeki İsim"
             value={holderName}
+            autoComplete="cc-name"
             onChange={(e) => setHolderName(e.target.value.toUpperCase())}
           />
         </div>
@@ -87,6 +88,7 @@ export default function StepPaymentCard({
             placeholder="XXXX XXXX XXXX XXXX"
             maxLength={19}
             value={formattedCardNumber}
+            autoComplete="cc-number"
             onChange={(e) => setCardNumber(e.target.value.replace(/\D/g, ""))}
           />
         </div>
@@ -99,6 +101,7 @@ export default function StepPaymentCard({
               placeholder="AA"
               maxLength={2}
               value={expireMonth}
+              autoComplete="cc-exp-month"
               onChange={(e) =>
                 setExpireMonth(e.target.value.replace(/\D/g, ""))
               }
@@ -112,6 +115,7 @@ export default function StepPaymentCard({
               placeholder="YY"
               maxLength={2}
               value={expireYear}
+              autoComplete="cc-exp-year"
               onChange={(e) => setExpireYear(e.target.value.replace(/\D/g, ""))}
             />
           </div>
@@ -123,6 +127,7 @@ export default function StepPaymentCard({
               placeholder="***"
               maxLength={3}
               value={cvc}
+              autoComplete="cc-csc"
               onChange={(e) => setCvc(e.target.value.replace(/\D/g, ""))}
             />
           </div>
@@ -132,7 +137,7 @@ export default function StepPaymentCard({
       <CardFooter className="flex justify-between w-full">
         <Button
           variant="outline"
-          onClick={() => setStep(2)}
+          onClick={() => setStep(1)}
           disabled={isProcessing}
         >
           Geri
@@ -146,7 +151,7 @@ export default function StepPaymentCard({
               <Loader2 className="w-5 h-5 animate-spin" /> İşlem Yapılıyor...
             </span>
           ) : (
-            `Ödemeyi Tamamla ${totalPrice.toFixed(2)} TL`
+            `Ödemeyi Tamamla`
           )}
         </Button>
       </CardFooter>

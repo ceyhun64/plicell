@@ -10,11 +10,9 @@ export default function ClientLayoutWrapper({
 }) {
   const pathname = usePathname();
 
-  // Admin ve checkout sayfalarında sidebar görünmesin
-  const isAdminPage = pathname?.startsWith("/admin") ?? false;
-  const isCheckoutPage = pathname?.startsWith("/checkout") ?? false;
-
-  const showSidebar = !isAdminPage && !isCheckoutPage;
+  // Sidebar'ın görünmemesi gereken sayfalar
+  const hiddenPaths = ["/admin", "/checkout", "/reset-password", "/forgot-password"];
+  const showSidebar = !hiddenPaths.some((path) => pathname?.startsWith(path));
 
   return (
     <>

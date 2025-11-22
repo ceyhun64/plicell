@@ -1,11 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { HelpCircle, Headset, MapPin, Mail, Phone, User } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { HelpCircle, Headset } from "lucide-react";
 
 export default function FaqPage() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
@@ -20,7 +18,7 @@ export default function FaqPage() {
       answer: (
         <>
           <p className="mb-2">
-            Evet, NowArt'den üye olmadan da kolayca sipariş verebilirsiniz!
+            Evet, Moda Perde'den üye olmadan da kolayca sipariş verebilirsiniz!
           </p>
           <p className="mb-2">
             Misafir kullanıcı olarak alışveriş yapmanıza olanak tanıyan
@@ -52,7 +50,7 @@ export default function FaqPage() {
           </p>
           <p className="mb-2">
             Herhangi bir sorunla karşılaşırsanız, müşteri hizmetlerimize
-            ulaşmaktan çekinmeyin! +90 533 387 40 74 info@nowartplicell.com
+            ulaşmaktan çekinmeyin! +90 533 387 40 74 info@modaperde.com
           </p>
         </>
       ),

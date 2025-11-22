@@ -4,7 +4,8 @@ import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card";
 import { Heart } from "lucide-react";
 import Link from "next/link";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
+import { useFavorite } from "@/contexts/favoriteContext";
 
 interface ProductData {
   id: number;
@@ -23,11 +24,6 @@ interface ProductData {
   room?: string;
 }
 
-interface Favorite {
-  id: number;
-  productId: number;
-}
-
 // Roomlara göre renk eşleme
 const roomColors: Record<string, string> = {
   Salon: "bg-gray-500",
@@ -42,85 +38,18 @@ const roomColors: Record<string, string> = {
 export default function ProductCard({ product }: { product: ProductData }) {
   const [currentImage, setCurrentImage] = useState(product.mainImage);
   const imageRef = useRef<HTMLDivElement>(null);
-  const [favorited, setFavorited] = useState(false);
-  const [user, setUser] = useState(null);
 
-  useEffect(() => {
-    // Component mount olduğunda API'yi çağır
-    const checkUser = async () => {
-      try {
-        const res = await fetch("/api/account/check");
-        const data = await res.json();
-        if (data.user) {
-          setUser(data.user);
-        } else {
-          setUser(null);
-        }
-      } catch (error) {
-        console.error("Kullanıcı kontrolü hatası:", error);
-        setUser(null);
-      }
-    };
-    checkUser();
-  }, []);
-  useEffect(() => {
-    if (!user) return; // giriş yoksa API çağrısını atla
+  const { favorites, addFavorite, removeFavorite, isFavorited } = useFavorite();
+  const favorited = isFavorited(product.id);
 
-    const checkFavorite = async () => {
-      try {
-        const res = await fetch("/api/favorites", {
-          credentials: "include", // cookie varsa gönder
-        });
-        if (!res.ok) return;
-        const data: Favorite[] = await res.json();
-        const fav = data.find(
-          (f) => Number(f.productId) === Number(product.id)
-        );
-        if (fav) setFavorited(true);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    checkFavorite();
-  }, [product.id, user]);
-
-  const toggleFavorite = async (e: React.MouseEvent) => {
+  const handleFavoriteClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
 
-    if (!user) {
-      alert("Favori eklemek için giriş yapmanız gerekiyor.");
-      return;
-    }
-
-    try {
-      if (!favorited) {
-        const res = await fetch("/api/favorites", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ productId: product.id }),
-          credentials: "include",
-        });
-        if (res.ok) {
-          setFavorited(true);
-          window.dispatchEvent(
-            new CustomEvent("favoriteChanged", { detail: 1 })
-          );
-        }
-      } else {
-        const res = await fetch(`/api/favorites/${product.id}`, {
-          method: "DELETE",
-          credentials: "include",
-        });
-        if (res.ok) {
-          setFavorited(false);
-          window.dispatchEvent(
-            new CustomEvent("favoriteChanged", { detail: -1 })
-          );
-        }
-      }
-    } catch (err) {
-      console.error(err);
+    if (favorited) {
+      removeFavorite(product.id);
+    } else {
+      addFavorite(product.id);
     }
   };
 
@@ -158,7 +87,7 @@ export default function ProductCard({ product }: { product: ProductData }) {
           {/* ROOM BADGE */}
           {product.room && (
             <span
-              className={`absolute top-1 right-1 md:top-3 md:right-3 text-white text-xs font-extralight  px-2 py-1 rounded-xs shadow-md z-2 ${
+              className={`absolute top-1 right-1 md:top-3 md:right-3 text-white text-xs font-extralight px-2 py-1 rounded-xs shadow-md z-2 ${
                 roomColors[product.room] || "bg-gray-500"
               }`}
             >
@@ -191,7 +120,7 @@ export default function ProductCard({ product }: { product: ProductData }) {
 
             <button
               className="absolute top-4 right-2 p-1 rounded-full bg-white hover:bg-red-50 transition"
-              onClick={toggleFavorite} // 🔹 Butona click handler eklendi
+              onClick={handleFavoriteClick}
             >
               <Heart
                 className={`h-4 w-4 transition-colors duration-300 ${

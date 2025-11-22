@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Instagram, Facebook, Phone, ChevronDown } from "lucide-react"; // ChevronDown eklendi
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
-import { GradientText } from "../ui/shadcn-io/gradient-text/indext";
+import { GradientText } from "../ui/shadcn-io/gradient-text/index";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 export default function Footer() {

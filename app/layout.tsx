@@ -4,6 +4,7 @@ import "./globals.css";
 import ClientLayoutWrapper from "@/components/layout/ClientLayoutWrapper";
 import ScrollToTopButton from "@/components/layout/scrollToTop";
 import { CartProvider } from "@/contexts/cartContext";
+import { FavoriteProvider } from "@/contexts/favoriteContext";
 import { Toaster } from "sonner";
 import Head from "next/head"; // 👈 ekledik
 
@@ -57,17 +58,19 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <CartProvider>
-          <ClientLayoutWrapper>
-            <main>{children}</main>
-          </ClientLayoutWrapper>
-          <ScrollToTopButton />
-          <Toaster
-            richColors
-            position="bottom-right"
-            toastOptions={{
-              style: { zIndex: 9999 },
-            }}
-          />
+          <FavoriteProvider>
+            <ClientLayoutWrapper>
+              <main>{children}</main>
+            </ClientLayoutWrapper>
+            <ScrollToTopButton />
+            <Toaster
+              richColors
+              position="bottom-right"
+              toastOptions={{
+                style: { zIndex: 9999 },
+              }}
+            />
+          </FavoriteProvider>
         </CartProvider>
       </body>
     </html>

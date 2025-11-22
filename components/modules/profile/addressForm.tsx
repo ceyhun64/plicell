@@ -28,6 +28,7 @@ export interface AddressFormData {
   phone?: string; // Formda yok, opsiyonel
   country?: string; // Formda yok, opsiyonel (varsayılan Türkiye)
   email?: string; // ✅ Yeni eklendi
+  tcno?: string;
 }
 
 export interface AddressFormProps {
@@ -324,7 +325,17 @@ export default function AdresForm({
           required
         />
       </div>
-
+      <div className="space-y-1">
+        <Label htmlFor="tcno">TC Kimlik No *</Label>
+        <Input
+          id="tcno"
+          type="text"
+          maxLength={11}
+          value={formData.tcno}
+          onChange={(e) => setFormData({ ...formData, tcno: e.target.value })}
+          required
+        />
+      </div>
       {/* Adres Detayı */}
       <div className="space-y-2 md:col-span-2">
         <Label htmlFor="address" className="text-gray-700 font-medium">

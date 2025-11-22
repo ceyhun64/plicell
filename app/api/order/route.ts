@@ -235,10 +235,16 @@ export async function POST(req: NextRequest) {
         transactionId: paymentResult?.paymentId || null,
         items: {
           create: basketItems.map((item) => ({
-            productId: Number(item.productId),
+            // DÜZELTME: productId yerine zorunlu 'product' ilişkisini 'connect' ile bağlıyoruz.
+
+            product: {
+              connect: { id: Number(item.id) },
+            },
             quantity: Number(item.quantity || 1),
-            unitPrice: Number(item.unitPrice), 
-            totalPrice:Number(item.totalPrice) ,
+            // DÜZELTME: item.unitPrice undefined ise 0 kullan
+            unitPrice: Number(item.unitPrice || 0),
+            // totalPrice için de güvenlik önlemi
+            totalPrice: Number(item.totalPrice || 0),
             note: item.note,
             profile: item.profile,
             width: item.width,
@@ -252,25 +258,25 @@ export async function POST(req: NextRequest) {
           create: [
             {
               type: "shipping",
-              firstName: shippingAddress.firstName ?? firstName ?? "",
-              lastName: shippingAddress.lastName ?? lastName ?? "",
+              firstName: body.buyer?.buyerName ?? "",
+              lastName: body.buyer?.buyerSurname ?? "",
               address: shippingAddress.address ?? "",
               district: shippingAddress.district ?? "",
               city: shippingAddress.city ?? "",
-              zip: shippingAddress.zip ?? "",
-              phone: shippingAddress.phone ?? "",
-              country: shippingAddress.country ?? "",
+              zip: shippingAddress.zip ?? shippingAddress.zipCode ?? "",
+              phone: body.buyer?.phone ?? "",
+              country: shippingAddress.country ?? "Türkiye",
             },
             {
               type: "billing",
-              firstName: billingAddress.firstName ?? firstName ?? "",
-              lastName: billingAddress.lastName ?? lastName ?? "",
+              firstName: body.buyer?.buyerName ?? "",
+              lastName: body.buyer?.buyerSurname ?? "",
               address: billingAddress.address ?? "",
               district: billingAddress.district ?? "",
               city: billingAddress.city ?? "",
-              zip: billingAddress.zip ?? "",
-              phone: billingAddress.phone ?? "",
-              country: billingAddress.country ?? "",
+              zip: billingAddress.zip ?? billingAddress.zipCode ?? "",
+              phone: body.buyer?.phone ?? "",
+              country: billingAddress.country ?? "Türkiye",
             },
           ],
         },

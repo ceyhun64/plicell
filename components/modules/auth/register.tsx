@@ -139,7 +139,7 @@ export default function RegisterForm({ onLoginClick }: RegisterFormProps) {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute inset-y-0 right-3 flex items-center text-gray-500"
+                className="absolute inset-y-0 right-3  mt-4.5  flex items-center text-gray-500"
               >
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
@@ -158,12 +158,12 @@ export default function RegisterForm({ onLoginClick }: RegisterFormProps) {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
-                className="mt-1 pr-10 rounded-xs border border-gray-200 focus:border-black focus:ring-0"
+                className="mt-1 pr-10 rounded-xs border  border-gray-200 focus:border-black focus:ring-0"
               />
               <button
                 type="button"
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="absolute inset-y-0 right-3 flex items-center text-gray-500"
+                className="absolute inset-y-0 right-3  mt-4.5   flex items-center text-gray-500"
               >
                 {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
@@ -171,7 +171,7 @@ export default function RegisterForm({ onLoginClick }: RegisterFormProps) {
 
             <Button
               type="submit"
-              className={`w-full rounded-full bg-[#7B0323] hover:bg-gray-900 text-white py-6 text-lg font-semibold ${
+              className={`w-full rounded-full bg-[#7B0323] hover:bg-[#7B0323]/90 text-white py-6 text-lg font-semibold ${
                 isLoading ? "opacity-50 cursor-not-allowed" : ""
               }`}
               disabled={isLoading}

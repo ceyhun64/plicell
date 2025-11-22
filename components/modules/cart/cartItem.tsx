@@ -25,7 +25,7 @@ export default function CartItem({
   return (
     <div className="flex flex-col sm:flex-row w-full gap-4 sm:gap-6 p-4 sm:p-6 bg-white rounded-xs border border-gray-100 shadow-md hover:shadow-lg transition-shadow">
       {/* Product Image */}
-      <div className="relative w-full sm:w-28 h-40 sm:h-32 flex-shrink-0 rounded-sm overflow-hidden">
+      <div className="relative w-full sm:w-28 h-40 sm:h-32 flex-shrink-0 rounded-xs overflow-hidden">
         <Image
           src={product.mainImage}
           alt={product.title}

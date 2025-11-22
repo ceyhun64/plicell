@@ -18,7 +18,7 @@ const StepIndicator: React.FC<StepIndicatorProps> = ({ step, currentStep, label 
 
   return (
     <div
-      className={`flex flex-col items-center w-1/3 ${
+      className={`flex flex-col items-center w-1/2 ${
         step > 1 ? "border-l pl-4 border-gray-200 dark:border-gray-700" : ""
       }`}
     >
@@ -49,8 +49,7 @@ const PaymentStepper: React.FC<PaymentStepperProps> = ({ currentStep }) => {
   return (
     <div className="flex justify-between mb-6 text-sm font-medium text-center">
       <StepIndicator step={1} currentStep={currentStep} label="Adres" />
-      <StepIndicator step={2} currentStep={currentStep} label="Kargo" />
-      <StepIndicator step={3} currentStep={currentStep} label="Kart Bilgileri" />
+      <StepIndicator step={2} currentStep={currentStep} label="Kart Bilgileri" />
     </div>
   );
 };

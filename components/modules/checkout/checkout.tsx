@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react"; // 👈 Oturum açma için eklendi
 import PaymentStepper from "@/components/modules/checkout/paymentStepper";
 import StepAddress from "@/components/modules/checkout/stepAddress";
-import StepCargo from "@/components/modules/checkout/stepCargo";
 import StepPaymentCard from "@/components/modules/checkout/stepPayment";
 import BasketSummaryCard from "@/components/modules/checkout/cartSummary";
 import { AddressFormData } from "@/components/modules/profile/addressForm";
@@ -14,8 +13,8 @@ import { getCart, clearGuestCart, GuestCartItem } from "@/utils/cart";
 import { Spinner } from "@/components/ui/spinner";
 
 const cargoOptions = [
-  { id: "standart", name: "Standart Kargo", fee: 12.0 },
-  { id: "express", name: "Hızlı Kargo", fee: 22.0 },
+  { id: "standart", name: "Standart Kargo", fee: 0.0 }, // 👈 Ücret sıfırlandı
+  { id: "express", name: "Hızlı Kargo", fee: 0.0 }, // 👈 Ücret sıfırlandı
 ];
 
 interface Address {
@@ -31,6 +30,7 @@ interface Address {
   phone?: string;
   country?: string;
   email?: string;
+  tcno?: string;
 }
 
 interface User {
@@ -61,6 +61,7 @@ interface CartItem {
   width?: number;
   height?: number;
   device?: string;
+  m2?: number;
 }
 
 interface UserUser {
@@ -101,36 +102,68 @@ export default function PaymentPage() {
     zip: "",
     phone: "",
     country: "Türkiye",
+    tcno: "",
   };
   const [newAddressForm, setNewAddressForm] = useState(initialAddressForm);
   const [isAddingNewAddress, setIsAddingNewAddress] = useState(false);
   const [isSavingAddress, setIsSavingAddress] = useState(false);
 
   // Kullanıcı ve sepet verilerini çek
-  useEffect(() => {
-    const fetchData = async () => {
-      setLoading(true);
-      try {
-        const localCart = localStorage.getItem("cart");
-        if (localCart) setCartItems(JSON.parse(localCart));
-
-        const userRes = await fetch("/api/user", { credentials: "include" });
-        if (userRes.ok) {
-          const userData = await userRes.json();
-          setUser(userData);
-        } else {
-          setUser(null);
-        }
-      } catch (err) {
-        console.error("Fetch hatası:", err);
+  const fetchData = async () => {
+    // 👈 Dışarı taşıdık
+    setLoading(true);
+    try {
+      // Kullanıcıyı çek
+      const userRes = await fetch("/api/user", { credentials: "include" });
+      let userData = null;
+      if (userRes.ok) {
+        userData = await userRes.json();
+        setUser(userData);
+      } else {
         setUser(null);
-      } finally {
-        setLoading(false);
       }
-    };
 
+      // Sepeti belirle
+      if (userData?.user?.id) {
+        // Login olmuş kullanıcı için backend cart
+        const cartRes = await fetch("/api/cart", { credentials: "include" });
+        if (cartRes.ok) {
+          const cartData = await cartRes.json();
+          setCartItems(cartData);
+        } else {
+          setCartItems([]); // Hata durumunda sepeti temizle
+        }
+      } else {
+        // Guest için localStorage cart
+        const localCart = getCart(); // getCart() fonksiyonunu kullan (localStorage'dan çeker)
+        if (localCart.length > 0) {
+          // Sadece doluysa ayarla
+          // Local storage'daki basit ürünleri API'dan detaylı ürün bilgisi ile çekmek gerekebilir.
+          // Ancak mevcut yapıda, local cart'ın sadece ürün ID'leri yerine tam item yapısını
+          // döndürdüğünü varsayarak sadece `getCart()`'ı çağırıp dönen veriyi kullanabiliriz.
+          // Eğer `getCart()` sadece GuestCartItem[] döndürüyorsa, PaymentPage'in CartItem[] tipine dönüştürmelisiniz.
+          // Mevcut kodunuzda localCart'ı doğrudan setCartItems'a atıyorsunuz, bu da `GuestCartItem[]`'ın `CartItem[]` olarak kullanılması anlamına geliyor.
+          // UYUMLULUK SORUNU YAŞAMAMAK İÇİN:
+          // Eğer `getCart()` GuestCartItem[] döndürüyorsa, aşağıdakini kullanın:
+          // setCartItems(localCart as any as CartItem[]);
+          // Eğer `getCart()` (veya localStorage) zaten CartItem[] formatına uygun veri tutuyorsa, mevcut haliyle devam edin:
+          setCartItems(JSON.parse(localStorage.getItem("cart") || "[]"));
+        } else {
+          setCartItems([]);
+        }
+      }
+    } catch (err) {
+      console.error("Fetch hatası:", err);
+      setUser(null);
+      setCartItems([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchData();
-  }, []);
+  }, []); // 👈 Sayfa
 
   // Subtotal ve total hesaplama
   const subTotal = useMemo(() => {
@@ -147,10 +180,14 @@ export default function PaymentPage() {
     return cargo ? cargo.fee : 0;
   }, [selectedCargo]);
 
-  const totalPrice = useMemo(
-    () => subTotal + selectedCargoFee,
-    [subTotal, selectedCargoFee]
-  );
+  const totalPrice = useMemo(() => {
+    const baseTotal = subTotal + selectedCargoFee;
+    // Yüzde 10'luk artışı ekle (1.1 ile çarp)
+    const totalWithMarkup = baseTotal * 1.1;
+    // Virgülden sonra iki basamak hassasiyeti için toFixed kullanabilirsiniz,
+    // ancak useMemo'dan dönen değerin number olması önerilir.
+    return totalWithMarkup;
+  }, [subTotal, selectedCargoFee]);
 
   if (loading) return <Spinner />;
   if (error)
@@ -262,7 +299,7 @@ export default function PaymentPage() {
 
       // 🔹 Guest cart temizle
       clearGuestCart();
-
+      await fetchData();
       setIsAddingNewAddress(false);
       setNewAddressForm(initialAddressForm);
       console.log("Address and cart saved successfully");
@@ -367,6 +404,7 @@ export default function PaymentPage() {
     };
 
     const billingAddress = { ...shippingAddress };
+    console.log("cartItems:", cartItems);
 
     const basketItemsFormatted = cartItems.map((item) => {
       const area =
@@ -379,8 +417,15 @@ export default function PaymentPage() {
         itemType: "PHYSICAL",
         price: unitPrice.toFixed(2),
         quantity: item.quantity,
+        profile: item.profile,
+        width: item.width,
+        height: item.height,
+        m2: item.m2,
+        device: item.device,
       };
     });
+
+    console.log("basketItemsFormatted:", basketItemsFormatted);
 
     const paymentCardFormatted = {
       cardHolderName: holderName,
@@ -413,12 +458,22 @@ export default function PaymentPage() {
       if (!res.ok) return router.push("/checkout/unsuccess");
 
       const data = await res.json();
-
       if (data.status === "success") {
+        // 🔥 Veritabanındaki her cartItem'ı sil
+        for (const item of cartItems) {
+          try {
+            await fetch(`/api/cart/${item.id}`, {
+              method: "DELETE",
+            });
+          } catch (err) {
+            console.error("Cart item delete error:", err);
+          }
+        }
+
+        // 🔥 Local sepeti temizle
         localStorage.removeItem("cart");
+
         router.push("/checkout/success");
-      } else {
-        router.push("/checkout/unsuccess");
       }
     } catch (err) {
       console.error("handlePayment fetch hatası:", err);
@@ -453,14 +508,6 @@ export default function PaymentPage() {
           )}
 
           {step === 2 && (
-            <StepCargo
-              cargoOptions={cargoOptions}
-              selectedCargo={selectedCargo}
-              setSelectedCargo={setSelectedCargo}
-              setStep={setStep}
-            />
-          )}
-          {step === 3 && (
             <StepPaymentCard
               holderName={holderName}
               setHolderName={setHolderName}

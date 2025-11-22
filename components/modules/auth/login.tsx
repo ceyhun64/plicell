@@ -26,30 +26,70 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
     setIsLoading(true);
     setIsSuccess(false);
 
-    const result = await signIn("credentials", {
-      redirect: false,
-      email,
-      password,
-    });
+    try {
+      const result = await signIn("credentials", {
+        redirect: false,
+        email,
+        password,
+      });
 
-    setIsLoading(false);
+      setIsLoading(false);
 
-    if (result?.error) {
-      setLoginMessage("Email veya şifre hatalı");
-      setIsSuccess(false);
-      return;
-    }
+      if (result?.error) {
+        setLoginMessage("Email veya şifre hatalı");
+        setIsSuccess(false);
+        return;
+      }
 
-    if (result?.ok) {
-      setLoginMessage("Giriş başarılı!");
-      setIsSuccess(true);
+      if (result?.ok) {
+        setLoginMessage("Giriş başarılı!");
+        setIsSuccess(true);
 
-      const loggedInUser = { email }; // API'den name vs. çekilebilir
-      if (onLoginSuccess) onLoginSuccess(loggedInUser);
+        const loggedInUser = { email }; // API'den name vs. çekilebilir
+        if (onLoginSuccess) onLoginSuccess(loggedInUser);
 
-      setTimeout(() => {
-        router.push("/"); // İsteğe bağlı yönlendirme
-      }, 500);
+        // 🔹 Favorileri veritabanına ekle
+        const localFavs: number[] = JSON.parse(
+          localStorage.getItem("favorites") || "[]"
+        );
+        if (localFavs.length > 0) {
+          await Promise.all(
+            localFavs.map((productId) =>
+              fetch("/api/favorites", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ productId }),
+                credentials: "include",
+              })
+            )
+          );
+          localStorage.removeItem("favorites");
+        }
+
+        // 🔹 Guest cart'ı veritabanına ekle
+        const guestCart = JSON.parse(localStorage.getItem("guestCart") || "[]");
+        if (guestCart.length > 0) {
+          await Promise.all(
+            guestCart.map((item: any) =>
+              fetch("/api/cart", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(item),
+                credentials: "include",
+              })
+            )
+          );
+          localStorage.removeItem("guestCart");
+        }
+
+        setTimeout(() => {
+          router.push("/"); // yönlendirme
+        }, 500);
+      }
+    } catch (error) {
+      console.error(error);
+      setLoginMessage("Giriş sırasında bir hata oluştu.");
+      setIsLoading(false);
     }
   };
 
@@ -97,7 +137,7 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
               />
               <button
                 type="button"
-                className="absolute inset-y-0 right-3 flex items-center text-gray-400 hover:text-gray-600 transition"
+                className="absolute right-3 mt-4.5  inset-y-0 flex items-center text-gray-400 hover:text-gray-600 transition"
                 onClick={() => setShowPassword(!showPassword)}
               >
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -105,7 +145,7 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
             </div>
 
             <Link
-              href="/forget-password"
+              href="/forgot-password"
               className="mt-2 text-sm font-semibold hover:underline block text-right"
             >
               Şifrenizi mi unuttunuz?
@@ -113,7 +153,7 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
 
             <Button
               type="submit"
-              className={`w-full rounded-full bg-[#7B0323] hover:bg-gray-900 text-white py-6 text-lg font-semibold mt-4 ${
+              className={`w-full rounded-full bg-[#7B0323] hover:bg-[#7B0323]/90 text-white py-6 text-lg font-semibold mt-4 ${
                 isLoading ? "opacity-50 cursor-not-allowed" : ""
               }`}
               disabled={isLoading}
