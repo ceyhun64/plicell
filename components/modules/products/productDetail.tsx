@@ -24,7 +24,6 @@ import DescriptionandReview from "./descriptionAndReview";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { ImageZoom } from "@/components/ui/shadcn-io/image-zoom";
-import { Spinner } from "@/components/ui/spinner";
 import { addToGuestCart } from "@/utils/cart"; // en üste import et
 import {
   Select,
@@ -34,7 +33,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import ProfileModal from "./profileModal";
-import { Skeleton } from "@/components/ui/skeleton";
+import ProductDetailSkeleton from "./productDetailSkeleton";
 
 // Interface ve Profiles kısmı değişmedi
 
@@ -289,41 +288,10 @@ export default function ProductDetailPage() {
   };
   console.log("product:", product);
   // ✅ Loading ve 404
+  // ✅ Loading ve 404 (İyileştirilmiş Skeleton)
   if (loading) {
     return (
-      <div className="container mx-auto px-4 py-10 animate-pulse">
-        {/* Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-          {/* Left image skeleton */}
-          <div className="flex flex-col gap-4">
-            <Skeleton className="w-full h-[450px] rounded-md" />
-
-            <div className="flex gap-3 overflow-auto">
-              <Skeleton className="w-20 h-20 rounded-md" />
-              <Skeleton className="w-20 h-20 rounded-md" />
-              <Skeleton className="w-20 h-20 rounded-md" />
-              <Skeleton className="w-20 h-20 rounded-md" />
-            </div>
-          </div>
-
-          {/* Right panel skeleton */}
-          <div className="flex flex-col gap-6">
-            <Skeleton className="h-10 w-3/4" />
-            <Skeleton className="h-6 w-1/3" />
-
-            <Skeleton className="h-32 w-full rounded-md" />
-
-            <div className="grid grid-cols-3 gap-4">
-              <Skeleton className="h-20" />
-              <Skeleton className="h-20" />
-              <Skeleton className="h-20" />
-            </div>
-
-            <Skeleton className="h-10 w-full" />
-            <Skeleton className="h-12 w-full rounded-full" />
-          </div>
-        </div>
-      </div>
+      <ProductDetailSkeleton/>
     );
   }
 
