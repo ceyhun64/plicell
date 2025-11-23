@@ -28,6 +28,7 @@ interface Address {
   zip?: string;
   phone: string;
   country: string;
+  tcno?: string;
 }
 
 interface CreateOrderBody {
@@ -266,6 +267,7 @@ export async function POST(req: NextRequest) {
               zip: shippingAddress.zip ?? shippingAddress.zipCode ?? "",
               phone: body.buyer?.phone ?? "",
               country: shippingAddress.country ?? "Türkiye",
+              tcno: body.buyer?.tcno ?? "",
             },
             {
               type: "billing",
@@ -277,6 +279,7 @@ export async function POST(req: NextRequest) {
               zip: billingAddress.zip ?? billingAddress.zipCode ?? "",
               phone: body.buyer?.phone ?? "",
               country: billingAddress.country ?? "Türkiye",
+              tcno: body.buyer?.tcno ?? "",
             },
           ],
         },

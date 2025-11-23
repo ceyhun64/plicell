@@ -136,7 +136,7 @@ export default function AdminDashboard() {
       const [productRes, orderRes, userRes, blogRes] = await Promise.all([
         fetch("/api/products"),
         fetch("/api/order"),
-        fetch("/api/user"),
+        fetch("/api/user/all"),
         fetch("/api/blog"),
       ]);
 
@@ -146,6 +146,8 @@ export default function AdminDashboard() {
         userRes.json(),
         blogRes.json(),
       ]);
+
+      console.log("KPI verileri:", productData, orderData, userData, blogData);
 
       // KPI sayıları
       const productsCount =
@@ -164,7 +166,7 @@ export default function AdminDashboard() {
         {
           id: "products",
           title: "Ürünler",
-          stat: productsCount,
+          stat: productData?.products?.length || 0,
           description: "Ürünleri görüntüle ve yönet",
           icon: <Package size={24} className="text-blue-500" />,
           href: "/admin/products",
@@ -172,7 +174,7 @@ export default function AdminDashboard() {
         {
           id: "orders",
           title: "Siparişler",
-          stat: ordersCount,
+          stat: orderData?.orders?.length || 0,
           description: "Siparişleri takip et ve yönet",
           icon: <ShoppingCart size={24} className="text-emerald-500" />,
           href: "/admin/orders",
@@ -180,7 +182,7 @@ export default function AdminDashboard() {
         {
           id: "users",
           title: "Kullanıcılar",
-          stat: usersCount,
+          stat: userData?.users?.length || 0, // <-- burayı değiştirdik
           description: "Kullanıcıları yönet",
           icon: <Users size={24} className="text-violet-500" />,
           href: "/admin/users",
@@ -188,7 +190,7 @@ export default function AdminDashboard() {
         {
           id: "blogs",
           title: "Bloglar",
-          stat: blogsCount,
+          stat: blogData?.blogs?.length || 0,
           description: "Blog listesini görüntüle",
           icon: <FileText size={24} className="text-yellow-500" />,
           href: "/admin/blogs",

@@ -53,6 +53,12 @@ export default function AdminSidebar(): React.ReactElement {
     },
     { id: "users", label: "Kullanıcılar", icon: Users, href: "/admin/users" },
     { id: "blogs", label: "Bloglar", icon: FileText, href: "/admin/blogs" },
+    {
+      id: "subscribers",
+      label: "Aboneler",
+      icon: Users,
+      href: "/admin/subscribers",
+    },
   ];
 
   const active =

@@ -86,7 +86,7 @@ model Address {
   neighborhood String?
   district     String
   city         String
-  tcno         String?
+  tcno         String?  @db.VarChar(11) // <- burası schema ile uyumlu olmalı
   zip          String
   phone        String
   country      String
@@ -140,18 +140,20 @@ model OrderItem {
 }
 
 model OrderAddress {
-  id        Int    @id @default(autoincrement())
+  id        Int     @id @default(autoincrement())
   orderId   Int
   type      String
   firstName String
   lastName  String
   address   String
   district  String
-  city      String
-  zip       String
-  phone     String
-  country   String
-  order     Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  tcno      String? @db.VarChar(11) // <- burası schema ile uyumlu olmalı
+
+  city    String
+  zip     String
+  phone   String
+  country String
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
 
   @@index([orderId], map: "OrderAddress_orderId_fkey")
   @@map("orderaddress")
@@ -227,6 +229,15 @@ model product {
   Favorite  Favorite[]
   OrderItem OrderItem[]
   Review    Review[]
+}
+
+model Subscribe {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("subscribe")
 }
 
 enum OrderStatus {

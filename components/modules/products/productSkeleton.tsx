@@ -34,10 +34,10 @@ export default function ProductSkeleton() {
               {Array.from({ length: 8 }).map((_, i) => (
                 <div
                   key={i}
-                  className="bg-white p-4 rounded-lg shadow-sm border border-gray-200"
+                  className="bg-white p-4 rounded-xs shadow-sm border border-gray-200"
                 >
                   {/* Daha yüksek ürün görseli skeletonu */}
-                  <Skeleton className="w-full h-56 md:h-82 rounded-lg mb-4" />
+                  <Skeleton className="w-full h-56 md:h-82 rounded-xs mb-4" />
 
                   {/* Başlık skeletonu */}
                   <Skeleton className="h-5 w-4/5 mb-3" />

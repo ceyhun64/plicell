@@ -62,7 +62,7 @@ export default function AdminLogin() {
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="relative w-full max-w-md bg-white dark:bg-gray-800 backdrop-blur-md rounded-2xl shadow-2xl p-10 flex flex-col gap-6"
+        className="relative w-full max-w-md bg-white dark:bg-gray-800 backdrop-blur-md rounded-xs shadow-2xl p-10 flex flex-col gap-6"
       >
         {/* Logo / Başlık */}
         <div className="flex flex-col items-center gap-2">
@@ -128,7 +128,7 @@ export default function AdminLogin() {
 
           <Button
             type="submit"
-            className="w-full bg-gradient-to-r from-red-700 to-pink-700 hover:from-red-800 hover:to-pink-800 text-white font-semibold py-3 rounded-xl shadow-lg transition-transform transform hover:scale-105"
+            className="w-full bg-gradient-to-r from-[#7B0323] to-[#5E021A] hover:from-[#7B0323]/90 hover:to-[#5E021A]/90 text-white font-semibold py-3 rounded-full shadow-lg transition-transform transform hover:scale-105"
             disabled={isLoading}
           >
             {isLoading ? "Yükleniyor..." : "Giriş Yap"}

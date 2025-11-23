@@ -72,6 +72,11 @@ export default function Navbar() {
       label: "S.S.S",
       href: "/faq",
     },
+     {
+      label: "Blog",
+      href: "/blog",
+    },
+
   ];
 
   const [favoriteCount, setFavoriteCount] = useState(0);

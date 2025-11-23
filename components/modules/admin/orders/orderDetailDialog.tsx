@@ -34,9 +34,10 @@ export default function OrderDetailDialog({
   getNextStatus,
 }: Props) {
   if (!order) return null;
+  console.log(order);
 
   const nextStatus = getNextStatus(order.status);
-  console.log("order:", order);
+
   const shippingAddress = order.addresses.find((a) => a.type === "shipping");
   const billingAddress = order.addresses.find((a) => a.type === "billing");
 
@@ -125,14 +126,14 @@ export default function OrderDetailDialog({
                 )}
                 {item.width && item.height && (
                   <p className="text-gray-500 text-xs">
-                    Boyut: {item.width}x{item.height} cm
+                    Genişlik x Yükseklik: {item.width}x{item.height} cm
                   </p>
                 )}
                 {item.m2 && (
                   <p className="text-gray-500 text-xs">m²: {item.m2}</p>
                 )}
                 {item.device && (
-                  <p className="text-gray-500 text-xs">Cihaz: {item.device}</p>
+                  <p className="text-gray-500 text-xs">Aparat: {item.device}</p>
                 )}
                 {item.note && (
                   <p className="text-gray-500 text-xs">Not: {item.note}</p>
@@ -161,6 +162,8 @@ export default function OrderDetailDialog({
                   <p>
                     Alıcı: {addr.firstName} {addr.lastName}
                   </p>
+                  <p>Tc. No: {addr.tcno}</p>
+
                   <p>Adres: {addr.address}</p>
                   <p>
                     Şehir / Ülke: {addr.city} / {addr.country}

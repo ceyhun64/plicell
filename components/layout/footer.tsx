@@ -218,32 +218,35 @@ export default function Footer() {
       </div>
 
       {/* Alt Bar */}
-      <div className="container mx-auto mt-12 flex flex-col md:flex-row justify-between items-center px-6 md:px-12 border-t border-gray-200 gap-6 md:gap-0 pt-6">
-        <p className="text-sm text-gray-500 text-center md:text-left">
-          Developed By{" "}
-          <a
-            href="https://wa.me/905541496377"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="font-semibold text-gray-900 hover:underline"
-          >
-            <GradientText
-              className="text-xl font-bold font-mono tracking-tighter"
-              text=".jhun{}"
-            />
-          </a>
-        </p>
+   <div className="container mx-auto mt-12 flex flex-col-reverse md:flex-row justify-between items-center px-6 md:px-18 border-t border-gray-200 gap-6 md:gap-0 pt-6">
+  {/* Developed By - mobilde altta */}
+  <p className="text-sm text-gray-500 text-center md:text-left">
+    Developed By{" "}
+    <a
+      href="https://wa.me/905541496377"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="font-semibold text-gray-900 hover:underline"
+    >
+      <GradientText
+        className="text-xl font-bold font-mono tracking-tighter"
+        text=".jhun{}"
+      />
+    </a>
+  </p>
 
-        <div className="flex justify-center md:justify-end">
-          <Image
-            src="/iyzico/logo_band_colored@3x.webp"
-            alt="iyzico ile güvenli ödeme"
-            width={400}
-            height={100}
-            className="object-contain"
-          />
-        </div>
-      </div>
+  {/* Logo */}
+  <div className="flex justify-center md:justify-end w-full md:w-auto">
+    <Image
+      src="/iyzico/logo_band_colored@3x.webp"
+      alt="iyzico ile güvenli ödeme"
+      width={400}
+      height={100}
+      className="object-contain"
+    />
+  </div>
+</div>
+
     </footer>
   );
 }
