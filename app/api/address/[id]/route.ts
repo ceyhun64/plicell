@@ -1,14 +1,16 @@
+// app/api/address/[id]/route.ts
 import { NextResponse } from "next/server";
 import prisma from "@/lib/db";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import type { NextRequest } from "next/server";
 
+// 📌 PATCH: Adres güncelle
 export async function PATCH(
   request: NextRequest,
-  context: { params: Promise<{ id: string }> } // 👈 dikkat!
+  context: { params: Promise<{ id: string }> }
 ) {
-  const { id } = await context.params; // 👈 params artık Promise
+  const { id } = await context.params; // params artık Promise
   try {
     const session = await getServerSession(authOptions);
     if (!session || !session.user?.id) {
@@ -16,7 +18,6 @@ export async function PATCH(
     }
 
     const body = await request.json();
-
     const addressId = Number(id);
     if (isNaN(addressId)) {
       return NextResponse.json(
@@ -39,9 +40,26 @@ export async function PATCH(
       );
     }
 
+    // TC validation (opsiyonel)
+    if (body.tcno && (body.tcno.length !== 11 || !/^[0-9]+$/.test(body.tcno))) {
+      return NextResponse.json({ error: "Invalid TC number" }, { status: 400 });
+    }
+
     const updatedAddress = await prisma.address.update({
       where: { id: addressId },
-      data: body,
+      data: {
+        title: body.title ?? existingAddress.title,
+        firstName: body.firstName ?? existingAddress.firstName,
+        lastName: body.lastName ?? existingAddress.lastName,
+        address: body.address ?? existingAddress.address,
+        neighborhood: body.neighborhood ?? existingAddress.neighborhood,
+        district: body.district ?? existingAddress.district,
+        city: body.city ?? existingAddress.city,
+        zip: body.zip ?? existingAddress.zip,
+        phone: body.phone ?? existingAddress.phone,
+        country: body.country ?? existingAddress.country,
+        tcno: body.tcno ?? existingAddress.tcno,
+      },
     });
 
     return NextResponse.json({ address: updatedAddress });
@@ -54,9 +72,10 @@ export async function PATCH(
   }
 }
 
+// 📌 DELETE: Adres sil
 export async function DELETE(
   request: NextRequest,
-  context: { params: Promise<{ id: string }> } // 👈 aynı şekilde
+  context: { params: Promise<{ id: string }> }
 ) {
   const { id } = await context.params;
 

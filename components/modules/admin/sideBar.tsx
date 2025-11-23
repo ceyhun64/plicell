@@ -74,7 +74,7 @@ export default function AdminSidebar(): React.ReactElement {
 
   const AdminInfo = (
     <div className="flex flex-col gap-1 p-4 border-t border-gray-200">
-      <span className="font-semibold text-gray-900">Abdulkadir Cer</span>
+      <span className="font-semibold text-gray-900">Feridun Polat</span>
       <button
         onClick={handleLogout}
         className="flex items-center gap-1 text-red-500 hover:text-red-600 transition"

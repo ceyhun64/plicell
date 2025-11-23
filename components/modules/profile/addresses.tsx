@@ -20,15 +20,13 @@ interface Address {
   address: string;
   district: string;
   city: string;
-  neighborhood?: string; // Eklenen alan, opsiyonel bırakılabilir
+  neighborhood?: string;
   zip?: string;
   phone?: string;
   country?: string;
   email?: string;
+  tcno?: string; // 🚨 API'deki tcno alanı eklendi
 }
-
-// AddressFormProps ve AddressFormData interface'leri zaten AdresForm bileşeninden geliyor.
-// Ancak AdresForm bileşenindeki AddressFormData tanımı ile aynı olmalı.
 
 interface AddressFormData {
   title: string;
@@ -38,10 +36,11 @@ interface AddressFormData {
   city: string;
   district: string;
   neighborhood: string;
-  zip?: string; // Formda yok, opsiyonel yapıldı
-  phone?: string; // Formda yok, opsiyonel yapıldı
-  country?: string; // Formda yok, opsiyonel yapıldı
+  zip?: string;
+  phone?: string;
+  country?: string; // POST API'sinde zorunlu, bu yüzden opsiyonel yapmadım.
   email?: string;
+  tcno?: string; // 🚨 API'deki tcno alanı eklendi
 }
 
 export default function Adreslerim() {
@@ -51,7 +50,6 @@ export default function Adreslerim() {
   const [duzenlenenAdres, setDuzenlenenAdres] = useState<Address | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Formdan kaldırılan alanlar için boş string yerine boşluklar (varsayılan değerler)
   const initialFormData: AddressFormData = {
     title: "",
     firstName: "",
@@ -64,6 +62,7 @@ export default function Adreslerim() {
     phone: "",
     country: "Türkiye", // Varsayılan ülke
     email: "",
+    tcno: "", // 🚨 Varsayılan tcno
   };
 
   const [ekleFormData, setEkleFormData] =
@@ -72,24 +71,25 @@ export default function Adreslerim() {
   const [duzenleFormData, setDuzenleFormData] =
     useState<AddressFormData>(initialFormData);
 
-  // 🔹 Adresleri Yükle
+  // 🔹 Adresleri Yükle (GET API'sine göre güncellendi)
   useEffect(() => {
     const fetchAddresses = async () => {
       try {
         const res = await fetch("/api/address", { method: "GET" });
         const data = await res.json();
         if (!res.ok) throw new Error(data.error || "Adresler yüklenemedi.");
-        // Gelen veride neighborhood yoksa boş string ataması eklendi.
-        const addressesWithNeighborhood: Address[] = (data.addresses || []).map(
+
+        const addressesWithDefaults: Address[] = (data.addresses || []).map(
           (a: Address) => ({
             ...a,
             neighborhood: a.neighborhood || "",
             zip: a.zip || "",
             phone: a.phone || "",
             country: a.country || "Türkiye",
+            tcno: a.tcno || "", // 🚨 tcno varsayılan ataması
           })
         );
-        setAdresler(addressesWithNeighborhood);
+        setAdresler(addressesWithDefaults);
       } catch (error) {
         console.error(error);
         toast.error("Adresler yüklenirken bir hata oluştu.");
@@ -101,7 +101,7 @@ export default function Adreslerim() {
     fetchAddresses();
   }, []);
 
-  // 🔹 Adres Silme (Kodda değişiklik yok)
+  // 🔹 Adres Silme (Kodda değişiklik yok, API ile uyumlu)
   const handleSil = async (id: number) => {
     try {
       const res = await fetch(`/api/address/${id}`, { method: "DELETE" });
@@ -115,19 +115,21 @@ export default function Adreslerim() {
     }
   };
 
-  // 🔹 Yeni Adres Ekle (Zorunlu alanlar kontrolü güncellendi)
+  // 🔹 Yeni Adres Ekle (POST API zorunlu alanlarına göre güncellendi)
   const handleEkleKaydet = async () => {
-    // Formdaki zorunlu alanlar: title, firstName, lastName, address, city, district, neighborhood
+    // POST API'sindeki zorunlu alanlar: firstName, lastName, address, district, city, country
     if (
-      !ekleFormData.title ||
       !ekleFormData.firstName ||
       !ekleFormData.lastName ||
       !ekleFormData.address ||
       !ekleFormData.district ||
       !ekleFormData.city ||
-      !ekleFormData.neighborhood // Mahalle eklendi
+      !ekleFormData.country
     ) {
-      toast.error("Lütfen tüm zorunlu alanları (*) doldurun.");
+      // 🚨 Zorunlu alan kontrolü API'ye göre ayarlandı
+      toast.error(
+        "Lütfen alıcı adı/soyadı, adres, il, ilçe ve ülke gibi tüm zorunlu alanları doldurun."
+      );
       return;
     }
 
@@ -135,19 +137,21 @@ export default function Adreslerim() {
       const res = await fetch("/api/address", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        // FormData'yı olduğu gibi gönderiyoruz
         body: JSON.stringify(ekleFormData),
       });
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Adres eklenemedi.");
 
-      // Yeni eklenen adresin de neighborhood, zip, phone, country alanları olmalı
+      // Yeni eklenen adresin alanlarını varsayılanlarla dolduruyoruz
       const newAddress: Address = {
         ...data.address,
         neighborhood: data.address.neighborhood || "",
         zip: data.address.zip || "",
         phone: data.address.phone || "",
         country: data.address.country || "Türkiye",
+        tcno: data.address.tcno || "", // 🚨 tcno ataması
       };
 
       setAdresler((prev) => [newAddress, ...prev]);
@@ -170,31 +174,37 @@ export default function Adreslerim() {
       address: adres.address,
       district: adres.district,
       city: adres.city,
-      neighborhood: adres.neighborhood || "", // Varsayılan değer atandı
-      zip: adres.zip || "", // Varsayılan değer atandı
-      phone: adres.phone || "", // Varsayılan değer atandı
-      country: adres.country || "Türkiye", // Varsayılan değer atandı
+      neighborhood: adres.neighborhood || "",
+      zip: adres.zip || "",
+      phone: adres.phone || "",
+      country: adres.country || "Türkiye",
       email: adres.email,
+      tcno: adres.tcno || "", // 🚨 tcno değeri
     });
     setDuzenleForm(true);
     setYeniAdresForm(false); // Yeni adres formunu kapat
   };
 
-  // 🔹 Adres Düzenleme Kaydet (Kodda değişiklik yok)
+  // 🔹 Adres Düzenleme Kaydet (PATCH API zorunlu alanlarına göre güncellendi)
   const handleDuzenleKaydet = async () => {
     if (!duzenlenenAdres) return;
 
-    // Düzenleme formunda da zorunlu alan kontrolü yapılabilir.
+    // PATCH API'sindeki alanlar isteğe bağlı olarak gönderilebilir, ancak
+    // kullanıcının formu boş bırakıp kaydetmesini engellemek için mevcut frontend
+    // zorunlu alan kontrolünü kullanıyoruz. Daha temiz bir UX için zorunlu alanlar
+    // POST API'si ile aynı olmalıdır.
     if (
-      !duzenleFormData.title ||
       !duzenleFormData.firstName ||
       !duzenleFormData.lastName ||
       !duzenleFormData.address ||
       !duzenleFormData.district ||
       !duzenleFormData.city ||
-      !duzenleFormData.neighborhood
+      !duzenleFormData.country
     ) {
-      toast.error("Lütfen tüm zorunlu alanları (*) doldurun.");
+      // 🚨 Zorunlu alan kontrolü güncellendi
+      toast.error(
+        "Lütfen alıcı adı/soyadı, adres, il, ilçe ve ülke gibi tüm zorunlu alanları doldurun."
+      );
       return;
     }
 
@@ -202,18 +212,21 @@ export default function Adreslerim() {
       const res = await fetch(`/api/address/${duzenlenenAdres.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
+        // FormData'yı olduğu gibi gönderiyoruz
         body: JSON.stringify(duzenleFormData),
       });
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Adres güncellenemedi.");
 
+      // Güncellenen adresin alanlarını varsayılanlarla dolduruyoruz
       const updatedAddress: Address = {
         ...data.address,
         neighborhood: data.address.neighborhood || "",
         zip: data.address.zip || "",
         phone: data.address.phone || "",
         country: data.address.country || "Türkiye",
+        tcno: data.address.tcno || "", // 🚨 tcno ataması
       };
 
       setAdresler((prev) =>
@@ -259,7 +272,7 @@ export default function Adreslerim() {
     );
   }
 
-  // 🔸 Normal render (Adres listeleme kısmı güncellendi)
+  // 🔸 Normal render
   return (
     <div className="flex flex-col md:flex-row min-h-screen ">
       <Sidebar />
@@ -291,14 +304,14 @@ export default function Adreslerim() {
                 setDuzenleForm(false);
                 setEkleFormData(initialFormData);
               }}
-              className=" flex items-center gap-2 border border-gray-300   shadow-sm bg-gradient-to-br from-[#7B0323] to-[#B3133C] text-white hover:text-white/90 px-4 py-2 rounded-full hover:opacity-90 transition"
+              className=" flex items-center gap-2 border border-gray-300  shadow-sm bg-gradient-to-br from-[#7B0323] to-[#B3133C] text-white hover:text-white/90 px-4 py-2 rounded-full hover:opacity-90 transition"
               variant="ghost"
             >
               {yeniAdresForm ? (
-                <X size={20}  />
+                <X size={20} />
               ) : (
                 <>
-                  <PlusCircle size={20}  />
+                  <PlusCircle size={20} />
                   <span className="font-medium">Yeni Adres Ekle</span>
                 </>
               )}
@@ -360,9 +373,9 @@ export default function Adreslerim() {
                   <Card
                     key={a.id}
                     className="
-                  bg-white border border-gray-200 rounded-xs shadow-md 
-                  hover:shadow-lg transition-shadow
-                "
+                    bg-white border border-gray-200 rounded-xs shadow-md 
+                    hover:shadow-lg transition-shadow
+                  "
                   >
                     <CardContent className="p-6">
                       <div className="flex justify-between items-start">
@@ -382,6 +395,13 @@ export default function Adreslerim() {
                             {a.neighborhood && `${a.neighborhood}, `}
                             {a.district} — {a.city} {a.zip}
                           </p>
+
+                          {/* 🚨 tcno'yu opsiyonel olarak göster */}
+                          {a.tcno && (
+                            <p className="text-sm text-gray-500">
+                              TC: {a.tcno}
+                            </p>
+                          )}
 
                           {a.phone && (
                             <p className="text-gray-600">{a.phone}</p>

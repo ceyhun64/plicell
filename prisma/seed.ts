@@ -120,6 +120,7 @@ async function seedRooms() {
     "Banyo",
     "Çocuk Odası",
     "Oturma Odası",
+    "Ofis"
   ];
 
   for (const name of rooms) {

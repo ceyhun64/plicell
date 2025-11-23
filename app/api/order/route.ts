@@ -8,7 +8,7 @@ interface BasketItem {
   name: string; // ürün adı
   totalPrice: number; // unitPrice
   unitPrice: number;
-  category1?: string; // ürün kategorisi
+  category?: string; // ürün kategorisi
   quantity?: number; // ürün adedi
   note?: string | null; // sepet notu
   profile?: string | null;
@@ -69,6 +69,7 @@ interface Address {
   zip?: string;
   phone: string;
   country: string;
+  tcno?: string;
 }
 
 interface CreateOrderBody {
@@ -236,8 +237,6 @@ export async function POST(req: NextRequest) {
         transactionId: paymentResult?.paymentId || null,
         items: {
           create: basketItems.map((item) => ({
-            // DÜZELTME: productId yerine zorunlu 'product' ilişkisini 'connect' ile bağlıyoruz.
-
             product: {
               connect: { id: Number(item.id) },
             },
@@ -267,7 +266,7 @@ export async function POST(req: NextRequest) {
               zip: shippingAddress.zip ?? shippingAddress.zipCode ?? "",
               phone: body.buyer?.phone ?? "",
               country: shippingAddress.country ?? "Türkiye",
-              tcno: body.buyer?.tcno ?? "",
+              tcno: shippingAddress.tcno ?? body.buyer?.tcno ?? "",
             },
             {
               type: "billing",
@@ -279,7 +278,7 @@ export async function POST(req: NextRequest) {
               zip: billingAddress.zip ?? billingAddress.zipCode ?? "",
               phone: body.buyer?.phone ?? "",
               country: billingAddress.country ?? "Türkiye",
-              tcno: body.buyer?.tcno ?? "",
+              tcno: shippingAddress.tcno ?? body.buyer?.tcno ?? "",
             },
           ],
         },

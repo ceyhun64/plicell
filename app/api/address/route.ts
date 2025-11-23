@@ -33,10 +33,10 @@ export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     const body = await request.json();
+    console.log(body);
 
-    // 🧩 login değilse frontend'den gelen userId'yi kullan
+    // 🧩 Login değilse frontend'den gelen userId'yi kullan
     const userId = session?.user?.id ?? body.userId;
-
     if (!userId) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
@@ -46,18 +46,26 @@ export async function POST(request: NextRequest) {
       firstName,
       lastName,
       address,
+      neighborhood,
       district,
       city,
       zip,
       phone,
       country,
+      tcno, // <- Prisma şeması ile uyumlu
     } = body;
 
+    // 🛑 Eksik alan kontrolü
     if (!firstName || !lastName || !address || !district || !city || !country) {
       return NextResponse.json(
         { error: "Required fields missing" },
         { status: 400 }
       );
+    }
+
+    // 🧪 TC Kimlik Validation (opsiyonel)
+    if (tcno && (tcno.length !== 11 || !/^[0-9]+$/.test(tcno))) {
+      return NextResponse.json({ error: "Invalid TC number" }, { status: 400 });
     }
 
     const newAddress = await prisma.address.create({
@@ -67,11 +75,13 @@ export async function POST(request: NextRequest) {
         firstName,
         lastName,
         address,
+        neighborhood: neighborhood || "",
         district,
         city,
         zip: zip || "",
         phone: phone || "",
         country,
+        tcno: tcno || null,
       },
     });
 

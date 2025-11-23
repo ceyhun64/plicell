@@ -15,8 +15,7 @@ import DefaultPagination from "@/components/layout/pagination";
 import { useIsMobile } from "@/hooks/use-mobile";
 import ProductTable from "./productTable";
 import { toast } from "sonner";
-import AddProductDialog, { ProductFormData } from "./addProduct";
-import UpdateProductDialog from "./updateProduct";
+import ProductDialog, { ProductFormData } from "./productDialog";
 import {
   Dialog,
   DialogContent,
@@ -28,44 +27,46 @@ import {
 interface Product {
   id: number;
   title: string;
+  description: string;
   pricePerM2: number;
   rating: number;
   reviewCount?: number;
   mainImage: string;
   subImage?: string;
+  subImage2?: string;
+  subImage3?: string;
   category: string;
+  subCategory?: string;
+  room?: string;
   createdAt: string;
   updatedAt: string;
-  subCategory?: string;
-  subCategoryId?: string;
 }
 
 export default function Products(): React.ReactElement {
   const [products, setProducts] = useState<Product[]>([]);
   const [filter, setFilter] = useState("all");
   const [subFilter, setSubFilter] = useState("all");
-
+  const [roomFilter, setRoomFilter] = useState("all");
   const [search, setSearch] = useState("");
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-
-  const [updateDialogOpen, setUpdateDialogOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
-
+  const [addDialogOpen, setAddDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [productToDelete, setProductToDelete] = useState<Product | null>(null);
 
   const isMobile = useIsMobile();
 
-  // --- API'den ürünleri fetch et ---
+  // ===================== API FETCH =====================
   const fetchProducts = async () => {
     try {
       const res = await fetch("/api/products");
       const data = await res.json();
       if (res.ok) setProducts(data.products);
-      else console.error(data.error);
+      else toast.error(data.error);
     } catch (err) {
       console.error("Ürünler alınamadı:", err);
+      toast.error("Ürünler alınırken hata oluştu!");
     }
   };
 
@@ -73,14 +74,36 @@ export default function Products(): React.ReactElement {
     fetchProducts();
   }, []);
 
-  // Dialog kapandığında seçili ürünleri temizle
+  // Dialog kapandığında seçili ürün temizlenir
   useEffect(() => {
-    if (!updateDialogOpen) setSelectedProduct(null);
+    if (!addDialogOpen) setSelectedProduct(null);
     if (!deleteDialogOpen) setProductToDelete(null);
-  }, [updateDialogOpen, deleteDialogOpen]);
+  }, [addDialogOpen, deleteDialogOpen]);
 
-  // Filtreleme + Arama
-  // Türkçe karakterleri ve boşlukları normalize eden yardımcı fonksiyon
+  // ===================== FILTRELEME =====================
+  const categories = [
+    "Dikey Perde",
+    "Ahşap Jaluzi",
+    "Metal Jaluzi",
+    "Perde Aksesuarları",
+    "Stor Perde",
+    "Zebra Perde",
+    "Rüstik",
+    "Tüller",
+    "Fon",
+    "Plise",
+  ];
+
+  const roomOptions = [
+    "Salon",
+    "Mutfak",
+    "Yatak Odası",
+    "Banyo",
+    "Çocuk Odası",
+    "Oturma Odası",
+    "Ofis",
+  ];
+
   const normalize = (str: string) =>
     str
       .toLowerCase()
@@ -97,9 +120,14 @@ export default function Products(): React.ReactElement {
       filter === "all" ? true : normalize(p.category) === normalize(filter)
     )
     .filter((p) =>
-      normalize(filter) === "plicell" && subFilter !== "all"
+      filter.toLowerCase() === "plicell" && subFilter !== "all"
         ? normalize(p.subCategory || "") === normalize(subFilter)
         : true
+    )
+    .filter((p) =>
+      roomFilter === "all"
+        ? true
+        : normalize(p.room || "") === normalize(roomFilter)
     )
     .filter((p) => p.title.toLowerCase().includes(search.toLowerCase()));
 
@@ -108,35 +136,46 @@ export default function Products(): React.ReactElement {
     currentPage * 15
   );
 
-  // --- Ürün ekleme ---
-  const handleAddProduct = async (
+  // ===================== ÜRÜN EKLE / GÜNCELLE =====================
+  const handleSubmitProduct = async (
     formData: ProductFormData,
-    mainFile: File,
-    subFile?: File
+    mainFile: File | null,
+    subFile?: File | null,
+    subFile2?: File | null,
+    subFile3?: File | null,
+    productId?: number
   ) => {
-    const dataForm = new FormData();
-    dataForm.append("title", formData.title);
-    dataForm.append("pricePerM2", String(formData.pricePerM2));
-    dataForm.append("rating", String(formData.rating));
-    dataForm.append("reviewCount", String(formData.reviewCount || 0));
-    dataForm.append("category", formData.category);
-    if (formData.subCategory)
-      dataForm.append("subCategory", formData.subCategory);
-    dataForm.append("file", mainFile);
-    if (subFile) dataForm.append("subImageFile", subFile);
-
     try {
-      const res = await fetch("/api/products", {
-        method: "POST",
-        body: dataForm,
-      });
+      const dataForm = new FormData();
+      dataForm.append("title", formData.title);
+      dataForm.append("description", formData.description);
+      dataForm.append("pricePerM2", String(formData.pricePerM2));
+      dataForm.append("rating", String(formData.rating));
+      dataForm.append("reviewCount", String(formData.reviewCount || 0));
+      dataForm.append("category", formData.category);
+      if (formData.subCategory)
+        dataForm.append("subCategory", formData.subCategory);
+      if (formData.room) dataForm.append("room", formData.room);
+      if (mainFile) dataForm.append("file", mainFile);
+      if (subFile) dataForm.append("subImageFile", subFile);
+      if (subFile2) dataForm.append("subImage2File", subFile2);
+      if (subFile3) dataForm.append("subImage3File", subFile3);
+
+      const url = productId ? `/api/products/${productId}` : "/api/products";
+      const method = productId ? "PUT" : "POST";
+
+      const res = await fetch(url, { method, body: dataForm });
       const data = await res.json();
 
       if (res.ok) {
-        toast.success("Ürün başarıyla eklendi!");
+        toast.success(
+          productId ? "Ürün başarıyla güncellendi!" : "Ürün başarıyla eklendi!"
+        );
         fetchProducts();
+        setAddDialogOpen(false);
+        setSelectedProduct(null);
       } else {
-        toast.error(data.error || "Ürün eklenirken hata oluştu!");
+        toast.error(data.error || "İşlem başarısız!");
       }
     } catch (err) {
       console.error(err);
@@ -144,65 +183,17 @@ export default function Products(): React.ReactElement {
     }
   };
 
-  // --- Ürün güncelleme ---
-  const handleUpdateProduct = async (
-    updatedData: ProductFormData,
-    mainFile?: File,
-    subFile?: File
-  ) => {
-    if (!selectedProduct) return;
-
-    const formData = new FormData();
-    formData.append("title", updatedData.title);
-    formData.append("pricePerM2", String(updatedData.pricePerM2));
-    formData.append("rating", String(updatedData.rating));
-    formData.append("reviewCount", String(updatedData.reviewCount || 0));
-    formData.append("category", updatedData.category);
-
-    // Alt kategori null olarak gönderilecek
-    formData.append(
-      "subCategory",
-      updatedData.subCategory && updatedData.subCategory !== ""
-        ? updatedData.subCategory
-        : "null"
-    );
-
-    if (mainFile) formData.append("file", mainFile);
-    if (subFile) formData.append("subImageFile", subFile);
-
-    try {
-      const res = await fetch(`/api/products/${selectedProduct.id}`, {
-        method: "PUT",
-        body: formData,
-      });
-      const data = await res.json();
-
-      if (res.ok) {
-        toast.success("Ürün başarıyla güncellendi!");
-        fetchProducts();
-        setUpdateDialogOpen(false);
-      } else {
-        toast.error(data.error || "Güncelleme başarısız");
-      }
-    } catch (err) {
-      console.error(err);
-      toast.error("Beklenmedik bir hata oluştu.");
-    }
-  };
-
-  // --- Silme dialogu aç ---
+  // ===================== SİLME İŞLEMLERİ =====================
   const confirmDeleteProduct = (product: Product) => {
     setProductToDelete(product);
     setDeleteDialogOpen(true);
   };
 
-  // --- Seçilenleri silme dialogu ---
   const confirmDeleteSelected = () => {
     if (selectedIds.length === 0) return;
     setDeleteDialogOpen(true);
   };
 
-  // --- Tekli ürün silme ---
   const handleDeleteProduct = async () => {
     if (!productToDelete) return;
 
@@ -223,10 +214,10 @@ export default function Products(): React.ReactElement {
     } finally {
       setDeleteDialogOpen(false);
       setProductToDelete(null);
+      setSelectedIds([]);
     }
   };
 
-  // --- Seçilenleri sil ---
   const handleDeleteSelectedProducts = async () => {
     try {
       await Promise.all(
@@ -245,7 +236,7 @@ export default function Products(): React.ReactElement {
     }
   };
 
-  // --- Seçim işlemleri ---
+  // ===================== SEÇİM İŞLEMLERİ =====================
   const handleSelectAll = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.checked) setSelectedIds(paginatedProducts.map((p) => p.id));
     else setSelectedIds([]);
@@ -257,6 +248,7 @@ export default function Products(): React.ReactElement {
     );
   };
 
+  // ===================== RENDER =====================
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-gray-50 text-gray-900">
       <Sidebar />
@@ -265,14 +257,13 @@ export default function Products(): React.ReactElement {
           isMobile ? "" : "md:ml-64"
         }`}
       >
-        {/* Başlık */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
           <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#001e59] ms-12">
             Ürün Yönetimi
           </h1>
         </div>
 
-        {/* Araç çubuğu */}
+        {/* Araç Çubuğu */}
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8">
           <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
             <Button
@@ -286,34 +277,36 @@ export default function Products(): React.ReactElement {
             >
               Seçilenleri Sil ({selectedIds.length})
             </Button>
-            <AddProductDialog onSubmit={handleAddProduct} />
+
+            <ProductDialog
+              className="px-4 py-2"
+              onSubmit={handleSubmitProduct}
+              product={selectedProduct ?? undefined}
+            />
           </div>
 
           <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-            <Select onValueChange={(val) => setFilter(val)} defaultValue="all">
+            <Select onValueChange={setFilter} defaultValue="all">
               <SelectTrigger className="w-full sm:w-48 bg-white border border-gray-200 text-gray-800 rounded-xs shadow-sm">
                 <SelectValue placeholder="Kategori seç" />
               </SelectTrigger>
               <SelectContent className="bg-white border border-gray-200 text-gray-800 rounded-xs">
                 <SelectItem value="all">Tüm Ürünler</SelectItem>
-                <SelectItem value="Plicell">Plicell</SelectItem>
-                <SelectItem value="Zebra">Zebra</SelectItem>
-                <SelectItem value="Stor">Stor</SelectItem>
-                <SelectItem value="Ahşap Jaluzi">Ahşap Jaluzi</SelectItem>
+                {categories.map((cat) => (
+                  <SelectItem key={cat} value={cat}>
+                    {cat}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
 
-            {/* Alt kategori filtresi, sadece Plicell seçildiğinde görünür */}
             {filter.toLowerCase() === "plicell" && (
-              <Select
-                onValueChange={(val) => setSubFilter(val)}
-                defaultValue="all"
-              >
+              <Select onValueChange={setSubFilter} defaultValue="all">
                 <SelectTrigger className="w-full sm:w-48 bg-white border border-gray-200 text-gray-800 rounded-xs shadow-sm">
                   <SelectValue placeholder="Alt kategori seç" />
                 </SelectTrigger>
-                <SelectContent className="bg-white border border-gray-200 text-gray-800 rounded-xs">
-                  <SelectItem value="all">Tüm Alt Kategoriler</SelectItem>
+                <SelectContent>
+                  <SelectItem value="all">Tümü</SelectItem>
                   <SelectItem value="Bella">Bella</SelectItem>
                   <SelectItem value="Valeria">Valeria</SelectItem>
                   <SelectItem value="Spark">Spark</SelectItem>
@@ -328,50 +321,40 @@ export default function Products(): React.ReactElement {
               </Select>
             )}
 
+            <Select onValueChange={setRoomFilter} defaultValue="all">
+              <SelectTrigger className="w-full sm:w-48 bg-white border border-gray-200 text-gray-800 rounded-xs shadow-sm">
+                <SelectValue placeholder="Oda seç" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Tüm Odalar</SelectItem>
+                {roomOptions.map((room) => (
+                  <SelectItem key={room} value={room}>
+                    {room}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
             <Input
               type="text"
               placeholder="Ürün adına göre ara..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full sm:w-64 bg-white border border-gray-200 rounded-xs text-gray-800 placeholder-gray-400 shadow-sm focus:ring-2 focus:ring-[#001e59] focus:outline-none"
+              className="w-full sm:w-64 bg-white border border-gray-200 rounded-xs text-gray-800 shadow-sm focus:ring-2 focus:ring-[#001e59] focus:outline-none"
             />
           </div>
         </div>
 
-        {/* Tablo */}
         <ProductTable
           products={paginatedProducts}
           onDeleteClick={confirmDeleteProduct}
-          onUpdateClick={(product) => {
-            setSelectedProduct(product);
-            setUpdateDialogOpen(true);
-          }}
+          onUpdateClick={(product) => setSelectedProduct(product)}
           onSelectAll={handleSelectAll}
           onSelectOne={handleSelectOne}
           selectedIds={selectedIds}
         />
 
-        {/* Güncelleme dialog */}
-        {selectedProduct && (
-          <UpdateProductDialog
-            product={{
-              title: selectedProduct.title,
-              pricePerM2: selectedProduct.pricePerM2,
-              rating: selectedProduct.rating,
-              reviewCount: selectedProduct.reviewCount || 0,
-              category: selectedProduct.category,
-              mainImage: selectedProduct.mainImage,
-              subImage: selectedProduct.subImage,
-              subCategory: selectedProduct.subCategory,
-              subCategoryId: selectedProduct.subCategoryId,
-            }}
-            open={updateDialogOpen}
-            onOpenChange={setUpdateDialogOpen}
-            onUpdate={handleUpdateProduct}
-          />
-        )}
-
-        {/* Silme dialogu */}
+        {/* DELETE Dialog */}
         <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
           <DialogContent className="sm:max-w-[400px]">
             <DialogHeader>
@@ -379,9 +362,9 @@ export default function Products(): React.ReactElement {
             </DialogHeader>
             <p className="mt-2 text-sm text-gray-600">
               {productToDelete
-                ? `${productToDelete.title} adlı ürünü silmek istediğinize emin misiniz?`
+                ? `"${productToDelete.title}" adlı ürünü silmek istiyor musunuz?`
                 : selectedIds.length > 0
-                ? `${selectedIds.length} ürünü silmek istediğinize emin misiniz?`
+                ? `${selectedIds.length} ürün silinecek.`
                 : "Ürün seçilmedi."}
             </p>
             <DialogFooter className="mt-4 flex justify-end gap-2">
@@ -405,7 +388,7 @@ export default function Products(): React.ReactElement {
           </DialogContent>
         </Dialog>
 
-        {/* Sayfalama */}
+        {/* Pagination */}
         <div className="mt-6 flex justify-center">
           <DefaultPagination
             totalItems={filteredProducts.length}

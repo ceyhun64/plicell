@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Save } from "lucide-react"; // Info kaldırıldı
+import { Save } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -14,8 +14,7 @@ import {
 } from "@/components/ui/select";
 import Cities from "@/public/city.json";
 
-// Kullanılmayan alanlar (zip, phone, country) opsiyonel yapıldı,
-// neighborhood formda zorunlu olduğu için zorunluluk kaldırıldı (API'ye göre).
+// Güncellenmiş AddressFormData arayüzü
 export interface AddressFormData {
   title: string;
   firstName: string;
@@ -23,12 +22,12 @@ export interface AddressFormData {
   address: string;
   city: string;
   district: string;
-  neighborhood: string; // Formda zorunlu olduğu için opsiyonel değil
-  zip?: string; // Formda yok, opsiyonel
-  phone?: string; // Formda yok, opsiyonel
-  country?: string; // Formda yok, opsiyonel (varsayılan Türkiye)
+  neighborhood: string;
+  zip?: string;
+  phone?: string;
+  country?: string;
   email?: string; // ✅ Yeni eklendi
-  tcno?: string;
+  tcno?: string; // ✅ Yeni eklendi
 }
 
 export interface AddressFormProps {
@@ -126,8 +125,6 @@ export default function AdresForm({
   // onValueChange'de selectedCity.name'i atıyoruz.
   // İlçe Select Value'sunda ID kullanıldığı için,
   // onValueChange'de selectedDistrict.name'i atıyoruz.
-  // Mahalle Select Value'sunda name kullanıldığı için,
-  // onValueChange'de sadece name'i atıyoruz (Select'in kendisinden geliyor).
 
   return (
     <form
@@ -186,7 +183,7 @@ export default function AdresForm({
         />
       </div>
 
-      {/* Email */}
+      {/* Email - Konumu değiştirildi (Adreslerim.tsx'e göre üst kısma alındı) */}
       <div className="space-y-2 md:col-span-2">
         <Label htmlFor="email" className="text-gray-700 font-medium">
           E-posta *
@@ -196,7 +193,7 @@ export default function AdresForm({
           type="email"
           className="rounded-lg h-11 text-[15px]"
           placeholder="ornek@mail.com"
-          value={formData.email}
+          value={formData.email || ""} // 👈 DÜZELTME
           onChange={(e) => setFormData({ ...formData, email: e.target.value })}
           required
         />
@@ -296,7 +293,7 @@ export default function AdresForm({
         </Select>
       </div>
 
-      {/* Posta Kodu */}
+      {/* Posta Kodu - Hata düzeltildi: value={formData.zip || ""} */}
       <div className="space-y-2">
         <Label htmlFor="zip" className="text-gray-700 font-medium">
           Posta Kodu *
@@ -305,13 +302,13 @@ export default function AdresForm({
           id="zipCode"
           className="rounded-lg h-11 text-[15px]"
           placeholder="00000"
-          value={formData.zip}
+          value={formData.zip || ""} // 👈 DÜZELTME
           onChange={(e) => setFormData({ ...formData, zip: e.target.value })}
           required
         />
       </div>
 
-      {/* Telefon */}
+      {/* Telefon - Hata düzeltildi: value={formData.phone || ""} */}
       <div className="space-y-2">
         <Label htmlFor="phone" className="text-gray-700 font-medium">
           Telefon *
@@ -320,22 +317,25 @@ export default function AdresForm({
           id="telefon"
           className="rounded-lg h-11 text-[15px]"
           placeholder="05XX XXX XX XX"
-          value={formData.phone}
+          value={formData.phone || ""} // 👈 DÜZELTME
           onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
           required
         />
       </div>
+
+      {/* TC Kimlik No - Hata düzeltildi: value={formData.tcno || ""} */}
       <div className="space-y-1">
         <Label htmlFor="tcno">TC Kimlik No *</Label>
         <Input
           id="tcno"
           type="text"
           maxLength={11}
-          value={formData.tcno}
+          value={formData.tcno || ""} // 👈 DÜZELTME
           onChange={(e) => setFormData({ ...formData, tcno: e.target.value })}
           required
         />
       </div>
+
       {/* Adres Detayı */}
       <div className="space-y-2 md:col-span-2">
         <Label htmlFor="address" className="text-gray-700 font-medium">

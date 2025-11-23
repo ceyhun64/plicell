@@ -18,16 +18,22 @@ import { ChangeEvent } from "react";
 export interface Product {
   id: number;
   title: string;
+  description: string;
   pricePerM2: number;
   rating: number;
   reviewCount?: number;
+
   mainImage: string;
   subImage?: string;
+  subImage2?: string;
+  subImage3?: string;
+
   category: string;
+  subCategory?: string;
+  room?: string;
+
   createdAt: string;
   updatedAt: string;
-  subCategory?: string;
-  subCategoryId?: string;
 }
 
 export interface ProductTableProps {
@@ -58,9 +64,9 @@ export default function ProductTable({
 
   return (
     <ScrollArea className="w-full rounded-xs border border-gray-200 bg-white shadow-md p-2">
-      {/* Masaüstü Tablo */}
+      {/* DESKTOP TABLE */}
       <div className="hidden md:block overflow-x-auto w-full">
-        <Table className="min-w-[800px] text-sm">
+        <Table className="min-w-[1000px] text-sm">
           <TableHeader className="bg-gray-50 text-[#001e59]">
             <TableRow>
               <TableHead className="w-10 text-center">
@@ -78,6 +84,7 @@ export default function ProductTable({
               <TableHead>Görseller</TableHead>
               <TableHead>Ürün Adı</TableHead>
               <TableHead>Kategori</TableHead>
+              <TableHead>Oda</TableHead>
               <TableHead>Fiyat (m²)</TableHead>
               <TableHead>Puan</TableHead>
               <TableHead>Yorum</TableHead>
@@ -96,6 +103,7 @@ export default function ProductTable({
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.2 }}
               >
+                {/* Checkbox */}
                 <TableCell className="text-center">
                   <input
                     type="checkbox"
@@ -104,45 +112,49 @@ export default function ProductTable({
                     className="cursor-pointer"
                   />
                 </TableCell>
+
                 <TableCell>{product.id}</TableCell>
+
+                {/* Images */}
                 <TableCell>
-                  <div className="flex gap-2 items-center">
-                    <div className="relative w-12 h-12 rounded-xs overflow-hidden border flex-shrink-0">
-                      <Image
-                        src={getSafeImagePath(product.mainImage)}
-                        alt={product.title}
-                        fill
-                        className="object-cover"
-                      />
-                    </div>
-                    <div className="relative w-12 h-12 rounded-xs overflow-hidden border flex-shrink-0">
-                      <Image
-                        src={getSafeImagePath(product.subImage)}
-                        alt={product.title}
-                        fill
-                        className="object-cover"
-                      />
-                    </div>
+                  <div className="relative w-12 h-12 rounded-xs overflow-hidden border flex-shrink-0">
+                    <Image
+                      src={getSafeImagePath(product.mainImage)}
+                      alt={product.title}
+                      fill
+                      className="object-cover"
+                    />
                   </div>
                 </TableCell>
+
                 <TableCell className="font-medium">{product.title}</TableCell>
+
                 <TableCell>
                   <Badge variant="outline" className="capitalize">
-                    {product.category === "Plicell" && product.subCategory
+                    {product.subCategory
                       ? `${product.category} - ${product.subCategory}`
                       : product.category}
+                  </Badge>
+                </TableCell>
+
+                <TableCell>
+                  <Badge variant="secondary" className="capitalize">
+                    {product.room || "—"}
                   </Badge>
                 </TableCell>
 
                 <TableCell>{product.pricePerM2.toLocaleString()} ₺</TableCell>
                 <TableCell>{product.rating} ⭐</TableCell>
                 <TableCell>{product.reviewCount || 0}</TableCell>
+
                 <TableCell className="text-gray-500">
                   {new Date(product.createdAt).toLocaleDateString("tr-TR")}
                 </TableCell>
                 <TableCell className="text-gray-500">
                   {new Date(product.updatedAt).toLocaleDateString("tr-TR")}
                 </TableCell>
+
+                {/* Actions */}
                 <TableCell className="text-center flex gap-2 justify-center">
                   <Button
                     size="sm"
@@ -165,7 +177,7 @@ export default function ProductTable({
         </Table>
       </div>
 
-      {/* Mobil Kart Görünümü */}
+      {/* MOBILE VIEW */}
       <div className="md:hidden flex flex-col gap-4">
         {products.map((product) => (
           <motion.div
@@ -175,6 +187,7 @@ export default function ProductTable({
             animate={{ opacity: 1 }}
             transition={{ duration: 0.2 }}
           >
+            {/* Top */}
             <div className="flex gap-3 items-center">
               <div className="relative w-20 h-20 rounded-xs overflow-hidden border flex-shrink-0">
                 <Image
@@ -184,18 +197,25 @@ export default function ProductTable({
                   className="object-cover"
                 />
               </div>
+
               <div className="flex-1 flex flex-col gap-1">
                 <p className="font-semibold text-[#001e59]">{product.title}</p>
+
                 <Badge variant="outline" className="capitalize w-max">
-                  {product.category === "Plicell" && product.subCategory
+                  {product.subCategory
                     ? `${product.category} - ${product.subCategory}`
                     : product.category}
+                </Badge>
+
+                <Badge className="w-max capitalize" variant="secondary">
+                  {product.room || "—"}
                 </Badge>
 
                 <p className="text-[#001e59] font-semibold">
                   {product.pricePerM2.toLocaleString()} ₺ / m²
                 </p>
               </div>
+
               <input
                 type="checkbox"
                 checked={selectedIds.includes(product.id)}
@@ -203,10 +223,13 @@ export default function ProductTable({
                 className="cursor-pointer"
               />
             </div>
+
+            {/* Stats */}
             <div className="flex justify-between text-sm text-gray-500">
               <p>Puan: {product.rating} ⭐</p>
               <p>Yorum: {product.reviewCount || 0}</p>
             </div>
+
             <div className="flex justify-between text-sm text-gray-500">
               <p>
                 Oluşturulma:{" "}
@@ -217,6 +240,8 @@ export default function ProductTable({
                 {new Date(product.updatedAt).toLocaleDateString("tr-TR")}
               </p>
             </div>
+
+            {/* Buttons */}
             <div className="flex gap-2 justify-end mt-2">
               <Button
                 size="sm"

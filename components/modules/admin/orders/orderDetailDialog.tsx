@@ -166,9 +166,9 @@ export default function OrderDetailDialog({
 
                   <p>Adres: {addr.address}</p>
                   <p>
-                    Şehir / Ülke: {addr.city} / {addr.country}
+                  Ülke: {addr.country}
                   </p>
-                  {addr.district && <p>İlçe: {addr.district}</p>}
+                  {addr.district && <p>Şehir-İlçe: {addr.city}/{addr.district}</p>}
                   {addr.zip && <p>ZIP: {addr.zip}</p>}
                   {addr.phone && <p>Telefon: {addr.phone}</p>}
                 </div>

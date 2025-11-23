@@ -2,7 +2,6 @@ import { NextResponse, type NextRequest } from "next/server";
 import prisma from "@/lib/db";
 import fs from "fs/promises";
 import path from "path";
-import { isArgumentsObject } from "util/types";
 
 // --- GET /api/products/:id ---
 export async function GET(
@@ -10,13 +9,14 @@ export async function GET(
   context: { params: Promise<{ id: string }> }
 ) {
   const { id } = await context.params;
+
   try {
     const product = await prisma.product.findUnique({
       where: { id: Number(id) },
       include: {
         category: true,
         subCategory: true,
-        room: true
+        room: true,
       },
     });
 
@@ -29,16 +29,15 @@ export async function GET(
         product: {
           ...product,
           category: product.category.name,
-          subCategory: product.subCategory?.name,
-          room: product.room?.name
-          
+          subCategory: product.subCategory?.name ?? null,
+          room: product.room?.name ?? null,
         },
       },
       { status: 200 }
     );
   } catch (error) {
     console.error("Ürünleri getirirken hata:", error);
-    return NextResponse.json({ error: "Ürünler alınamadı" }, { status: 500 });
+    return NextResponse.json({ error: "Ürün alınamadı" }, { status: 500 });
   }
 }
 
@@ -48,6 +47,7 @@ export async function DELETE(
   context: { params: Promise<{ id: string }> }
 ) {
   const { id } = await context.params;
+
   try {
     const existingProduct = await prisma.product.findUnique({
       where: { id: Number(id) },
@@ -66,6 +66,8 @@ export async function DELETE(
 
     await deleteFile(existingProduct.mainImage);
     await deleteFile(existingProduct.subImage);
+    await deleteFile(existingProduct.subImage2);
+    await deleteFile(existingProduct.subImage3);
 
     const product = await prisma.product.delete({
       where: { id: Number(id) },
@@ -92,16 +94,22 @@ export async function PUT(
     const formData = await request.formData();
     const mainFile = formData.get("file") as File | null;
     const subFile = formData.get("subImageFile") as File | null;
+    const subFile2 = formData.get("subImage2File") as File | null;
+    const subFile3 = formData.get("subImage3File") as File | null;
 
     const title = formData.get("title")?.toString();
     const pricePerM2 = parseFloat(formData.get("pricePerM2") as string);
-    const rating = parseFloat(formData.get("rating") as string);
+    const rating = parseInt(formData.get("rating") as string);
     const reviewCount = formData.get("reviewCount")
       ? parseInt(formData.get("reviewCount") as string)
-      : undefined;
+      : 0;
 
     const mainCategoryName = formData.get("category") as string;
     const subCategoryName = formData.get("subCategory") as string | null;
+    const roomName = formData.get("room") as string | null;
+    const description = formData.get("description")?.toString() || "";
+
+   
 
     if (!mainCategoryName) {
       return NextResponse.json(
@@ -133,9 +141,18 @@ export async function PUT(
         );
       }
       subCategoryId = subCategory.id;
-    } else {
-      // Alt kategori yoksa null gönder
-      subCategoryId = undefined; // null yerine
+    }
+
+    let roomId: number | undefined = undefined;
+    if (roomName && roomName !== "null") {
+      const room = await prisma.room.findFirst({ where: { name: roomName } });
+      if (!room) {
+        return NextResponse.json(
+          { success: false, error: "Oda bulunamadı." },
+          { status: 404 }
+        );
+      }
+      roomId = room.id;
     }
 
     const existingProduct = await prisma.product.findUnique({
@@ -173,23 +190,33 @@ export async function PUT(
     const subImagePath = subFile
       ? await uploadFile(subFile)
       : existingProduct.subImage;
+    const subImage2Path = subFile2
+      ? await uploadFile(subFile2)
+      : existingProduct.subImage2;
+    const subImage3Path = subFile3
+      ? await uploadFile(subFile3)
+      : existingProduct.subImage3;
 
-     
     const updatedProduct = await prisma.product.update({
       where: { id: Number(id) },
       data: {
         title,
         pricePerM2,
+        description,
         rating,
         reviewCount,
         mainImage: mainImagePath,
         subImage: subImagePath,
+        subImage2: subImage2Path,
+        subImage3: subImage3Path,
         categoryId: mainCategory.id,
         subCategoryId,
+        roomId,
       },
       include: {
         category: true,
         subCategory: true,
+        room: true,
       },
     });
 
@@ -199,7 +226,8 @@ export async function PUT(
         product: {
           ...updatedProduct,
           category: updatedProduct.category.name,
-          subCategory: updatedProduct.subCategory?.name,
+          subCategory: updatedProduct.subCategory?.name ?? null,
+          room: updatedProduct.room?.name ?? null,
         },
       },
       { status: 200 }

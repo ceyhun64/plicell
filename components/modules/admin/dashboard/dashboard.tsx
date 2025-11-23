@@ -9,6 +9,7 @@ import {
   CardContent,
   CardDescription,
 } from "@/components/ui/card";
+
 import {
   Package,
   ShoppingCart,
@@ -18,7 +19,9 @@ import {
   CheckCircle,
   Truck,
   XCircle,
+  UserPlus,
 } from "lucide-react";
+
 import Link from "next/link";
 import { Separator } from "@/components/ui/separator";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -26,36 +29,10 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 
-interface User {
-  id: number;
-  name: string;
-  surname: string;
-  email: string;
-}
-
-interface OrderItem {
-  id: number;
-  quantity: number;
-  totalPrice: number;
-  product: {
-    title: string;
-  };
-}
-
-interface FormattedOrder {
-  id: number;
-  paidPrice: number;
-  currency?: string;
-  user: User;
-  status: "pending" | "paid" | "shipped" | "delivered" | "cancelled";
-  createdAt: string;
-  items: OrderItem[];
-}
-
 interface KPI {
   id: string;
   title: string;
-  stat: number | string;
+  stat: number;
   description: string;
   icon: React.ReactNode;
   href: string;
@@ -64,109 +41,50 @@ interface KPI {
 export default function AdminDashboard() {
   const isMobile = useIsMobile();
   const [kpiData, setKpiData] = useState<KPI[]>([]);
-  const [recentOrders, setRecentOrders] = useState<FormattedOrder[]>([]);
+  const [recentOrders, setRecentOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // ---- STATUS Yardımcı Fonksiyonları ----
-  const getStatusInTurkish = (status: FormattedOrder["status"]) => {
-    switch (status) {
-      case "pending":
-        return "Ödeme Bekleniyor";
-      case "paid":
-        return "Ödeme Başarılı";
-      case "shipped":
-        return "Kargoya Verildi";
-      case "delivered":
-        return "Teslim Edildi";
-      case "cancelled":
-        return "İptal Edildi";
-      default:
-        return "Bilinmiyor";
-    }
+  const getStatusBadge = (status: string) => {
+    const tr: Record<string, any> = {
+      pending: ["Ödeme Bekleniyor", "bg-yellow-500", <Loader className="w-3 h-3 animate-spin" />],
+      paid: ["Ödeme Başarılı", "bg-blue-600", <CheckCircle className="w-3 h-3" />],
+      shipped: ["Kargoya Verildi", "bg-amber-600", <Truck className="w-3 h-3" />],
+      delivered: ["Teslim Edildi", "bg-green-600", <Package className="w-3 h-3" />],
+      cancelled: ["İptal Edildi", "bg-red-700", <XCircle className="w-3 h-3" />],
+    };
+
+    const [label, color, icon] = tr[status] || ["Bilinmiyor", "bg-gray-400", null];
+
+    return (
+      <Badge className={`${color} flex items-center gap-1`}>
+        {icon} {label}
+      </Badge>
+    );
   };
 
-  const getStatusBadge = (status: FormattedOrder["status"]) => {
-    const label = getStatusInTurkish(status);
-    switch (label) {
-      case "Ödeme Bekleniyor":
-        return (
-          <Badge className="bg-yellow-500 flex items-center gap-1">
-            <Loader className="w-3 h-3 animate-spin" />
-            {label}
-          </Badge>
-        );
-      case "Ödeme Başarılı":
-        return (
-          <Badge className="bg-blue-600 flex items-center gap-1">
-            <CheckCircle className="w-3 h-3" />
-            {label}
-          </Badge>
-        );
-      case "Kargoya Verildi":
-        return (
-          <Badge className="bg-amber-600 flex items-center gap-1">
-            <Truck className="w-3 h-3" />
-            {label}
-          </Badge>
-        );
-      case "Teslim Edildi":
-        return (
-          <Badge className="bg-green-600 flex items-center gap-1">
-            <Package className="w-3 h-3" />
-            {label}
-          </Badge>
-        );
-      case "İptal Edildi":
-        return (
-          <Badge className="bg-red-700 flex items-center gap-1">
-            <XCircle className="w-3 h-3" />
-            {label}
-          </Badge>
-        );
-      default:
-        return <Badge>{label}</Badge>;
-    }
-  };
-
-  // ---- API'den KPI ve Siparişleri Çek ----
   const fetchDashboardData = async () => {
     setLoading(true);
     try {
-      // Tüm API çağrılarını paralel yap
-      const [productRes, orderRes, userRes, blogRes] = await Promise.all([
+      const [productRes, orderRes, userRes, blogRes, subsRes] = await Promise.all([
         fetch("/api/products"),
         fetch("/api/order"),
         fetch("/api/user/all"),
         fetch("/api/blog"),
+        fetch("/api/subscribe"),
       ]);
 
-      const [productData, orderData, userData, blogData] = await Promise.all([
-        productRes.json(),
-        orderRes.json(),
-        userRes.json(),
-        blogRes.json(),
-      ]);
+      const products = await productRes.json();
+      const orders = await orderRes.json();
+      const users = await userRes.json();
+      const blogs = await blogRes.json();
+      const subscribers = await subsRes.json(); // ARRAY!!
 
-      console.log("KPI verileri:", productData, orderData, userData, blogData);
-
-      // KPI sayıları
-      const productsCount =
-        productData?.status === "success"
-          ? productData.products?.length || 0
-          : 0;
-      const ordersCount =
-        orderData?.status === "success" ? orderData.orders?.length || 0 : 0;
-      const usersCount =
-        userData?.status === "success" ? userData.users?.length || 0 : 0;
-      const blogsCount =
-        blogData?.status === "success" ? blogData.blogs?.length || 0 : 0;
-
-      // KPI verilerini ayarla
+      // KPI COUNT FIX
       setKpiData([
         {
           id: "products",
           title: "Ürünler",
-          stat: productData?.products?.length || 0,
+          stat: products.products?.length || 0,
           description: "Ürünleri görüntüle ve yönet",
           icon: <Package size={24} className="text-blue-500" />,
           href: "/admin/products",
@@ -174,7 +92,7 @@ export default function AdminDashboard() {
         {
           id: "orders",
           title: "Siparişler",
-          stat: orderData?.orders?.length || 0,
+          stat: orders.orders?.length || 0,
           description: "Siparişleri takip et ve yönet",
           icon: <ShoppingCart size={24} className="text-emerald-500" />,
           href: "/admin/orders",
@@ -182,7 +100,7 @@ export default function AdminDashboard() {
         {
           id: "users",
           title: "Kullanıcılar",
-          stat: userData?.users?.length || 0, // <-- burayı değiştirdik
+          stat: users.users?.length || 0,
           description: "Kullanıcıları yönet",
           icon: <Users size={24} className="text-violet-500" />,
           href: "/admin/users",
@@ -190,30 +108,41 @@ export default function AdminDashboard() {
         {
           id: "blogs",
           title: "Bloglar",
-          stat: blogData?.blogs?.length || 0,
+          stat: blogs.blogs?.length || 0,
           description: "Blog listesini görüntüle",
           icon: <FileText size={24} className="text-yellow-500" />,
           href: "/admin/blogs",
         },
+        {
+          id: "subscribers",
+          title: "Aboneler",
+          stat: Array.isArray(subscribers) ? subscribers.length : 0,
+          description: "Abonelerini görüntüle",
+          icon: <UserPlus size={24} className="text-teal-500" />,
+          href: "/admin/subscribers",
+        },
       ]);
 
-      // En son 5 sipariş
+      // LAST 5 ORDERS
       const latestOrders =
-        orderData?.status === "success"
-          ? orderData.orders
-              .sort(
-                (a: FormattedOrder, b: FormattedOrder) =>
-                  new Date(b.createdAt).getTime() -
-                  new Date(a.createdAt).getTime()
-              )
-              .slice(0, 5)
-          : [];
+        orders.orders
+          ?.sort(
+            (a: any, b: any) =>
+              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          )
+          .slice(0, 5) || [];
+
+      // ORDER → USER MATCH (backend user vermiyor)
+      const userMap: Record<number, any> = {};
+      users.users?.forEach((u: any) => (userMap[u.id] = u));
+
+      latestOrders.forEach((o: any) => {
+        o.user = userMap[o.userId] || { name: "Bilinmiyor", surname: "", email: "-" };
+      });
 
       setRecentOrders(latestOrders);
     } catch (err) {
       console.error("API hata:", err);
-      setKpiData([]);
-      setRecentOrders([]);
     } finally {
       setLoading(false);
     }
@@ -223,69 +152,51 @@ export default function AdminDashboard() {
     fetchDashboardData();
   }, []);
 
-  // ---- LOADING DURUMU ----
-  if (loading) {
-    return <Spinner />;
-  }
+  if (loading) return <Spinner />;
 
-  // ---- DASHBOARD UI ----
   return (
     <div className="flex min-h-screen bg-gray-50 text-gray-900">
       <Sidebar />
-      <main className={`flex-1 p-4 md:p-8 ${isMobile ? "" : "ml-64"}`}>
-        <div className="flex justify-between items-center mb-6 ms-12 mt-2">
-          <h1 className="text-3xl font-bold tracking-tight text-[#001e59]">
-            Yönetim Paneli
-          </h1>
-        </div>
 
-        {/* KPI Kartları */}
+      <main className={`flex-1 p-4 md:p-8 ${isMobile ? "" : "ml-64"}`}>
+        <h1 className="ms-12 mt-2 mb-6 text-3xl font-bold text-[#001e59]">Yönetim Paneli</h1>
+
+        {/* KPI CARDS */}
         <div
           className={`grid gap-6 mb-8 ${
-            isMobile
-              ? "grid-cols-1"
-              : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+            isMobile ? "grid-cols-1" : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5"
           }`}
         >
           {kpiData.map((card) => (
             <Link key={card.id} href={card.href}>
-              <Card className="bg-white border border-gray-200 hover:shadow-lg hover:scale-[1.02] transition-all rounded-xs shadow-md cursor-pointer group">
+              <Card className="bg-white border hover:shadow-lg hover:scale-[1.02] transition-all cursor-pointer">
                 <CardHeader className="flex items-center gap-3">
-                  <div className="p-3 bg-gray-100 rounded-xs group-hover:bg-gray-200 transition-colors">
-                    {card.icon}
-                  </div>
+                  <div className="p-3 bg-gray-100 rounded-xs">{card.icon}</div>
                   <div>
-                    <CardTitle className="text-gray-900 text-lg">
-                      {card.title}
-                    </CardTitle>
-                    <CardDescription className="text-gray-900 text-2xl font-bold">
+                    <CardTitle className="text-lg text-gray-900">{card.title}</CardTitle>
+                    <CardDescription className="text-2xl font-bold text-gray-900">
                       {card.stat}
                     </CardDescription>
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <CardDescription className="text-gray-500">
-                    {card.description}
-                  </CardDescription>
+                  <CardDescription className="text-gray-500">{card.description}</CardDescription>
                 </CardContent>
               </Card>
             </Link>
           ))}
         </div>
 
-        {/* Son Siparişler Tablosu */}
-        <Card className="bg-white border border-gray-200 rounded-xs shadow-md">
+        {/* LAST ORDERS */}
+        <Card className="bg-white border rounded-xs shadow-md">
           <CardHeader>
-            <CardTitle className="text-xl text-gray-900">
-              Son Siparişler
-            </CardTitle>
+            <CardTitle className="text-xl">Son Siparişler</CardTitle>
             <Separator className="mt-2 bg-gray-200" />
           </CardHeader>
+
           <CardContent>
             {recentOrders.length === 0 ? (
-              <p className="text-center text-gray-500 py-6">
-                Henüz sipariş bulunmamaktadır.
-              </p>
+              <p className="text-center text-gray-500 py-6">Henüz sipariş bulunmamaktadır.</p>
             ) : (
               <div className="overflow-x-auto">
                 <table className="min-w-full text-left">
@@ -301,40 +212,35 @@ export default function AdminDashboard() {
                       <th className="px-4 py-3">Detay</th>
                     </tr>
                   </thead>
+
                   <tbody>
                     {recentOrders.map((order) => (
-                      <tr
-                        key={order.id}
-                        className="border-b hover:bg-gray-50 transition-all"
-                      >
+                      <tr key={order.id} className="border-b hover:bg-gray-50">
                         <td className="px-4 py-3">{order.id}</td>
+
                         <td className="px-4 py-3 font-medium">
                           {order.user.name} {order.user.surname}
                         </td>
-                        <td className="px-4 py-3 hidden sm:table-cell">
-                          {order.user.email}
+
+                        <td className="px-4 py-3 hidden sm:table-cell">{order.user.email}</td>
+
+                        <td className="px-4 py-3 truncate max-w-xs">
+                          {(order.items || []).map((i: any) => i.product?.title).join(", ")}
                         </td>
-                        <td className="px-4 py-3 max-w-xs truncate">
-                          {order.items.map((i) => i.product.title).join(", ")}
-                        </td>
+
                         <td className="px-4 py-3 hidden md:table-cell text-emerald-600 font-semibold">
-                          {order.paidPrice.toLocaleString("tr-TR")} ₺
+                          {order.paidPrice?.toLocaleString("tr-TR")} ₺
                         </td>
-                        <td className="px-4 py-3 hidden lg:table-cell">
-                          {getStatusBadge(order.status)}
-                        </td>
+
+                        <td className="px-4 py-3 hidden lg:table-cell">{getStatusBadge(order.status)}</td>
+
                         <td className="px-4 py-3 hidden md:table-cell text-gray-600">
-                          {new Date(order.createdAt).toLocaleDateString(
-                            "tr-TR"
-                          )}
+                          {new Date(order.createdAt).toLocaleDateString("tr-TR")}
                         </td>
+
                         <td className="px-4 py-3">
                           <Link href={`/admin/orders?orderId=${order.id}`}>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="text-[#001e59] border-[#001e59] hover:bg-gray-100"
-                            >
+                            <Button size="sm" variant="outline">
                               Gör
                             </Button>
                           </Link>
@@ -343,16 +249,6 @@ export default function AdminDashboard() {
                     ))}
                   </tbody>
                 </table>
-              </div>
-            )}
-
-            {recentOrders.length > 0 && (
-              <div className="mt-4 flex justify-end">
-                <Link href="/admin/orders" passHref>
-                  <Button className="bg-[#001e59] hover:bg-[#002b87] text-white">
-                    Tüm Siparişleri Gör
-                  </Button>
-                </Link>
               </div>
             )}
           </CardContent>

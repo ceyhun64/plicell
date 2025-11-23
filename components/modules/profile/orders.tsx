@@ -28,6 +28,7 @@ interface Address {
   lastName: string;
   phone: string;
   address: string;
+  neighborhood?: string; // 🔹 opsiyonel eklendi
   district: string;
   city: string;
   zip?: string;
@@ -67,7 +68,7 @@ interface Order {
   currency: string;
   paymentMethod?: string;
   transactionId?: string;
-  addresses: Address[];
+  addresses: Address[]; // 🔹 neighborhood opsiyoneli içerir
   items: OrderItem[];
 }
 
@@ -119,6 +120,8 @@ export default function Orders() {
       setSelectedOrder(null);
     }
   };
+
+  console.log("Orders:", orders);
 
   // 💰 Para birimi formatlayıcı
   const formatCurrency = (amount: number, currency?: string) => {

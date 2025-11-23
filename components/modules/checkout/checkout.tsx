@@ -401,6 +401,8 @@ export default function PaymentPage() {
       country: shippingAddr.country ?? "Türkiye",
       address: shippingAddr.address ?? "",
       zipCode: shippingAddr.zip ?? "",
+      tcno: shippingAddr.tcno ?? "",
+      district: shippingAddr.district ?? "",
     };
 
     const billingAddress = { ...shippingAddress };
