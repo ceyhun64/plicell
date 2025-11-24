@@ -6,10 +6,7 @@ import { authOptions } from "@/lib/auth";
 import type { NextRequest } from "next/server";
 
 export async function GET(request: NextRequest) {
-  const session = await getServerSession(authOptions);
-  if (!session || !session.user?.id) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+
 
   try {
     const blogs = await prisma.blog.findMany();

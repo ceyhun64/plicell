@@ -158,11 +158,11 @@ export default function BlogPage() {
 
   // Veri yüklendiğinde (Content State)
   return (
-    <div className="bg-gradient-to-b from-white via-amber-950/5 to-white py-16 lg:py-24 font-sans">
+    <div className="bg-gradient-to-b from-white via-amber-950/5 to-white py-10 lg:py-16 font-sans">
       <div className="max-w-7xl mx-auto px-4 md:px-6 space-y-16">
         {/* BAŞLIK KISMI */}
         <div className="text-center mb-12">
-          <p className="flex items-center justify-center text-sm font-semibold uppercase tracking-widest text-rose-600 mb-2">
+          <p className="flex items-center justify-center text-xs md:text-sm font-semibold uppercase tracking-widest text-rose-600 mb-2">
             <ScrollText className="w-5 h-5 mr-2" />
             Perde Dünyasından Haberler
           </p>

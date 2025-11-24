@@ -182,7 +182,7 @@ Mesaj: ${formData.message}
   ];
 
   return (
-    <div className="bg-gradient-to-b from-white via-amber-950/10 to-white py-16 md:py-24 font-inter">
+    <div className="bg-gradient-to-b from-white via-amber-950/10 to-white py-10 md:py-16 font-inter">
       <div className="max-w-7xl mx-auto px-4 md:px-6 space-y-12">
         {/* 1. SATIR: Başlık + Bilgiler (sol), Form (sağ) */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">

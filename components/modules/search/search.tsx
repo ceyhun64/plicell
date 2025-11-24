@@ -102,7 +102,7 @@ export default function DefaultSearch() {
                 placeholder="Ürün ara..."
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                className="w-full pl-10 pr-10 py-3 text-base"
+                className="w-full pl-10 pr-10 py-3 text-base rounded-full"
               />
               {query && (
                 <button
