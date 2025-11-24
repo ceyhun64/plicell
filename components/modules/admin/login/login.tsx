@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Eye, EyeOff, Lock, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,6 +11,7 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { signIn } from "next-auth/react";
 import { GradientText } from "@/components/ui/shadcn-io/gradient-text/index";
+import { signOut } from "next-auth/react";
 
 export default function AdminLogin() {
   const [email, setEmail] = useState("");
@@ -19,7 +20,12 @@ export default function AdminLogin() {
   const [loginMessage, setLoginMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-
+  useEffect(() => {
+    const logoutExistingSession = async () => {
+      await signOut({ redirect: false }); // Mevcut session'ı kapat
+    };
+    logoutExistingSession();
+  }, []);
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -95,7 +101,7 @@ export default function AdminLogin() {
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="admin@nowart.com"
+              placeholder="admin@Moda Perde.com"
               required
               className="rounded-lg"
             />
@@ -128,7 +134,7 @@ export default function AdminLogin() {
 
           <Button
             type="submit"
-            className="w-full bg-gradient-to-r from-[#7B0323] to-[#5E021A] hover:from-[#7B0323]/90 hover:to-[#5E021A]/90 text-white font-semibold py-3 rounded-full shadow-lg transition-transform transform hover:scale-105"
+            className="w-full bg-gradient-to-r from-[#7B0323] to-[#5E021A] hover:from-[##7B0323]/90 hover:to-[#5E021A]/90 text-white font-semibold py-3 rounded-full shadow-lg transition-transform transform hover:scale-105"
             disabled={isLoading}
           >
             {isLoading ? "Yükleniyor..." : "Giriş Yap"}

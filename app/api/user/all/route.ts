@@ -22,7 +22,7 @@ export async function GET(req: NextRequest) {
       include: { addresses: true },
       orderBy: { createdAt: "desc" },
     });
-
+    console.log("users:", users);
     return NextResponse.json({ users });
   } catch (error) {
     console.error("Error fetching users:", error);

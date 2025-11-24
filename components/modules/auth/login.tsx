@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { Eye, EyeOff } from "lucide-react";
+import { toast } from "sonner";
 
 interface LoginFormProps {
   onLoginSuccess?: (user: { name?: string; email?: string }) => void;
@@ -17,14 +18,11 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [loginMessage, setLoginMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
 
   const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
-    setIsSuccess(false);
 
     try {
       const result = await signIn("credentials", {
@@ -36,19 +34,17 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
       setIsLoading(false);
 
       if (result?.error) {
-        setLoginMessage("Email veya şifre hatalı");
-        setIsSuccess(false);
+        toast.error("Email veya şifre hatalı"); // ❌ Hata toast
         return;
       }
 
       if (result?.ok) {
-        setLoginMessage("Giriş başarılı!");
-        setIsSuccess(true);
+        toast.success("Giriş başarılı!"); // ✅ Başarı toast
 
-        const loggedInUser = { email }; // API'den name vs. çekilebilir
+        const loggedInUser = { email };
         if (onLoginSuccess) onLoginSuccess(loggedInUser);
 
-        // 🔹 Favorileri veritabanına ekle
+        // Favorileri veritabanına ekle
         const localFavs: number[] = JSON.parse(
           localStorage.getItem("favorites") || "[]"
         );
@@ -66,7 +62,7 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
           localStorage.removeItem("favorites");
         }
 
-        // 🔹 Guest cart'ı veritabanına ekle
+        // Guest cart
         const guestCart = JSON.parse(localStorage.getItem("guestCart") || "[]");
         if (guestCart.length > 0) {
           await Promise.all(
@@ -82,13 +78,11 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
           localStorage.removeItem("guestCart");
         }
 
-        setTimeout(() => {
           router.push("/"); // yönlendirme
-        }, 500);
       }
     } catch (error) {
       console.error(error);
-      setLoginMessage("Giriş sırasında bir hata oluştu.");
+      toast.error("Giriş sırasında bir hata oluştu"); // ❌ Hata toast
       setIsLoading(false);
     }
   };
@@ -161,15 +155,6 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
               {isLoading ? "Giriş yapılıyor..." : "Giriş Yap"}
             </Button>
 
-            {loginMessage && (
-              <p
-                className={`text-center mt-2 text-sm ${
-                  isSuccess ? "text-green-500" : "text-red-500"
-                }`}
-              >
-                {loginMessage}
-              </p>
-            )}
           </form>
         </div>
 

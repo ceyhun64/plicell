@@ -2,11 +2,12 @@ import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import prisma from "@/lib/db";
 import bcrypt from "bcrypt";
-import type { NextAuthOptions } from "next-auth"; // AuthOptions yerine NextAuthOptions kullanın
+import type { NextAuthOptions } from "next-auth";
 
 // authOptions değişkenini ARTIK DIŞA AKTARMIYORUZ (export yok)
 const authOptions: NextAuthOptions = {
   providers: [
+    // ... (CredentialsProvider ayarları aynı kalacak)
     CredentialsProvider({
       name: "Credentials",
       credentials: {
@@ -41,9 +42,18 @@ const authOptions: NextAuthOptions = {
   ],
   session: {
     strategy: "jwt",
+    // 👇👇👇 BURAYA EKLENİYOR 👇👇👇
+    // Örnek: 30 gün (30 * 24 * 60 * 60 = 2.592.000 saniye)
+    maxAge: 24 * 60 * 60,
+    // VEYA daha kısa bir süre, örneğin 7 gün:
+    // maxAge: 7 * 24 * 60 * 60,
+    // VEYA sadece 1 gün:
+    // maxAge: 24 * 60 * 60,
+    // (JWT'nin ne kadar süre geçerli olacağını tanımlar)
   },
   secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
+    // ... (callbacks aynı kalacak)
     async jwt({ token, user }) {
       if (user) {
         // user'dan token'a özel alanları kopyala
@@ -63,7 +73,7 @@ const authOptions: NextAuthOptions = {
         name: token.name,
         surname: token.surname,
         email: token.email,
-        role: token.role  // role'ün türünü uygun şekilde belirtin
+        role: token.role, // role'ün türünü uygun şekilde belirtin
       };
       return session;
     },

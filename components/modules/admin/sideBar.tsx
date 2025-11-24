@@ -6,19 +6,16 @@ import {
   Users,
   ShoppingCart,
   Package,
-  Settings,
   LogOut,
   Menu,
   X,
-  FileText, // Bloglar ikonu
+  FileText,
+  Info,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { signOut } from "next-auth/react"; // <-- import eklendi
-import Image from "next/image";
 
 interface MenuItem {
   id: string;
@@ -30,7 +27,7 @@ interface MenuItem {
 export default function AdminSidebar(): React.ReactElement {
   const router = useRouter();
   const pathname = usePathname() ?? "";
-  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   const menuItems: MenuItem[] = [
     {
@@ -61,90 +58,102 @@ export default function AdminSidebar(): React.ReactElement {
     },
   ];
 
-  const active =
-    menuItems.find(
-      (item) => pathname === item.href || pathname.startsWith(item.href + "/")
-    )?.id || "dashboard";
+  const active = menuItems.find(
+    (item) => pathname === item.href || pathname.startsWith(item.href + "/")
+  )?.id;
 
-  // 🔑 Dinamik logout
   const handleLogout = async () => {
-    await signOut({ redirect: false });
-    router.push("/admin"); // veya giriş sayfası
+    await router.push("/admin");
   };
 
   const AdminInfo = (
-    <div className="flex flex-col gap-1 p-4 border-t border-gray-200">
-      <span className="font-semibold text-gray-900">Feridun Polat</span>
+    <div className="flex flex-col gap-2 p-4 border-t border-gray-200 bg-gray-50 dark:bg-gray-800 rounded-md shadow-sm">
+      {/* Kullanıcı Adı */}
+      <span className="font-semibold text-gray-900 dark:text-gray-100">
+        Feridun Polat
+      </span>
+
+      {/* Uyarı Mesajı */}
+      <div className="flex items-center gap-2 text-yellow-700 dark:text-yellow-400 bg-yellow-50 dark:bg-yellow-900/20 p-2 rounded-md">
+        <Info size={24} />
+        <p className="text-sm">
+          Lütfen admin sayfasından ayrılmadan önce çıkış yapınız.
+        </p>
+      </div>
+
+      {/* Çıkış Butonu */}
       <button
         onClick={handleLogout}
-        className="flex items-center gap-1 text-red-500 hover:text-red-600 transition"
+        className="flex items-center justify-center gap-2 mt-2 w-full py-2 rounded-full bg-red-500 hover:bg-red-600 text-white font-medium transition-shadow shadow-md hover:shadow-lg"
       >
-        <LogOut size={15} /> <span>Çıkış</span>
+        <LogOut size={16} /> Çıkış Yap
       </button>
     </div>
   );
 
-  // Masaüstü ve mobil sidebar aynen kalabilir
+  // Desktop Sidebar
   const DesktopSidebar = (
-    <aside className="fixed left-0 top-0 w-64 h-screen bg-white shadow-lg flex flex-col justify-between border-r border-gray-200">
-      <div>
-        <div className="px-6 py-6 border-b border-gray-200 flex items-center gap-2">
-          <Link href="/admin/dashboard" className="flex items-center gap-2">
-            {/* Favicon */}
-            <Image src="/favicon.ico" alt="Logo" width={24} height={24} />
-            {/* Başlık */}
-            <span className="text-xl font-bold text-gray-900 tracking-tight">
-              NowArt<span className="text-[#92e676]">Admin</span>
-            </span>
-          </Link>
-        </div>
+    <>
+      <AnimatePresence>
+        <motion.aside
+          initial={{ x: -300 }}
+          animate={{ x: 0 }}
+          exit={{ x: -300 }}
+          transition={{ duration: 0.25, ease: "easeInOut" }}
+          className="fixed left-0 top-0 w-64 h-screen bg-white shadow-lg flex flex-col justify-between border-r border-gray-200 hidden md:flex"
+        >
+          <div>
+            <div className="px-6 py-6 border-b border-gray-200 flex items-center gap-2">
+              <span className="text-xl font-bold text-gray-900 tracking-tight">
+                ModaPerde<span className="text-[#7B0323]"> Admin</span>
+              </span>
+            </div>
 
-        <nav className="flex flex-col mt-4 px-3">
-          {menuItems.map(({ id, label, icon: Icon, href }) => {
-            const isActive = active === id;
-            return (
-              <Link
-                key={id}
-                href={href}
-                className={`group relative flex items-center gap-3 px-4 py-3 rounded-xs transition-all ${
-                  isActive
-                    ? "bg-[#92e676]/20 text-[#001e59] shadow-inner"
-                    : "text-gray-600 hover:text-[#001e59] hover:bg-gray-100"
-                }`}
-              >
-                {isActive && (
-                  <motion.span
-                    layoutId="activeTab"
-                    className="absolute left-0 top-0 bottom-0 w-1 bg-[#92e676] rounded-r-full"
-                  />
-                )}
-                <Icon
-                  className={`w-5 h-5 ${
-                    isActive
-                      ? "text-[#92e676]"
-                      : "text-gray-400 group-hover:text-[#92e676]"
-                  }`}
-                />
-                <span className="text-sm font-medium">{label}</span>
-              </Link>
-            );
-          })}
-        </nav>
-      </div>
+            <nav className="flex flex-col mt-4 px-3 space-y-1">
+              {menuItems.map(({ id, label, icon: Icon, href }) => {
+                const isActive = active === id;
+                return (
+                  <Link
+                    key={id}
+                    href={href}
+                    className={`group flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
+                      isActive
+                        ? "bg-[#7B0323]/20 text-[#001e59] shadow-inner font-semibold"
+                        : "text-gray-600 hover:text-[#001e59] hover:bg-gray-100"
+                    }`}
+                  >
+                    <Icon
+                      className={`w-5 h-5 ${
+                        isActive
+                          ? "text-[#7B0323]"
+                          : "text-gray-400 group-hover:text-[#7B0323]"
+                      }`}
+                    />
+                    <span className="text-sm">{label}</span>
+                  </Link>
+                );
+              })}
+            </nav>
+          </div>
 
-      {AdminInfo}
-    </aside>
+          {AdminInfo}
+        </motion.aside>
+      </AnimatePresence>
+    </>
   );
 
+  // Mobile Sidebar
   const MobileSidebar = (
     <>
-      <Button
-        size="icon"
-        onClick={() => setIsOpen(true)}
-        className="fixed top-4 left-4 z-50 bg-white text-[#001e59] border border-gray-300 hover:bg-gray-100 md:hidden"
-      >
-        <Menu />
-      </Button>
+      {!isOpen && (
+        <Button
+          size="icon"
+          onClick={() => setIsOpen(true)}
+          className="fixed top-4 left-4 z-50 w-12 h-12 p-3 bg-white rounded-full shadow-lg text-[#001e59] border border-gray-300 hover:bg-gray-100 md:hidden"
+        >
+          <Menu className="w-6 h-6" />
+        </Button>
+      )}
 
       <AnimatePresence>
         {isOpen && (
@@ -152,28 +161,23 @@ export default function AdminSidebar(): React.ReactElement {
             initial={{ x: "-100%" }}
             animate={{ x: 0 }}
             exit={{ x: "-100%" }}
-            transition={{ duration: 0.3, ease: "easeInOut" }}
-            className="fixed inset-0 z-40 bg-white/95 backdrop-blur-md md:hidden shadow-lg"
+            transition={{ duration: 0.25, ease: "easeInOut" }}
+            className="fixed inset-0 z-40 bg-white/95 backdrop-blur-md shadow-xl md:hidden flex flex-col justify-between"
           >
-            <div className="flex justify-between items-center px-6 py-6 border-b border-gray-200">
-              <Link
-                href="/admin/dashboard"
-                className="text-xl font-bold text-gray-900 ms-10"
-                onClick={() => setIsOpen(false)}
-              >
-                NowArt<span className="text-[#92e676]">Admin</span>
-              </Link>
+            <div className="flex justify-between items-center px-6 py-5 border-b border-gray-200">
+              <span className="text-xl font-bold text-gray-900">
+                ModaPerde<span className="text-[#7B0323]"> Admin</span>
+              </span>
               <Button
                 size="icon"
                 variant="ghost"
                 onClick={() => setIsOpen(false)}
-                className="text-gray-700"
               >
-                <X />
+                <X className="w-6 h-6" />
               </Button>
             </div>
 
-            <nav className="flex flex-col mt-6 px-3 space-y-2">
+            <nav className="flex-1 overflow-y-auto mt-4 px-4 space-y-1">
               {menuItems.map(({ id, label, icon: Icon, href }) => {
                 const isActive = active === id;
                 return (
@@ -181,32 +185,25 @@ export default function AdminSidebar(): React.ReactElement {
                     key={id}
                     href={href}
                     onClick={() => setIsOpen(false)}
-                    className={`group relative flex items-center gap-3 px-5 py-3 rounded-xs transition-all ${
+                    className={`group flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
                       isActive
-                        ? "bg-[#92e676]/20 text-[#001e59] shadow-inner"
+                        ? "bg-[#7B0323]/20 text-[#001e59] shadow-inner font-semibold"
                         : "text-gray-600 hover:text-[#001e59] hover:bg-gray-100"
                     }`}
                   >
-                    {isActive && (
-                      <motion.span
-                        layoutId="activeTabMobile"
-                        className="absolute left-0 top-0 bottom-0 w-1 bg-[#92e676] rounded-r-full"
-                      />
-                    )}
                     <Icon
                       className={`w-5 h-5 ${
                         isActive
-                          ? "text-[#92e676]"
-                          : "text-gray-400 group-hover:text-[#92e676]"
+                          ? "text-[#7B0323]"
+                          : "text-gray-400 group-hover:text-[#7B0323]"
                       }`}
                     />
-                    <span className="text-sm font-medium">{label}</span>
+                    <span className="text-sm">{label}</span>
                   </Link>
                 );
               })}
             </nav>
 
-            <Separator className="my-6 bg-gray-200" />
             {AdminInfo}
           </motion.div>
         )}

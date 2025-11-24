@@ -182,9 +182,12 @@ export default function Orders() {
     <div className="flex flex-col md:flex-row min-h-screen bg-gray-50 text-gray-900">
       <Sidebar />
       <main className={`flex-1 p-4 md:p-8 ${isMobile ? "ml-0" : "md:ml-64"}`}>
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#001e59] ms-12 mb-10">
-          Sipariş Yönetimi
-        </h1>
+        <div className="flex flex-col sm:flex-row justify-center md:justify-between md:items-start items-center mb-6 mt-3 gap-4">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#001e59]">
+            
+            Sipariş Yönetimi
+          </h1>
+        </div>
         <Input
           placeholder="Müşteri adı, email veya ID ara..."
           value={search}

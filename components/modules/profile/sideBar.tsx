@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { toast } from "sonner";
 
 interface User {
   name: string;
@@ -86,9 +87,11 @@ export default function Sidebar() {
     try {
       await fetch("/api/auth/logout", { method: "POST" });
       setUser(null);
+      toast.error("Çıkış yaptınız."); // 🔹 Toast ekledik
       router.push("/");
     } catch (err) {
       console.error("Çıkış yapılamadı", err);
+      toast.error("Çıkış sırasında bir hata oluştu."); // 🔹 Hata toast
     }
   };
 

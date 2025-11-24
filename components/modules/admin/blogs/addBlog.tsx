@@ -73,7 +73,7 @@ export default function AddBlogDialog({ onAdd }: AddBlogDialogProps) {
   return (
     <>
       <Button
-        className="bg-[#92e676] hover:bg-[#001e59] text-white font-medium"
+        className="bg-[#7B0323] hover:bg-[#001e59] text-white font-medium"
         onClick={() => {
           setOpen(true);
           resetForm();

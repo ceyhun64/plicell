@@ -251,14 +251,17 @@ export default function Products(): React.ReactElement {
   // ===================== RENDER =====================
   return (
     <div className="flex flex-col md:flex-row min-h-screen bg-gray-50 text-gray-900">
+      {/* Sidebar: mobilde collapsible veya üstte hamburger olabilir */}
       <Sidebar />
+
       <main
         className={`flex-1 p-4 md:p-8 transition-all ${
           isMobile ? "" : "md:ml-64"
         }`}
       >
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#001e59] ms-12">
+        {/* Başlık */}
+        <div className="flex flex-col sm:flex-row justify-center md:justify-between md:items-start items-center mb-6 mt-3 gap-4">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#001e59]">
             Ürün Yönetimi
           </h1>
         </div>
@@ -300,26 +303,26 @@ export default function Products(): React.ReactElement {
               </SelectContent>
             </Select>
 
-            {filter.toLowerCase() === "plicell" && (
-              <Select onValueChange={setSubFilter} defaultValue="all">
-                <SelectTrigger className="w-full sm:w-48 bg-white border border-gray-200 text-gray-800 rounded-xs shadow-sm">
-                  <SelectValue placeholder="Alt kategori seç" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">Tümü</SelectItem>
-                  <SelectItem value="Bella">Bella</SelectItem>
-                  <SelectItem value="Valeria">Valeria</SelectItem>
-                  <SelectItem value="Spark">Spark</SelectItem>
-                  <SelectItem value="Merlin">Merlin</SelectItem>
-                  <SelectItem value="Duble Linen">Duble Linen</SelectItem>
-                  <SelectItem value="Elegant">Elegant</SelectItem>
-                  <SelectItem value="Dimout">Dimout</SelectItem>
-                  <SelectItem value="Blackout">Blackout</SelectItem>
-                  <SelectItem value="Honeycomb20">Honeycomb20</SelectItem>
-                  <SelectItem value="Honeycomb16">Honeycomb16</SelectItem>
-                </SelectContent>
-              </Select>
-            )}
+            {/* {filter.toLowerCase() === "plicell" && (
+          <Select onValueChange={setSubFilter} defaultValue="all">
+            <SelectTrigger className="w-full sm:w-48 bg-white border border-gray-200 text-gray-800 rounded-xs shadow-sm">
+              <SelectValue placeholder="Alt kategori seç" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Tümü</SelectItem>
+              <SelectItem value="Bella">Bella</SelectItem>
+              <SelectItem value="Valeria">Valeria</SelectItem>
+              <SelectItem value="Spark">Spark</SelectItem>
+              <SelectItem value="Merlin">Merlin</SelectItem>
+              <SelectItem value="Duble Linen">Duble Linen</SelectItem>
+              <SelectItem value="Elegant">Elegant</SelectItem>
+              <SelectItem value="Dimout">Dimout</SelectItem>
+              <SelectItem value="Blackout">Blackout</SelectItem>
+              <SelectItem value="Honeycomb20">Honeycomb20</SelectItem>
+              <SelectItem value="Honeycomb16">Honeycomb16</SelectItem>
+            </SelectContent>
+          </Select>
+        )} */}
 
             <Select onValueChange={setRoomFilter} defaultValue="all">
               <SelectTrigger className="w-full sm:w-48 bg-white border border-gray-200 text-gray-800 rounded-xs shadow-sm">
@@ -345,16 +348,19 @@ export default function Products(): React.ReactElement {
           </div>
         </div>
 
-        <ProductTable
-          products={paginatedProducts}
-          onDeleteClick={confirmDeleteProduct}
-          onUpdateClick={(product) => setSelectedProduct(product)}
-          onSelectAll={handleSelectAll}
-          onSelectOne={handleSelectOne}
-          selectedIds={selectedIds}
-        />
+        {/* Ürün Tablosu */}
+        <div className="overflow-x-auto">
+          <ProductTable
+            products={paginatedProducts}
+            onDeleteClick={confirmDeleteProduct}
+            onUpdateClick={(product) => setSelectedProduct(product)}
+            onSelectAll={handleSelectAll}
+            onSelectOne={handleSelectOne}
+            selectedIds={selectedIds}
+          />
+        </div>
 
-        {/* DELETE Dialog */}
+        {/* Delete Dialog */}
         <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
           <DialogContent className="sm:max-w-[400px]">
             <DialogHeader>

@@ -16,18 +16,33 @@ import {
 } from "@/components/ui/dialog";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Spinner } from "@/components/ui/spinner";
+import { toast } from "sonner";
+
+const getUserPhone = (user: User) => {
+  if (user.phone && user.phone.trim() !== "") return user.phone;
+  if (user.addresses && user.addresses.length > 0) {
+    const addrPhone = user.addresses[0].phone;
+    return addrPhone && addrPhone.trim() !== "" ? addrPhone : "-";
+  }
+  return "-";
+};
 
 interface Address {
   id: number;
+  userId: number;
   title: string;
-  address: string;
-  city: string;
-  district: string;
-  neighborhood?: string;
   firstName: string;
   lastName: string;
+  address: string;
+  neighborhood?: string | null;
+  district: string;
+  city: string;
+  tcno?: string | null;
   zip: string;
+  phone: string;
   country: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 interface User {
@@ -116,6 +131,38 @@ export default function Users(): React.JSX.Element {
     fetchUsers();
   }, []);
 
+  const deleteUser = async (id: number) => {
+    try {
+      const res = await fetch(`/api/user/all/${id}`, {
+        method: "DELETE",
+      });
+
+      if (!res.ok) throw new Error("Silme işlemi başarısız");
+
+      setUsers((prev) => prev.filter((u) => u.id !== id));
+      toast.success("Kullanıcı başarıyla silindi.");
+    } catch (err) {
+      console.error(err);
+      toast.error("Kullanıcı silinemedi.");
+    }
+  };
+  const deleteSelectedUsers = async () => {
+    try {
+      await Promise.all(
+        selectedIds.map((id) =>
+          fetch(`/api/user/all/${id}`, { method: "DELETE" })
+        )
+      );
+
+      setUsers((prev) => prev.filter((u) => !selectedIds.includes(u.id)));
+      setSelectedIds([]);
+      toast.success("Kullanıcılar başarıyla silindi.");
+    } catch (err) {
+      console.error(err);
+      toast.error("Seçilen kullanıcılar silinirken hata oluştu.");
+    }
+  };
+
   // ✅ Checkbox işlemleri
   const handleSelectAll = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.checked) {
@@ -140,6 +187,7 @@ export default function Users(): React.JSX.Element {
       u.surname.toLowerCase().includes(search.toLowerCase()) ||
       u.email.toLowerCase().includes(search.toLowerCase())
   );
+  console.log("users", users);
 
   // 📄 Sayfalama
   const paginatedUsers = filteredUsers.slice(
@@ -159,20 +207,16 @@ export default function Users(): React.JSX.Element {
         }`}
       >
         {/* Başlık ve Araç Çubuğu */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#001e59] ms-12">
-            Kullanıcılar
-          </h1>
-
-          <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 w-full sm:w-auto">
+        <div className="flex flex-col sm:flex-row mb-6 gap-4">
+          <div className="flex flex-col sm:flex-row justify-center md:justify-between md:items-start items-center mb-6 mt-3 gap-4">
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#001e59]">
+              Kullanıcılar
+            </h1>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 w-full sm:w-auto justify-between items-start sm:items-center ">
             {/* Seçilenleri silme dialog */}
             <DeleteDialog
-              onConfirm={() => {
-                selectedIds.forEach((id) =>
-                  setUsers((prev) => prev.filter((u) => u.id !== id))
-                );
-                setSelectedIds([]);
-              }}
+              onConfirm={deleteSelectedUsers}
               trigger={
                 <Button
                   variant="default"
@@ -272,7 +316,7 @@ export default function Users(): React.JSX.Element {
                       {user.surname}
                     </td>
                     <td className="px-2 sm:px-3 py-2 sm:py-3 border-b border-gray-200 hidden sm:table-cell">
-                      {user.phone || "-"}
+                      {getUserPhone(user)}
                     </td>
                     <td className="px-2 sm:px-3 py-2 sm:py-3 border-b border-gray-200 hidden md:table-cell">
                       {user.email}
@@ -334,9 +378,7 @@ export default function Users(): React.JSX.Element {
                     </td>
                     <td className="px-2 sm:px-3 py-2 sm:py-3 border-b border-gray-200 text-center">
                       <DeleteDialog
-                        onConfirm={() =>
-                          setUsers(users.filter((u) => u.id !== user.id))
-                        }
+                        onConfirm={() => deleteUser(user.id)}
                         trigger={
                           <Button
                             variant="default"
@@ -440,7 +482,7 @@ export default function Users(): React.JSX.Element {
 
                 <div className="text-gray-600 text-sm">
                   <p>Email: {user.email}</p>
-                  <p>Telefon: {user.phone || "-"}</p>
+                  <p>Telefon: {getUserPhone(user)}</p>{" "}
                 </div>
 
                 <div className="flex justify-end mt-2">

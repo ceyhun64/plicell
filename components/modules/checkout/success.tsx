@@ -17,7 +17,7 @@ export default function Success() {
   }, [router]);
 
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center bg-gradient-to-b from-white via-green-950/20 to-white p-4">
+    <div className="min-h-screen flex flex-col justify-center items-center bg-green-950/20 p-4">
       <div className="bg-white shadow-lg rounded-xs p-10 text-center max-w-md">
         {/* Büyük ikon */}
         <CheckCircle className="text-green-600 w-24 h-24 mx-auto mb-4" />

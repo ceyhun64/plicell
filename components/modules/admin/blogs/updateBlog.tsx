@@ -64,7 +64,7 @@ export default function UpdateBlogDialog({
       <DialogTrigger asChild>
         <Button
           size="sm"
-          className="bg-[#001e59] hover:bg-[#92e676] text-white font-medium"
+          className="bg-[#001e59] hover:bg-[#7B0323] text-white font-medium"
           onClick={() => setOpen(true)}
         >
           Düzenle
@@ -216,7 +216,7 @@ export default function UpdateBlogDialog({
             <Button
               type="submit"
               disabled={loading}
-              className="h-8 text-sm bg-[#001e59] hover:bg-[#92e676] text-white"
+              className="h-8 text-sm bg-[#001e59] hover:bg-[#7B0323] text-white"
             >
               {loading ? "Güncelleniyor..." : "Kaydet"}
             </Button>

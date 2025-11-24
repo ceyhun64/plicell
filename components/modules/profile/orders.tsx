@@ -182,7 +182,7 @@ export default function Orders() {
               {[1, 2].map((i) => (
                 <Card
                   key={i}
-                  className="p-6 border border-gray-200 shadow-lg rounded-xl animate-pulse bg-white/80"
+                  className="p-6 border border-gray-200 shadow-lg rounded-xs animate-pulse bg-white/80"
                 >
                   <Skeleton className="h-5 w-32 mb-2" />
                   <Skeleton className="h-4 w-20 mb-4" />
@@ -191,7 +191,7 @@ export default function Orders() {
               ))}
             </div>
           ) : orders.length === 0 ? (
-            <div className="bg-white p-8 rounded-xl border border-gray-200 shadow-sm text-center space-y-4">
+            <div className="bg-white p-8 rounded-xs border border-gray-200 shadow-sm text-center space-y-4">
               <p className="text-gray-700 text-lg">
                 Henüz bir siparişiniz bulunmuyor.
               </p>
@@ -226,7 +226,7 @@ export default function Orders() {
                 return (
                   <Card
                     key={order.id}
-                    className="border border-gray-200 shadow-lg rounded-xl bg-white hover:shadow-2xl transition-shadow duration-300"
+                    className="border border-gray-200 shadow-lg rounded-xs bg-white hover:shadow-2xl transition-shadow duration-300"
                   >
                     <CardHeader className="p-6 flex flex-col md:flex-row justify-between items-start md:items-center border-b">
                       <div>

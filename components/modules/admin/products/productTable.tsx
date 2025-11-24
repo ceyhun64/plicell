@@ -54,12 +54,19 @@ export default function ProductTable({
   onSelectOne,
 }: ProductTableProps) {
   const isValidImage = (image?: string) => !!image && image.trim() !== "";
-
+console.log("products",products)
   const getSafeImagePath = (image?: string) => {
     if (!isValidImage(image)) return "/placeholder.png";
     return image!.startsWith("http")
       ? image!
       : "/" + image!.replace(/^\/+/, "");
+  };
+  const formatDate = (dateStr?: string) => {
+    if (!dateStr) return "-";
+    // ' ' yerine 'T' koyuyoruz, böylece JS bunu doğru parse ediyor
+    const isoDateStr = dateStr.replace(" ", "T");
+    const d = new Date(isoDateStr);
+    return isNaN(d.getTime()) ? "-" : d.toLocaleDateString("tr-TR");
   };
 
   return (
@@ -148,17 +155,17 @@ export default function ProductTable({
                 <TableCell>{product.reviewCount || 0}</TableCell>
 
                 <TableCell className="text-gray-500">
-                  {new Date(product.createdAt).toLocaleDateString("tr-TR")}
+                  {formatDate(product.createdAt)}
                 </TableCell>
                 <TableCell className="text-gray-500">
-                  {new Date(product.updatedAt).toLocaleDateString("tr-TR")}
+                  {formatDate(product.updatedAt)}
                 </TableCell>
 
                 {/* Actions */}
                 <TableCell className="text-center flex gap-2 justify-center">
                   <Button
                     size="sm"
-                    className="bg-[#92e676] hover:bg-[#001e59] text-white text-xs rounded-xs"
+                    className="bg-[#7B0323] hover:bg-[#001e59] text-white text-xs rounded-xs"
                     onClick={() => onUpdateClick(product)}
                   >
                     Güncelle
@@ -230,22 +237,11 @@ export default function ProductTable({
               <p>Yorum: {product.reviewCount || 0}</p>
             </div>
 
-            <div className="flex justify-between text-sm text-gray-500">
-              <p>
-                Oluşturulma:{" "}
-                {new Date(product.createdAt).toLocaleDateString("tr-TR")}
-              </p>
-              <p>
-                Güncellenme:{" "}
-                {new Date(product.updatedAt).toLocaleDateString("tr-TR")}
-              </p>
-            </div>
-
             {/* Buttons */}
             <div className="flex gap-2 justify-end mt-2">
               <Button
                 size="sm"
-                className="bg-[#92e676] hover:bg-[#001e59] text-white text-xs rounded-xs"
+                className="bg-[#7B0323] hover:bg-[#001e59] text-white text-xs rounded-xs"
                 onClick={() => onUpdateClick(product)}
               >
                 Güncelle

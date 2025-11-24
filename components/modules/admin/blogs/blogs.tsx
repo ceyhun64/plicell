@@ -181,8 +181,8 @@ export default function Blogs(): React.ReactElement {
       <Sidebar />
       <main className={`flex-1 p-4 md:p-8 ${isMobile ? "" : "md:ml-64"}`}>
         {/* Başlık */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#001e59] ms-12">
+        <div className="flex flex-col sm:flex-row justify-center md:justify-between md:items-start items-center mb-6 mt-3 gap-4">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#001e59]">
             Blog Yönetimi
           </h1>
         </div>

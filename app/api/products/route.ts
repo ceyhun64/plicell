@@ -46,6 +46,8 @@ export async function GET() {
       category: p.category.name,
       subCategory: p.subCategory?.name ?? undefined,
       room: p.room?.name ?? undefined, // 🆕 room ilişkisi
+      createdAt: p.createdAt.toISOString(),
+      updatedAt: p.updatedAt.toISOString(),
     }));
 
     return NextResponse.json({ products: productsData }, { status: 200 });

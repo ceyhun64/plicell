@@ -5,6 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { Eye, EyeOff } from "lucide-react";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 interface RegisterFormProps {
   onLoginClick?: () => void; // kayıt sonrası login sayfasına yönlendirme
@@ -18,21 +20,19 @@ export default function RegisterForm({ onLoginClick }: RegisterFormProps) {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [registerMessage, setRegisterMessage] = useState("");
-  const [isSuccess, setIsSuccess] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  const router = useRouter();
 
   const handleRegister = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (password !== confirmPassword) {
-      setRegisterMessage("Şifreler eşleşmiyor!");
-      setIsSuccess(false);
+      toast.error("Şifreler eşleşmiyor!");
       return;
     }
 
     setIsLoading(true);
-    setIsSuccess(false);
 
     try {
       const res = await fetch("/api/account/register", {
@@ -44,17 +44,15 @@ export default function RegisterForm({ onLoginClick }: RegisterFormProps) {
       const data = await res.json();
 
       if (!res.ok) {
-        setRegisterMessage(data.error || "Kayıt başarısız!");
-        setIsSuccess(false);
+        toast.error(data.error || "Kayıt başarısız!");
       } else {
-        setRegisterMessage("Kayıt başarılı! Giriş yapabilirsiniz.");
-        setIsSuccess(true);
+        toast.success("Kayıt başarılı! Giriş yapabilirsiniz.");
         if (onLoginClick) onLoginClick();
+        router.push("/login"); // yönlendirme
       }
     } catch (err) {
       console.error(err);
-      setRegisterMessage("Sunucu hatası, tekrar deneyin.");
-      setIsSuccess(false);
+      toast.error("Sunucu hatası, tekrar deneyin.");
     } finally {
       setIsLoading(false);
     }
@@ -179,15 +177,6 @@ export default function RegisterForm({ onLoginClick }: RegisterFormProps) {
               {isLoading ? "Kayıt yapılıyor..." : "Hesap Oluştur"}
             </Button>
 
-            {registerMessage && (
-              <p
-                className={`text-sm text-center mt-2 ${
-                  isSuccess ? "text-green-500" : "text-red-500"
-                }`}
-              >
-                {registerMessage}
-              </p>
-            )}
           </form>
         </div>
 

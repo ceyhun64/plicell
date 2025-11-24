@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import DefaultPagination from "@/components/layout/pagination";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Menu } from "lucide-react";
+import { toast } from "sonner";
 
 // ---- Tipler ----
 interface Subscriber {
@@ -67,7 +67,7 @@ export default function Subscribers() {
       setSelectedIds((prev) => prev.filter((sid) => sid !== id));
     } catch (err) {
       console.error("Delete failed:", err);
-      alert("Abone silinirken bir hata oluştu.");
+      toast.error("Abone silinirken bir hata oluştu.");
     }
   };
 
@@ -84,7 +84,7 @@ export default function Subscribers() {
       setSelectedIds([]);
     } catch (err) {
       console.error("Bulk delete failed:", err);
-      alert("Seçilen aboneler silinirken bir hata oluştu.");
+      toast.error("Seçilen aboneler silinirken bir hata oluştu.");
     }
   };
 
@@ -110,7 +110,7 @@ export default function Subscribers() {
         : users.map((u) => u.email);
 
     if (!mailSubject || !mailMessage) {
-      alert("Lütfen konu ve mesaj alanlarını doldurun.");
+      toast.warning("Lütfen konu ve mesaj alanlarını doldurun.");
       return;
     }
 
@@ -127,16 +127,16 @@ export default function Subscribers() {
 
       const data = await res.json();
       if (!res.ok) {
-        alert(data.error || "Mail gönderilemedi.");
+        toast.error(data.error || "Mail gönderilemedi.");
         return;
       }
 
-      alert(`Mail başarıyla gönderildi! (${recipients.length} kişi)`);
+      toast.success(`Mail başarıyla gönderildi! (${recipients.length} kişi)`);
       setMailSubject("");
       setMailMessage("");
     } catch (err) {
       console.error(err);
-      alert("Mail gönderilirken bir hata oluştu.");
+      toast.error("Mail gönderilirken bir hata oluştu.");
     }
   };
 
@@ -144,12 +144,15 @@ export default function Subscribers() {
     <div className="flex min-h-screen bg-gray-50 text-gray-900">
       <Sidebar />
       <main className={`flex-1 p-4 md:p-8 ${isMobile ? "" : "ml-64"}`}>
-        <h1 className="text-2xl md:text-3xl font-bold mb-6 ms-12 mt-2 text-gray-800">
-          Aboneler
-        </h1>
+        <div className="flex flex-col sm:flex-row justify-center md:justify-between md:items-start items-center mb-6 mt-3 gap-4">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#001e59]">
+            {" "}
+            Aboneler
+          </h1>
+        </div>
 
         {/* ---- Mail Gönderme ---- */}
-        <div className="mb-8 p-6 bg-white rounded-xl shadow-md border border-gray-200 w-full md:w-auto">
+        <div className="mb-8 p-6 bg-white rounded-xs shadow-md border border-gray-200 w-full md:w-auto">
           <h2 className="text-xl font-semibold mb-4 text-gray-900">
             Abonelere Mail Gönder
           </h2>
@@ -172,7 +175,7 @@ export default function Subscribers() {
 
             <Button
               onClick={handleSendMail}
-              className="bg-blue-600 hover:bg-blue-500 text-white"
+              className="bg-rose-800 hover:bg-rose-900 text-white"
             >
               Mail Gönder
             </Button>
