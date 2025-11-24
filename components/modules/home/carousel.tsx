@@ -1,15 +1,16 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
+// Kahraman verisi (Değişiklik yok)
 const heroes = [
   {
     id: 1,
-    title: "Modern Perdelerle Ev Dekorasyonu",
+    title: "Modern Perdelerle Dekorasyon",
     description:
       "Evinize şıklık ve konfor katacak en yeni perde koleksiyonumuzu keşfedin.",
     image: "/heroes/2.webp",
@@ -45,87 +46,124 @@ const heroes = [
   },
 ];
 
+const SLIDE_INTERVAL_MS = 6000; // Otomatik geçiş süresi (5 saniyeden 6 saniyeye çıkarıldı)
+
 export default function HeroSection() {
   const [current, setCurrent] = useState(0);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrent((prev) => (prev + 1) % heroes.length);
-    }, 5000);
-    return () => clearInterval(interval);
+  // Navigasyon fonksiyonları için useCallback kullanımı
+  const prevSlide = useCallback(() => {
+    setCurrent((prev) => (prev === 0 ? heroes.length - 1 : prev - 1));
   }, []);
 
-  const prevSlide = () => {
-    setCurrent((prev) => (prev === 0 ? heroes.length - 1 : prev - 1));
-  };
-
-  const nextSlide = () => {
+  const nextSlide = useCallback(() => {
     setCurrent((prev) => (prev === heroes.length - 1 ? 0 : prev + 1));
-  };
+  }, []);
+
+  // Otomatik slayt geçişi ve temizleme
+  useEffect(() => {
+    const interval = setInterval(() => {
+      nextSlide();
+    }, SLIDE_INTERVAL_MS);
+    return () => clearInterval(interval);
+  }, [nextSlide]); // Bağımlılık olarak nextSlide eklendi
+
+  // Klavye erişilebilirliği için event listener
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "ArrowLeft") {
+        prevSlide();
+      } else if (event.key === "ArrowRight") {
+        nextSlide();
+      }
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [prevSlide, nextSlide]);
 
   return (
-    <div className="relative w-full h-[500px] sm:h-[600px] lg:h-[700px] overflow-hidden">
-      {heroes.map((slide, index) => (
-        <div
-          key={slide.id}
-          className={`absolute inset-0 transition-all duration-1000 ease-in-out transform ${
-            index === current
-              ? "opacity-100 translate-x-0"
-              : "opacity-0 -translate-x-full "
-          }`}
-        >
-          <Image
-            src={slide.image}
-            alt={slide.title}
-            layout="fill"
-            objectFit="cover"
-            priority={index === 0}
-            quality={100}
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent"></div>
+    <div
+      className="relative w-full h-[500px] sm:h-[600px] lg:h-[700px] overflow-hidden group"
+      aria-roledescription="carousel"
+      aria-label="Ürün Tanıtım Kaydırıcısı"
+    >
+      {heroes.map((slide, index) => {
+        const isActive = index === current;
 
-          {/* Text blok */}
-          <Link
-            href={slide.href}
-            className="absolute bottom-8 left-4 sm:left-8 p-6 sm:p-12 max-w-xs sm:max-w-lg rounded-xs text-white backdrop-blur-sm bg-white/5 flex flex-col items-start"
+        return (
+          <div
+            key={slide.id}
+            // Sadece tek bir slaytı gösterip diğerlerini gizlemek için daha temiz bir yol
+            className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
+              isActive ? "opacity-100 z-10" : "opacity-0 z-0"
+            }`}
+            aria-hidden={!isActive} // Erişilebilirlik için gizli
+            role="group"
+            aria-label={`${index + 1} / ${heroes.length}`}
           >
-            <h1 className="scroll-m-20 text-3xl sm:text-5xl lg:text-7xl font-extrabold tracking-tight text-left font-[Playfair_Display] drop-shadow-lg">
-              {slide.title}
-            </h1>
-            <p className='text-sm sm:text-lg mt-3 sm:mt-5 font-["Mozilla_Headline"] drop-shadow'>
-              {slide.description}
-            </p>
+            {/* Görüntü */}
+            <Image
+              src={slide.image}
+              alt={slide.title}
+              fill
+              style={{ objectFit: "cover" }} // layout="fill" yerine modern Next.js 13+ style kullanımı
+              priority={index === 0} // İlk slayt için öncelik
+            />
 
-            <Button className="cursor-pointer mt-4 bg-[#7B0323] hover:bg-[#7B0323]/70 text-white py-3 sm:py-4 px-5 sm:px-8 rounded-full text-sm sm:text-lg font-semibold shadow-lg">
-              {slide.buttonText}
-            </Button>
-          </Link>
-        </div>
-      ))}
+            {/* Gradyan Kaplama */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/40  to-transparent"></div>
 
-      {/* Navigation Buttons */}
-      <div className="absolute top-2/3 md:top-1/2 left-[-2] md:left-3 transform -translate-y-1/2">
+            {/* Metin ve Buton Blok */}
+            <Link
+              href={slide.href}
+              className="absolute bottom-6 left-4 md:left-10 p-6 sm:p-10 rounded-xs text-white backdrop-blur-sm bg-white/10 hover:bg-white/20 transition-colors duration-300 flex flex-col items-start z-20 max-w-[90%] sm:max-w-[500px] w-auto break-words"
+              tabIndex={isActive ? 0 : -1}
+              aria-label={`${slide.title} sayfasına git`}
+            >
+              <h1 className="text-3xl sm:text-5xl lg:text-7xl font-extrabold tracking-tight text-left drop-shadow-xl font-serif break-words">
+                {slide.title}
+              </h1>
+              <p className="text-sm sm:text-lg mt-3 sm:mt-5 font-light opacity-95 drop-shadow-md break-words">
+                {slide.description}
+              </p>
+
+              <Button
+                asChild
+                className="mt-6 bg-[#7B0323] hover:bg-[#A30530] text-white py-3 sm:py-4 px-6 sm:px-10 rounded-full text-sm sm:text-lg font-semibold shadow-xl transition-all duration-300 transform hover:scale-[1.02]"
+              >
+                <span>{slide.buttonText}</span>
+              </Button>
+            </Link>
+          </div>
+        );
+      })}
+
+      {/* Navigasyon Düğmeleri */}
+      <div className="absolute top-1/2 left-3 transform -translate-y-1/2 z-30 opacity-70 group-hover:opacity-100 transition-opacity duration-300 ">
         <Button
-          variant="ghost"
+          variant="secondary" // Daha belirgin bir buton stili
           size="icon"
           onClick={prevSlide}
-          aria-label="Previous Slide"
-          className="bg-white/20 hover:bg-white/40 rounded-full backdrop-blur-sm"
+          aria-label="Önceki Slayt"
+          className="bg-white/30 hover:bg-white/50 rounded-full backdrop-blur-md shadow-lg h-12 w-12 text-black transition-transform duration-200 hover:scale-105"
         >
           <ChevronLeft size={28} />
         </Button>
       </div>
-      <div className="absolute top-2/3 md:top-1/2 right-[-2] md:right-3 transform -translate-y-1/2">
+      <div className="absolute top-1/2 right-3 transform -translate-y-1/2 z-30 opacity-70 group-hover:opacity-100 transition-opacity duration-300">
         <Button
-          variant="ghost"
+          variant="secondary"
           size="icon"
           onClick={nextSlide}
-          aria-label="Next Slide"
-          className="bg-white/20 hover:bg-white/40 rounded-full backdrop-blur-sm"
+          aria-label="Sonraki Slayt"
+          className="bg-white/30 hover:bg-white/50 rounded-full backdrop-blur-md shadow-lg h-12 w-12 text-black transition-transform duration-200 hover:scale-105"
         >
           <ChevronRight size={28} />
         </Button>
       </div>
+
     </div>
   );
 }

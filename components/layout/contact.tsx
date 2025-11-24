@@ -1,12 +1,88 @@
 "use client";
 
 import React, { useState } from "react";
+// UI Bileşenlerini İçe Aktarma
+// NOT: Bu component'in çalışması için dışarıdan sağlanan Button, Input, Textarea ve sonner/toast gibi bileşenlere ihtiyacı vardır.
+// Label bileşeni, bağımlılığı kaldırmak için standart HTML <label> etiketiyle değiştirildi.
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Mail, Phone, MapPin, User } from "lucide-react";
+import { Mail, Phone, MapPin, User, Send, Compass } from "lucide-react"; // Compass ikonu eklendi
 import { motion } from "framer-motion";
-import { Label } from "../ui/label";
+// import { Label } from "../ui/label"; // Hata veren harici bileşen kaldırıldı.
+import { toast } from "sonner";
+
+// --- YARDIMCI BİLEŞENLER ---
+
+const ContactInfoCard = ({
+  icon: Icon,
+  title,
+  content,
+}: {
+  icon: typeof MapPin;
+  title: string;
+  content: string | React.JSX.Element;
+}) => (
+  // Rose temasını koruyarak modern kart stili
+  <div className="flex items-start gap-4 p-4 bg-white/70 backdrop-blur-sm rounded-xs border border-gray-100 shadow-sm transition-all duration-300 hover:shadow-md hover:border-rose-100">
+    <Icon className="w-6 h-6 text-rose-600 flex-shrink-0 mt-0.5" />
+    <div>
+      <h3 className="text-lg font-semibold text-gray-800 mb-1">{title}</h3>
+      <div className="text-gray-600 leading-snug text-sm">{content}</div>
+    </div>
+  </div>
+);
+
+// Form alanları için yardımcı component
+// Harici Label bileşeni yerine standart HTML <label> kullanıldı.
+const InputField = ({
+  id,
+  name,
+  type = "text",
+  placeholder,
+  value,
+  Icon,
+  required = true,
+  handleChange, // handleChange prop olarak eklendi
+}: {
+  id: string;
+  name: string;
+  type?: string;
+  placeholder: string;
+  value: string;
+  Icon: typeof User;
+  required?: boolean;
+  handleChange: (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => void; // Tip tanımı eklendi
+}) => (
+  <div className="space-y-2">
+    {/* Standart HTML <label> etiketi kullanıldı */}
+    <label htmlFor={id} className="text-gray-700 font-medium text-sm block">
+      {required && <span className="text-rose-600 mr-1">*</span>}
+      {placeholder}
+    </label>
+    <div className="relative group">
+      <Icon
+        className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-rose-600 transition-colors"
+        size={18}
+      />
+      <Input
+        id={id}
+        name={name}
+        type={type}
+        value={value}
+        onChange={handleChange}
+        placeholder={placeholder}
+        required={required}
+        // Modern Tailwind Stilleri: Temiz, köşeleri yuvarlatılmış, rose odaklı
+        className="pl-11 py-5 rounded-lg border-gray-300 focus:border-rose-500 focus:ring-2 focus:ring-rose-100 transition-all text-gray-800 placeholder:text-gray-500 w-full"
+      />
+    </div>
+  </div>
+);
+
+// --- ANA BİLEŞEN ---
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -16,7 +92,6 @@ export default function Contact() {
     message: "",
   });
 
-  const [messageStatus, setMessageStatus] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (
@@ -26,9 +101,22 @@ export default function Contact() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setMessageStatus(null);
 
     try {
+      // Form alanlarını doğrulama
+      if (
+        !formData.name ||
+        !formData.phone ||
+        !formData.email ||
+        !formData.message
+      ) {
+        toast.error("Lütfen tüm zorunlu alanları doldurun.");
+        setIsLoading(false);
+        return;
+      }
+
+      // API çağrısı
+      // NOT: Bu bir mock API çağrısıdır, gerçek mail gönderme işlemi sunucu tarafında yapılmalıdır.
       const res = await fetch("/api/send-mail", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -47,173 +135,178 @@ Mesaj: ${formData.message}
       const data = await res.json();
 
       if (!res.ok) {
-        setMessageStatus(data.error || "Bir hata oluştu, tekrar deneyin.");
+        toast.error(
+          data.error ||
+            "Mesajınız gönderilemedi. Lütfen daha sonra tekrar deneyin."
+        );
       } else {
-        setMessageStatus("Mesajınız başarıyla gönderildi!");
+        toast.success(
+          "Mesajınız başarıyla gönderildi! Size en kısa sürede dönüş yapacağız."
+        );
         setFormData({ name: "", phone: "", email: "", message: "" });
       }
     } catch {
-      setMessageStatus("Sunucu hatası, tekrar deneyin.");
+      toast.error("Sunucu hatası, lütfen internet bağlantınızı kontrol edin.");
     } finally {
       setIsLoading(false);
     }
   };
 
-  return (
-    <div className="bg-gradient-to-b from-white via-amber-950/5 to-white py-20">
-      <div className="max-w-7xl mx-auto px-4 md:px-6 grid grid-cols-1 lg:grid-cols-2 gap-16">
-        {/* Left Section */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="space-y-8"
+  const contactDetails = [
+    {
+      icon: MapPin,
+      title: "Adres",
+      content: "Mustafa Kökmen Blv. 91, 27700 Gaziantep, Nizip Türkiye",
+    },
+    {
+      icon: Phone,
+      title: "Telefon",
+      content: (
+        <a href="tel:+905333874074" className="hover:text-rose-600 transition">
+          +90 533 387 40 74
+        </a>
+      ),
+    },
+    {
+      icon: Mail,
+      title: "E-posta",
+      content: (
+        <a
+          href="mailto:info@modaperde.com"
+          className="hover:text-rose-600 transition"
         >
-          <h2 className="text-4xl font-extrabold tracking-tight text-gray-900">
-            İletişime Geçin
-          </h2>
-          <p className="text-gray-600 leading-relaxed">
-            Bizimle iletişime geçmek için formu doldurabilir veya aşağıdaki
-            bilgileri kullanabilirsiniz.
-          </p>
+          info@modaperde.com
+        </a>
+      ),
+    },
+  ];
 
-          <div className="space-y-6">
-            <div className="flex items-start gap-4">
-              <MapPin className="w-6 h-6 text-[#7B0323]" />
-              <p className="text-gray-700 leading-tight">
-                Mustafa Kökmen Blv. 91, 27700 Gaziantep, Nizip Türkiye
+  return (
+    <div className="bg-gradient-to-b from-white via-amber-950/10 to-white py-16 md:py-24 font-inter">
+      <div className="max-w-7xl mx-auto px-4 md:px-6 space-y-12">
+        {/* 1. SATIR: Başlık + Bilgiler (sol), Form (sağ) */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
+          {/* SOL TARAF: BAŞLIK ve İLETİŞİM BİLGİLERİ */}
+          <motion.div
+            initial={{ opacity: 0, x: -50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.6 }}
+            className="space-y-10"
+          >
+            <div className="space-y-4">
+              <p className="text-sm font-semibold uppercase tracking-widest text-rose-600">
+                Bize Ulaşın
+              </p>
+              <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight text-gray-900 leading-tight">
+                Aklınızdaki Projeyi Konuşalım
+              </h2>
+              <p className="text-lg text-gray-600 leading-relaxed">
+                Perde sistemleri ve tekstil çözümlerimiz hakkında bilgi almak
+                için formu doldurabilirsiniz. Uzman ekibimiz size hızla dönüş
+                yapacaktır.
               </p>
             </div>
 
-            <div className="flex items-center gap-4">
-              <Phone className="w-6 h-6 text-[#7B0323]" />
-              <p className="text-gray-700">+90 533 387 40 74</p>
-            </div>
-
-            <div className="flex items-center gap-4">
-              <Mail className="w-6 h-6 text-[#7B0323]" />
-              <p className="text-gray-700">info@modaperde.com</p>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Right Section (Modern Form) */}
-        <motion.form
-          onSubmit={handleSubmit}
-          initial={{ opacity: 0, scale: 0.97 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.4 }}
-          className="backdrop-blur-xl bg-white/60 p-10 rounded-xs shadow-2xl border border-white/40 space-y-6"
-        >
-          {/* Form Alanları */}
-          <div className="space-y-6">
-            {/* Ad Soyad */}
-            <div className="space-y-2">
-              <Label htmlFor="name" className="text-gray-700 font-medium">
-                <span className="text-red-500">*</span> Ad Soyad
-              </Label>
-              <div className="relative group">
-                <User
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-rose-500"
-                  size={20}
+            <div className="space-y-4">
+              {contactDetails.map((item, index) => (
+                <ContactInfoCard
+                  key={index}
+                  icon={item.icon}
+                  title={item.title}
+                  content={item.content}
                 />
-                <Input
-                  id="name"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  placeholder="Adınız Soyadınız"
-                  required
-                  className="pl-12 py-3 rounded-xl border-gray-300 group-hover:border-rose-300 focus:ring-2 focus:ring-rose-300"
-                />
-              </div>
+              ))}
             </div>
+          </motion.div>
 
-            {/* Telefon */}
-            <div className="space-y-2">
-              <Label htmlFor="phone" className="text-gray-700 font-medium">
-                <span className="text-red-500">*</span> Telefon
-              </Label>
-              <div className="relative group">
-                <Phone
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-rose-500"
-                  size={20}
-                />
-                <Input
-                  id="phone"
-                  name="phone"
-                  type="tel"
-                  value={formData.phone}
-                  onChange={handleChange}
-                  placeholder="Telefon Numaranız"
-                  required
-                  className="pl-12 py-3 rounded-xl border-gray-300 group-hover:border-rose-300 focus:ring-2 focus:ring-rose-300"
-                />
-              </div>
-            </div>
-
-            {/* Email */}
-            <div className="space-y-2">
-              <Label htmlFor="email" className="text-gray-700 font-medium">
-                <span className="text-red-500">*</span> E-posta
-              </Label>
-              <div className="relative group">
-                <Mail
-                  className="absolute left-4 top-1/2 -translate-y-1/2 text-rose-500"
-                  size={20}
-                />
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  placeholder="E-posta Adresiniz"
-                  required
-                  className="pl-12 py-3 rounded-xl border-gray-300 group-hover:border-rose-300 focus:ring-2 focus:ring-rose-300"
-                />
-              </div>
-            </div>
-
-            {/* Mesaj */}
-            <div className="space-y-2">
-              <Label htmlFor="message" className="text-gray-700 font-medium">
-                <span className="text-red-500">*</span> Mesaj
-              </Label>
-              <Textarea
-                id="message"
-                name="message"
-                value={formData.message}
-                onChange={handleChange}
-                rows={6}
-                placeholder="Mesajınız"
-                required
-                className="rounded-xl border-gray-300 hover:border-rose-300 focus:ring-2 focus:ring-rose-300"
-              />
-            </div>
-          </div>
-
-          {/* Button */}
-          <Button
-            type="submit"
-            disabled={isLoading}
-            className="w-full rounded-full py-6 text-lg shadow-lg bg-gradient-to-br from-[#7B0323] to-[#B3133C] hover:opacity-90 transition"
+          {/* SAĞ TARAF: FORM */}
+          <motion.form
+            onSubmit={handleSubmit}
+            initial={{ opacity: 0, x: 50 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.6 }}
+            className="bg-white p-6 sm:p-10 rounded-xs shadow-2xl shadow-rose-400/20 border border-gray-100 space-y-6"
           >
-            {isLoading ? "Gönderiliyor..." : "Gönder"}
-          </Button>
-
-          {messageStatus && (
-            <p
-              className={`text-center mt-2 text-sm font-medium ${
-                messageStatus.includes("başarı")
-                  ? "text-green-600"
-                  : "text-red-600"
-              }`}
+            <div className="space-y-6">
+              <InputField
+                id="name"
+                name="name"
+                placeholder="Adınız Soyadınız"
+                value={formData.name}
+                Icon={User}
+                handleChange={handleChange}
+              />
+              <InputField
+                id="phone"
+                name="phone"
+                type="tel"
+                placeholder="Telefon Numaranız"
+                value={formData.phone}
+                Icon={Phone}
+                handleChange={handleChange}
+              />
+              <InputField
+                id="email"
+                name="email"
+                type="email"
+                placeholder="E-posta Adresiniz"
+                value={formData.email}
+                Icon={Mail}
+                handleChange={handleChange}
+              />
+              <div className="space-y-2">
+                <label
+                  htmlFor="message"
+                  className="text-gray-700 font-medium text-sm block"
+                >
+                  <span className="text-rose-600 mr-1">*</span> Mesajınız
+                </label>
+                <Textarea
+                  id="message"
+                  name="message"
+                  value={formData.message}
+                  onChange={handleChange}
+                  rows={5}
+                  placeholder="Detaylı mesajınızı buraya yazabilirsiniz..."
+                  required
+                  className="rounded-lg border-gray-300 focus:border-rose-500 focus:ring-2 focus:ring-rose-100 transition-all text-gray-800 placeholder:text-gray-500 w-full"
+                />
+              </div>
+            </div>
+            <Button
+              type="submit"
+              disabled={isLoading}
+              className="w-full rounded-full py-3 md:py-4 text-lg font-semibold shadow-lg shadow-rose-600/30 
+                     bg-rose-600 hover:bg-rose-700 transition-colors flex items-center justify-center gap-2"
             >
-              {messageStatus}
-            </p>
-          )}
-        </motion.form>
+              {isLoading ? (
+                <span className="flex items-center gap-2">
+                  <Send className="w-5 h-5 animate-spin" /> Gönderiliyor...
+                </span>
+              ) : (
+                <span className="flex items-center gap-2">
+                  <Send className="w-5 h-5" /> Gönder
+                </span>
+              )}
+            </Button>
+          </motion.form>
+        </div>
+
+        {/* 2. SATIR: HARİTA (IFRAME) */}
+        <div className="overflow-hidden rounded-xs shadow-xl border-1 border-rose-500/10 transition-shadow hover:shadow-2xl">
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3182.655035720213!2d37.42181087610954!3d37.08952217216598!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1531e452bb747ea3%3A0xb9b98881acfa56e3!2sMODA%20PERDE!5e0!3m2!1str!2str!4v1763988264992!5m2!1str!2str"
+            width="100%"
+            className="h-[450px] sm:h-[500px] md:h-[600px] rounded-xs"
+            style={{ border: 0 }}
+            allowFullScreen={false}
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+            title="Moda Perde Konumu Haritası"
+          />
+        </div>
       </div>
     </div>
   );

@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Eye, EyeOff } from "lucide-react";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { toast } from "sonner";
 
 export default function ResetPasswordPage() {
   const searchParams = useSearchParams();
@@ -15,7 +16,6 @@ export default function ResetPasswordPage() {
 
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [message, setMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleResetPassword = async (e: React.FormEvent) => {
@@ -23,7 +23,6 @@ export default function ResetPasswordPage() {
     if (!token) return;
 
     setIsLoading(true);
-    setMessage(null);
 
     try {
       const res = await fetch("/api/account/reset_password", {
@@ -33,20 +32,21 @@ export default function ResetPasswordPage() {
       });
 
       const data = await res.json();
+
       if (!res.ok) {
-        setMessage(data.error || "Bir hata oluştu");
+        toast.error(data.error || "Bir hata oluştu");
         setIsLoading(false);
         return;
       }
 
-      setMessage("✅ Şifreniz başarıyla güncellendi!");
+      toast.success("Şifreniz başarıyla güncellendi!");
 
       setTimeout(() => {
         router.push("/login"); // Login sayfasına yönlendir
       }, 2000);
     } catch (err) {
       console.error(err);
-      setMessage("Sunucu hatası, tekrar deneyin.");
+      toast.error("Sunucu hatası, tekrar deneyin.");
     } finally {
       setIsLoading(false);
     }
@@ -95,18 +95,6 @@ export default function ResetPasswordPage() {
           >
             {isLoading ? "Güncelleniyor..." : "Şifreyi Sıfırla"}
           </Button>
-
-          {message && (
-            <p
-              className={`text-center mt-2 text-sm ${
-                message.toLowerCase().includes("başarı")
-                  ? "text-green-600"
-                  : "text-red-500"
-              }`}
-            >
-              {message}
-            </p>
-          )}
         </form>
 
         <div className="text-center mt-4">

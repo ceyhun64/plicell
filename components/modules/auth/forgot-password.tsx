@@ -7,17 +7,16 @@ import { Label } from "@/components/ui/label";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { toast } from "sonner";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState<string>("");
-  const [message, setMessage] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const router = useRouter();
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
-    setMessage("");
 
     try {
       const res = await fetch("/api/account/forgot_password", {
@@ -29,13 +28,13 @@ export default function ForgotPasswordPage() {
       const data = await res.json();
 
       if (!res.ok) {
-        setMessage(data.error || "Bir hata oluştu, tekrar deneyin.");
+        toast.error(data.error || "Bir hata oluştu, tekrar deneyin.");
       } else {
-        setMessage(data.message || "Şifre sıfırlama linki gönderildi.");
+        toast.success(data.message || "Şifre sıfırlama linki gönderildi.");
       }
     } catch (err) {
       console.error("Forgot password hatası:", err);
-      setMessage("Sunucu hatası, tekrar deneyin.");
+      toast.error("Sunucu hatası, tekrar deneyin.");
     } finally {
       setIsLoading(false);
     }
@@ -74,25 +73,12 @@ export default function ForgotPasswordPage() {
           <Button
             type="submit"
             disabled={isLoading}
-            className={`w-full py-3 rounded-xl bg-gradient-to-r from-[#7B0323] to-[#5E021A]   text-white font-semibold shadow-lg transition-transform transform hover:scale-105 ${
+            className={`w-full py-3 rounded-xl bg-gradient-to-r from-[#7B0323] to-[#5E021A] text-white font-semibold shadow-lg transition-transform transform hover:scale-105 ${
               isLoading ? "opacity-50 cursor-not-allowed" : ""
             }`}
           >
             {isLoading ? "Gönderiliyor..." : "Şifre Yenileme Linki Gönder"}
           </Button>
-
-          {message && (
-            <p
-              className={`text-center text-sm ${
-                message.toLowerCase().includes("başarılı") ||
-                message.toLowerCase().includes("gönderildi")
-                  ? "text-green-600"
-                  : "text-red-500"
-              }`}
-            >
-              {message}
-            </p>
-          )}
         </form>
 
         <div className="text-center mt-4">
