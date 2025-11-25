@@ -57,7 +57,7 @@ const ProductTopBar: React.FC<ProductTopBarProps> = ({
   return (
     <div
       className={cn(
-        "sticky top-15 z-10 w-full px-4 md:px-6 transition-all duration-300",
+        "sticky top-14 z-50 w-full px-4 md:px-6 transition-all duration-300",
         scrolled
           ? "py-3 bg-white/80 backdrop-blur-lg shadow-sm border-b"
           : "py-3 bg-white/80 backdrop-blur-lg shadow-sm"

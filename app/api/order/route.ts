@@ -285,21 +285,105 @@ export async function POST(req: NextRequest) {
       },
       include: { items: true, addresses: true },
     });
+    const formatPrice = (price: any) =>
+      Number(price).toLocaleString("tr-TR", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
 
     // Mail gönderimleri
-    if (email) {
-      await sendMail(
-        [email],
-        `Order Confirmation - ${order.id}`,
-        `Hello ${firstName}, your order ${order.id} is paid successfully.`
-      );
-    }
+    // --- Mail Gönderimi ---
+    try {
+      // 1A. Müşteri onay maili
+      if (buyer.email) {
+        await sendMail(
+          [buyer.email],
+          `Siparişiniz Başarıyla Alınmıştır - #${order.id}`,
+          `
+Sayın ${firstName || ""} ${lastName || ""},
 
-    await sendMail(
-      ["ceyhunturkmen4@gmail.com"],
-      `New Order - ${order.id}`,
-      `New order placed. Order ID: ${order.id}`
-    );
+**MODA PERDE** üzerinden vermiş olduğunuz **#${
+            order.id
+          }** numaralı siparişiniz başarıyla oluşturulmuş ve ödemesi onaylanmıştır. Siparişiniz, en kısa sürede titizlikle hazırlanmaya başlanacaktır.
+
+**Sipariş Detayları:**
+* **Sipariş Numarası:** #${order.id}
+* **Sipariş Tarihi:** ${new Date().toLocaleDateString("tr-TR")}
+* **Toplam Tutar (KDV Dahil):** ${formatPrice(totalPrice)} ${currency || "TRY"}
+* **Ödenen Tutar (KDV Dahil):** ${formatPrice(paidPrice)} ${currency || "TRY"}
+* **Ödeme Yöntemi:** ${paymentMethod || "Kredi Kartı"}
+
+**Sipariş Edilen Ürünler:**
+${basketItems
+  .map(
+    (item) =>
+      `• ${item.name} (${item.quantity} Adet) — Birim Fiyat: ${formatPrice(
+        item.unitPrice || item.totalPrice
+      )} ${currency}`
+  )
+  .join("\n")}
+
+**Teslimat Adresi:**
+* **Alıcı Adı:** ${shippingAddress.firstName || firstName || ""} ${
+            shippingAddress.lastName || lastName || ""
+          }
+* **Adres:** ${shippingAddress.address}
+* **İl/İlçe:** ${shippingAddress.city} / ${shippingAddress.district}
+* **Telefon:** ${shippingAddress.phone}
+
+Siparişinizin tüm aşamaları hakkında e-posta ile bilgilendirileceksiniz.
+
+Bizi tercih ettiğiniz için teşekkür eder, iyi günler dileriz.
+
+Saygılarımızla, 
+**MODA PERDE Ekibi**
+[Web Sitenizin Adresi veya İletişim Bilgileri]
+`
+        );
+      }
+
+      // 1B. Admin bilgilendirme maili
+      /* ... POST fonksiyonu içinde ... */
+      // 1B. Admin bilgilendirme maili (Güncellenmiş)
+      await sendMail(
+        ["modaperdeofficial@gmail.com"],
+        `🔔 Yeni Sipariş Kaydı - Acil İşlem Gerekiyor: #${order.id}`,
+        `
+Sayın Yönetici,
+
+Web sitesi üzerinden yeni bir sipariş başarıyla alınmış ve ödemesi onaylanmıştır. Aşağıdaki detaylara göre siparişin en kısa sürede işleme alınması gerekmektedir.
+
+**Genel Sipariş Bilgileri:**
+* **Sipariş Numarası:** #${order.id}
+* **Müşteri ID:** ${userId}
+* **Müşteri E-posta:** ${buyer.email || "Belirtilmemiş"}
+* **Ödenen Tutar:** ${formatPrice(paidPrice)} ${currency || "TRY"}
+* **Ödeme Yöntemi:** ${paymentMethod || "Kredi Kartı"}
+
+**Sipariş Kalemleri:**
+${basketItems
+  .map(
+    (item) =>
+      `• ${item.name} — Miktar: ${
+        item.quantity
+      } Adet — Toplam Fiyat: ${formatPrice(item.totalPrice)} ${currency}`
+  )
+  .join("\n")}
+
+**Teslimat Bilgileri:**
+* **Adres:** ${shippingAddress.address}
+* **İl/İlçe:** ${shippingAddress.city} / ${shippingAddress.district}
+* **Telefon:** ${shippingAddress.phone}
+
+Lütfen siparişin detaylarını kontrol ederek üretim ve gönderim sürecini başlatınız.
+
+İyi çalışmalar.
+`
+      );
+    } catch (mailErr) {
+      console.error("Mail gönderimi sırasında hata:", mailErr);
+      // Ödeme ve sipariş başarılı ise mail hatası siparişi iptal etmez
+    }
 
     return NextResponse.json({ status: "success", order, paymentResult });
   } catch (err: any) {
@@ -372,27 +456,85 @@ export async function PATCH(req: NextRequest): Promise<NextResponse> {
     });
 
     // Kullanıcı bilgilendirme maili
+    // ... (Veritabanı güncellemesi yapıldı)
+
+    // Durumların Türkçe karşılıkları
+    const statusMap: { [key in UpdateOrderBody["status"]]: string } = {
+      pending: "Beklemede",
+      paid: "Ödeme Alındı (Hazırlanıyor)",
+      shipped: "Kargoya Verildi",
+      delivered: "Teslim Edildi",
+      cancelled: "İptal Edildi",
+    };
+
+    const turkishStatus = statusMap[updatedOrder.status] || updatedOrder.status;
+
+    // 2A. Kullanıcı bilgilendirme maili
+    /* ... PATCH fonksiyonu içinde ... */
+    // 2A. Kullanıcı bilgilendirme maili (Güncellenmiş)
     if (updatedOrder.user?.email) {
-      const userMessage = `Your order (ID: ${
-        updatedOrder.id
-      }) status is now ${updatedOrder.status.toUpperCase()}.`;
+      let specificNote = "";
+      if (updatedOrder.status === "shipped") {
+        specificNote =
+          "Siparişiniz kargo firmasına teslim edilmiştir. Takip numaranızı e-postanıza ekleyerek [Takip Bağlantısı] üzerinden güncel durumu izleyebilirsiniz."; // Eğer takip no eklenebilirse daha iyi olur.
+      } else if (updatedOrder.status === "delivered") {
+        specificNote =
+          "Siparişiniz başarıyla adresinize teslim edilmiştir. Ürünlerimizle ilgili deneyiminizi bizimle paylaşmanız bizi mutlu edecektir.";
+      } else if (updatedOrder.status === "cancelled") {
+        specificNote =
+          "Talebiniz üzerine veya operasyonel bir nedenle siparişiniz iptal edilmiştir. Geri ödeme süreciniz bankanıza bağlı olarak kısa süre içinde başlatılacaktır.";
+      } else if (updatedOrder.status === "paid") {
+        specificNote =
+          "Ödemeniz alınmış olup, siparişiniz hazırlanma aşamasına geçmiştir. Tahmini teslimat süreci hakkında bilgi almak için bizimle iletişime geçebilirsiniz.";
+      }
+
+      const userMessage = `
+Sayın ${updatedOrder.user.name || updatedOrder.user.email},
+
+**#${updatedOrder.id}** numaralı siparişinizin durumu güncellenmiştir.
+
+**Yeni Durum:** **${turkishStatus}**
+
+${specificNote ? `\n${specificNote}` : ""}
+
+Güncel sipariş bilgilerinizi web sitemizdeki hesabınız üzerinden de takip edebilirsiniz.
+
+Her türlü soru ve destek talebiniz için Müşteri Hizmetlerimiz ile iletişime geçebilirsiniz.
+
+Saygılarımızla,
+**MODA PERDE Ekibi**
+[Web Sitenizin Adresi veya İletişim Bilgileri]
+`;
+
       await sendMail(
         [updatedOrder.user.email],
-        `Order Update - ${updatedOrder.id}`,
+        `Sipariş Durumunuz Güncellendi: #${updatedOrder.id}`,
         userMessage
       );
     }
+    /* ... */
 
-    // Admin bilgilendirme maili
-    const adminMessage = `Order ID: ${
+    // 2B. Admin bilgilendirme maili
+    /* ... PATCH fonksiyonu içinde ... */
+    // 2B. Admin bilgilendirme maili (Güncellenmiş)
+    const adminMessage = `
+**#${
       updatedOrder.id
-    } status updated to ${updatedOrder.status.toUpperCase()}.`;
+    }** numaralı siparişin durumu başarılı bir şekilde güncellenmiştir.
+
+**Yeni Durum:** **${turkishStatus}** (${updatedOrder.status})
+**Güncelleyen Kullanıcı/Sistem:** Admin Panel / Otomatik Sistem
+**Güncelleme Zamanı:** ${new Date().toLocaleString("tr-TR")}
+
+Gerekli operasyonel adımların tamamlandığından emin olunuz.
+`;
+
     await sendMail(
-      ["ceyhunturkmen4@gmail.com"],
-      `Order Status Update - ${updatedOrder.id}`,
+      ["modaperdeofficial@gmail.com"],
+      `✅ Sipariş Durumu Değişikliği: #${updatedOrder.id}`,
       adminMessage
     );
-
+    /* ... */
     return NextResponse.json({ status: "success", order: updatedOrder });
   } catch (error: any) {
     console.error("Order PATCH Error:", error);

@@ -436,28 +436,30 @@ export default function ProductDetailPage() {
             </p>
             <Separator className="bg-gray-300/40" />
 
-            <section>
-               <h2 className="text-sm font-semibold text-gray-800 mb-4 uppercase tracking-wide">
+            {categoryProducts.length > 0 && (
+              <section>
+                <h2 className="text-sm font-semibold text-gray-800 mb-4 uppercase tracking-wide">
                   Ürünün Diğer Renkleri
                 </h2>
 
-              <div className="flex gap-2 overflow-x-auto pb-2">
-                {categoryProducts.map((p) => (
-                  <div
-                    key={p.id}
-                    onClick={() => router.push(`/products/${p.id}`)}
-                    className="relative w-20 h-24 rounded-xs cursor-pointer overflow-hidden transition-all flex-shrink-0"
-                  >
-                    <Image
-                      src={p.mainImage}
-                      alt={p.title}
-                      fill
-                      className="object-cover w-full h-full"
-                    />
-                  </div>
-                ))}
-              </div>
-            </section>
+                <div className="flex gap-2 overflow-x-auto pb-2">
+                  {categoryProducts.map((p) => (
+                    <div
+                      key={p.id}
+                      onClick={() => router.push(`/products/${p.id}`)}
+                      className="relative w-20 h-24 rounded-xs cursor-pointer overflow-hidden transition-all flex-shrink-0"
+                    >
+                      <Image
+                        src={p.mainImage}
+                        alt={p.title}
+                        fill
+                        className="object-cover w-full h-full"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
 
             {/* Özelleştirme */}
             <div className="flex flex-col gap-6">
