@@ -31,6 +31,7 @@ import { GradientText } from "../ui/shadcn-io/gradient-text/index";
 import CartDropdown from "./cartDropdown";
 import { getGuestCartCount } from "@/utils/cart";
 import { useFavorite } from "@/contexts/favoriteContext";
+import Image from "next/image";
 export default function Navbar() {
   const links = [
     {
@@ -72,11 +73,10 @@ export default function Navbar() {
       label: "S.S.S",
       href: "/faq",
     },
-     {
+    {
       label: "Blog",
       href: "/blog",
     },
-
   ];
 
   const [favoriteCount, setFavoriteCount] = useState(0);
@@ -179,12 +179,18 @@ export default function Navbar() {
     >
       <div className="flex items-center justify-between px-4 md:px-10  max-w-7xl mx-auto">
         {/* Logo */}
-        <Link href="/" className="text-2xl font-bold font-[Playfair_Display]">
-          <GradientText
-            className="text-xl font-serif tracking-tighter"
-            text="Moda Perde"
-            gradient="linear-gradient(90deg, #4A0217 0%, #800020 60%, #C70039 100%)"
-          />
+        <Link href="/" className="flex items-center gap-2">
+          <div className=" relative">
+            <Image
+              src="/logo/logo7.png"
+              alt="Moda Perde 6"
+              width={80}
+              height={100}
+              quality={100}
+              className="object-contain"
+              priority
+            />
+          </div>
         </Link>
 
         {/* Desktop Menu */}

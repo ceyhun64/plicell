@@ -61,7 +61,19 @@ export default function Footer() {
             >
               <div className="md:block">
                 <div className="text-2xl font-bold mb-3 font-[Playfair_Display]">
-                  <Link href="/home">Moda Perde</Link>
+                  <Link href="/" className="flex items-center gap-2">
+                    <div className="w-[90px] relative">
+                      <Image
+                        src="/logo/logo7.png"
+                        alt="Moda Perde 6"
+                        width={100}
+                        height={80}
+                        quality={100}
+                        className="object-contain"
+                        priority
+                      />
+                    </div>
+                  </Link>
                 </div>
                 <p className="text-sm leading-relaxed font-['Mozilla_Headline'] mb-4 md:mb-6">
                   Müşterilerimize en iyi ürünleri ve hizmetleri sunmaya
@@ -218,35 +230,34 @@ export default function Footer() {
       </div>
 
       {/* Alt Bar */}
-   <div className="container mx-auto mt-12 flex flex-col-reverse md:flex-row justify-between items-center px-6 md:px-18 border-t border-gray-200 gap-6 md:gap-0 pt-6">
-  {/* Developed By - mobilde altta */}
-  <p className="text-sm text-gray-500 text-center md:text-left">
-    Developed By{" "}
-    <a
-      href="https://wa.me/905541496377"
-      target="_blank"
-      rel="noopener noreferrer"
-      className="font-semibold text-gray-900 hover:underline"
-    >
-      <GradientText
-        className="text-xl font-bold font-mono tracking-tighter"
-        text=".jhun{}"
-      />
-    </a>
-  </p>
+      <div className="container mx-auto mt-12 flex flex-col-reverse md:flex-row justify-between items-center px-6 md:px-18 border-t border-gray-200 gap-6 md:gap-0 pt-6">
+        {/* Developed By - mobilde altta */}
+        <p className="text-sm text-gray-500 text-center md:text-left">
+          Developed By{" "}
+          <a
+            href="https://wa.me/905541496377"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-semibold text-gray-900 hover:underline"
+          >
+            <GradientText
+              className="text-xl font-bold font-mono tracking-tighter"
+              text=".jhun{}"
+            />
+          </a>
+        </p>
 
-  {/* Logo */}
-  <div className="flex justify-center md:justify-end w-full md:w-auto">
-    <Image
-      src="/iyzico/logo_band_colored@3x.webp"
-      alt="iyzico ile güvenli ödeme"
-      width={400}
-      height={100}
-      className="object-contain"
-    />
-  </div>
-</div>
-
+        {/* Logo */}
+        <div className="flex justify-center md:justify-end w-full md:w-auto">
+          <Image
+            src="/iyzico/logo_band_colored@3x.webp"
+            alt="iyzico ile güvenli ödeme"
+            width={400}
+            height={100}
+            className="object-contain"
+          />
+        </div>
+      </div>
     </footer>
   );
 }
