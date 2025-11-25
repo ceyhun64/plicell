@@ -295,13 +295,12 @@ Mesaj: ${formData.message}
         </div>
 
         {/* 2. SATIR: HARİTA (IFRAME) */}
-        <div className="overflow-hidden rounded-xs shadow-xl border-1 border-rose-500/10 transition-shadow hover:shadow-2xl">
+        <div className="overflow-hidden rounded-xs shadow-xl border border-rose-500/10 transition-shadow hover:shadow-2xl">
           <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3182.655035720213!2d37.42181087610954!3d37.08952217216598!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x1531e452bb747ea3%3A0xb9b98881acfa56e3!2sMODA%20PERDE!5e0!3m2!1str!2str!4v1763988264992!5m2!1str!2str"
-            width="100%"
-            className="h-[450px] sm:h-[500px] md:h-[600px] rounded-xs"
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3426.3942668546624!2d37.813051!3d37.0145675!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x15318f938be54e21%3A0x61bafd6c8b6f9376!2sModa%20Perde%20Ferudun%20Polat%20Homedesign!5e1!3m2!1str!2str!4v1764056635735!5m2!1str!2str"
+            className="w-full h-[450px] md:h-[500px]"
             style={{ border: 0 }}
-            allowFullScreen={false}
+            allowFullScreen
             loading="lazy"
             referrerPolicy="no-referrer-when-downgrade"
             title="Moda Perde Konumu Haritası"

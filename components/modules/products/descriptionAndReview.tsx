@@ -13,7 +13,6 @@ interface Comment {
   comment?: string;
   createdAt: string;
   user?: {
-    // user artık opsiyonel
     id: number;
     name: string;
     surname: string;
@@ -37,7 +36,12 @@ export default function ProductTabs({ productId }: ProductTabsProps) {
   const [commentText, setCommentText] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const [userId, setUserId] = useState<number | null>(null);
+  // Kullanıcı bilgileri
+  const [currentUser, setCurrentUser] = useState<{
+    id: number;
+    name: string;
+    surname: string;
+  } | null>(null);
 
   const [hasUserCommented, setHasUserCommented] = useState(false);
 
@@ -45,10 +49,17 @@ export default function ProductTabs({ productId }: ProductTabsProps) {
   useEffect(() => {
     async function fetchUser() {
       try {
-        const res = await fetch("/api/account/check");
+        const res = await fetch("/api/account/check", {
+          credentials: "include",
+        });
         const data = await res.json();
-        console.log(data);
-        if (data.user?.id) setUserId(data.user.id);
+        if (data.user?.id) {
+          setCurrentUser({
+            id: data.user.id,
+            name: data.user.name,
+            surname: data.user.surname,
+          });
+        }
       } catch (err) {
         console.error(err);
       }
@@ -58,7 +69,8 @@ export default function ProductTabs({ productId }: ProductTabsProps) {
 
   useEffect(() => {
     if (productId) fetchComments();
-  }, [productId]);
+  }, [productId, currentUser]);
+
   const fetchComments = async () => {
     if (!productId) return;
     setIsLoading(true);
@@ -68,10 +80,10 @@ export default function ProductTabs({ productId }: ProductTabsProps) {
       if (!res.ok) throw new Error(data.error || "Yorumlar alınamadı");
       setComments(data);
 
-      // Eğer kullanıcı giriş yaptıysa, onun yorum yapıp yapmadığını kontrol et
-      if (userId) {
+      // Kullanıcının yorum yapıp yapmadığını kontrol et
+      if (currentUser) {
         const userAlreadyCommented = data.some(
-          (comment: Comment) => comment.user?.id === userId
+          (comment: Comment) => comment.user?.id === currentUser.id
         );
         setHasUserCommented(userAlreadyCommented);
       }
@@ -84,7 +96,7 @@ export default function ProductTabs({ productId }: ProductTabsProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!productId || !userId) {
+    if (!productId || !currentUser) {
       toast.error("Yorum gönderebilmek için giriş yapmalısınız.");
       return;
     }
@@ -108,10 +120,23 @@ export default function ProductTabs({ productId }: ProductTabsProps) {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Yorum gönderilemedi");
 
-      setComments([data, ...comments]);
+      // Yorum eklenir eklenmez kullanıcı adı göster
+      setComments([
+        {
+          id: data.id || Date.now(), // backend id yoksa geçici id
+          rating,
+          title,
+          comment: commentText,
+          createdAt: new Date().toISOString(),
+          user: currentUser,
+        },
+        ...comments,
+      ]);
+
       setRating(0);
       setTitle("");
       setCommentText("");
+      setHasUserCommented(true); // kullanıcı artık yorum yapmış
       toast.success("Yorum başarıyla gönderildi!");
     } catch (error) {
       console.error(error);
@@ -197,7 +222,7 @@ export default function ProductTabs({ productId }: ProductTabsProps) {
 
           {activeTab === "comments" && (
             <div className="space-y-6">
-              {!hasUserCommented && (
+              {!hasUserCommented && currentUser && (
                 <form
                   onSubmit={handleSubmit}
                   className="border p-4 rounded-md space-y-4"

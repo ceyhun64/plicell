@@ -13,14 +13,17 @@ interface ReviewRequestBody {
 export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions);
   if (!session) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: "Yetkisiz erişim" }, { status: 401 });
   }
 
   let body: ReviewRequestBody;
   try {
     body = await req.json();
   } catch (error) {
-    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 });
+    return NextResponse.json(
+      { error: "Geçersiz JSON verisi" },
+      { status: 400 }
+    );
   }
 
   const { productId, rating, title, comment } = body;
@@ -28,7 +31,7 @@ export async function POST(req: NextRequest) {
   // rating kontrolü
   if (typeof rating !== "number" || rating < 1 || rating > 5) {
     return NextResponse.json(
-      { error: "Rating must be between 1 and 5" },
+      { error: "Puanlama 1 ile 5 arasında olmalıdır" },
       { status: 400 }
     );
   }
@@ -48,13 +51,13 @@ export async function POST(req: NextRequest) {
     if (error?.code === "P2002") {
       // unique constraint violation
       return NextResponse.json(
-        { error: "You have already reviewed this product." },
+        { error: "Bir ürün için en fazla 1 yorum yapabilirsiniz." },
         { status: 400 }
       );
     }
     console.error(error);
     return NextResponse.json(
-      { error: "Invalid product or other error." },
+      { error: "Geçersiz ürün veya başka bir hata oluştu." },
       { status: 400 }
     );
   }

@@ -6,6 +6,7 @@ import { Heart } from "lucide-react";
 import Link from "next/link";
 import { useState, useRef } from "react";
 import { useFavorite } from "@/contexts/favoriteContext";
+import { motion } from "framer-motion";
 
 interface ProductData {
   id: number;
@@ -24,7 +25,6 @@ interface ProductData {
   room?: string;
 }
 
-// Roomlara göre renk eşleme
 const roomColors: Record<string, string> = {
   Salon: "bg-gray-500",
   "Çocuk Odası": "bg-pink-500",
@@ -46,11 +46,8 @@ export default function ProductCard({ product }: { product: ProductData }) {
     e.preventDefault();
     e.stopPropagation();
 
-    if (favorited) {
-      removeFavorite(product.id);
-    } else {
-      addFavorite(product.id);
-    }
+    if (favorited) removeFavorite(product.id);
+    else addFavorite(product.id);
   };
 
   const handleMouseMove = (event: React.MouseEvent<HTMLDivElement>) => {
@@ -63,74 +60,71 @@ export default function ProductCard({ product }: { product: ProductData }) {
 
     let nextImage = product.mainImage;
 
-    if (relativeY >= 0 && relativeY < segment1) {
-      nextImage = product.subImage || product.mainImage;
-    } else if (relativeY >= segment1 && relativeY < segment2) {
+    if (relativeY < segment1) nextImage = product.subImage || product.mainImage;
+    else if (relativeY < segment2)
       nextImage = product.subImage2 || product.mainImage;
-    } else if (relativeY >= segment2 && relativeY <= height) {
-      nextImage = product.subImage3 || product.mainImage;
-    }
+    else nextImage = product.subImage3 || product.mainImage;
 
-    if (nextImage !== currentImage) {
-      setCurrentImage(nextImage);
-    }
+    if (nextImage !== currentImage) setCurrentImage(nextImage);
   };
 
-  const handleMouseLeave = () => {
-    setCurrentImage(product.mainImage);
-  };
+  const handleMouseLeave = () => setCurrentImage(product.mainImage);
 
   return (
-    <Card className="p-0 m-0 rounded-xs overflow-hidden hover:shadow-2xl transition-shadow duration-500 w-full relative">
-      <Link href={`/products/${product.id}`}>
-        <CardContent className="flex flex-col p-0 m-0 relative">
-          {/* ROOM BADGE */}
-          {product.room && (
-            <span
-              className={`absolute top-1 right-1 md:top-3 md:right-3 text-white text-xs font-extralight px-2 py-1 rounded-xs shadow-md z-2 ${
-                roomColors[product.room] || "bg-gray-500"
-              }`}
-            >
-              {product.room}
-            </span>
-          )}
-
-          <div
-            ref={imageRef}
-            className="relative w-full aspect-square cursor-pointer"
-            onMouseMove={handleMouseMove}
-            onMouseLeave={handleMouseLeave}
-          >
-            <Image
-              src={currentImage}
-              alt={product.title}
-              width={350}
-              height={350}
-              className="object-cover w-full h-full"
-            />
-          </div>
-
-          <div className="p-4 relative">
-            <p className="text-xs md:text-sm font-medium text-gray-900 transition-colors group-hover:text-red-600">
-              {product.title}
-            </p>
-            <p className="text-gray-600 text-xs md:text-sm">
-              {product.pricePerM2}₺ / m²
-            </p>
-
-            <button
-              className="absolute top-4 right-2 p-1 rounded-full bg-white hover:bg-red-50 transition"
-              onClick={handleFavoriteClick}
-            >
-              <Heart
-                className={`h-4 w-4 transition-colors duration-300 ${
-                  favorited ? "text-red-500" : "text-gray-300"
+    <motion.div
+      whileHover={{ scale: 1.01 }}
+      transition={{ type: "spring", stiffness: 180, damping: 12 }}
+    >
+      <Card className="p-0 m-0 rounded-xs overflow-hidden hover:shadow-2xl transition-shadow duration-500 w-full relative">
+        <Link href={`/products/${product.id}`}>
+          <CardContent className="flex flex-col p-0 m-0 relative">
+            {product.room && (
+              <span
+                className={`absolute top-1 right-1 md:top-3 md:right-3 text-white text-xs font-extralight px-2 py-1 rounded-xs shadow-md z-10 ${
+                  roomColors[product.room] || "bg-gray-500"
                 }`}
+              >
+                {product.room}
+              </span>
+            )}
+
+            <div
+              ref={imageRef}
+              className="relative w-full aspect-square cursor-pointer"
+              onMouseMove={handleMouseMove}
+              onMouseLeave={handleMouseLeave}
+            >
+              <Image
+                src={currentImage}
+                alt={product.title}
+                width={350}
+                height={350}
+                className="object-cover w-full h-full transition-transform duration-500"
               />
-            </button>
-          </div>
-        </CardContent>
-      </Link>
-    </Card>
+            </div>
+
+            <div className="p-4 relative">
+              <p className="text-xs md:text-sm font-medium text-gray-900">
+                {product.title}
+              </p>
+              <p className="text-gray-600 text-xs md:text-sm">
+                {product.pricePerM2}₺ / m²
+              </p>
+
+              <button
+                className="absolute top-4 right-2 p-1 rounded-full bg-white hover:bg-red-50 transition"
+                onClick={handleFavoriteClick}
+              >
+                <Heart
+                  className={`h-4 w-4 transition-colors duration-300 ${
+                    favorited ? "text-red-500" : "text-gray-300"
+                  }`}
+                />
+              </button>
+            </div>
+          </CardContent>
+        </Link>
+      </Card>
+    </motion.div>
   );
 }

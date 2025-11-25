@@ -113,11 +113,6 @@ export default function CategoriesSection() {
     // Normalde API'den veri çekimi burada olur.
     async function fetchCategories() {
       try {
-        // !!! GECİKME KALDIRILDI !!!
-        // await new Promise((resolve) => setTimeout(resolve, 1000));
-
-        // Gerçek API çağrısı veya yerel veri ataması
-        // (API çağrısı yoksa, setLoading(false) hemen çalışır.)
         setCategories(initialCategories);
       } catch (error) {
         console.error("Kategoriler yüklenirken hata oluştu:", error);
@@ -160,6 +155,32 @@ export default function CategoriesSection() {
   // Yükleme bittiğinde normal içerik gösterilir
   return (
     <section className="container mx-auto px-4 md:px-12 py-12 max-w-8xl space-y-6">
+      <div className="text-center mb-12">
+        <motion.h2
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="text-3xl sm:text-4xl md:text-5xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-gray-600 to-gray-800 drop-shadow-lg"
+        >
+          Ev Dekorasyonunuzu Baştan Yaratın
+        </motion.h2>
+
+        <motion.p
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="text-gray-600 mt-3 sm:mt-4 text-sm sm:text-base italic"
+        >
+          Kategorilerimiz ile mekanınıza şıklık ve konfor katın. Şimdi keşfedin!
+        </motion.p>
+
+        <motion.div
+          initial={{ width: 0 }}
+          animate={{ width: 60 }}
+          transition={{ duration: 0.8, delay: 0.4 }}
+          className="h-1 bg-rose-600 mx-auto mt-4 rounded-full"
+        ></motion.div>
+      </div>
       {/* 1. Satır — 3 */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {categories.slice(0, 3).map((c) => (

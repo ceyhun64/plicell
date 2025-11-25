@@ -43,8 +43,7 @@ export default function Products() {
   useEffect(() => {
     async function fetchProducts() {
       try {
-        // !!! GECİKME KALDIRILDI !!!
-        // await new Promise((resolve) => setTimeout(resolve, 1000));
+       
 
         const res = await fetch("/api/products");
         const data = await res.json();

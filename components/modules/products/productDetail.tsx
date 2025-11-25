@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo, useRef, useEffect } from "react";
 import Image from "next/image";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -52,6 +52,7 @@ interface ProductData {
   device?: string;
   subCategory?: string;
   room?: string;
+  categoryId?: number;
 }
 
 const profiles = [
@@ -67,6 +68,7 @@ const profiles = [
 export default function ProductDetailPage() {
   const params = useParams() as { id?: string };
   const productId = Number(params.id);
+  const router = useRouter();
 
   const cartDropdownRef = useRef<{ open: () => void; refreshCart: () => void }>(
     null
@@ -135,40 +137,26 @@ export default function ProductDetailPage() {
     fetchProduct();
   }, [productId]);
 
+  console.log("product:", product);
   useEffect(() => {
     if (!product) return;
 
     const fetchCategoryProducts = async () => {
       try {
-        const res = await fetch("/api/products");
+        const res = await fetch(`/api/products/category/${product.categoryId}`);
+        if (!res.ok) throw new Error("Kategori ürünleri çekilemedi");
         const data = await res.json();
-        console.log("data:", data);
-        if (res.ok && data.products) {
-          // Aynı kategorideki ürünleri filtrele
-          const filtered = data.products.filter((p: ProductData) => {
-            // Ana kategori eşleşmeli
-            const categoryMatch =
-              p.category.trim().toLowerCase() ===
-              product.category.trim().toLowerCase();
-
-            // Eğer ürünün subCategory'si varsa, onu da kontrol et
-            const subCategoryMatch = product.subCategory
-              ? p.subCategory?.trim().toLowerCase() ===
-                product.subCategory?.trim().toLowerCase()
-              : true; // alt kategori yoksa sadece ana kategori yeterli
-
-            return categoryMatch && subCategoryMatch;
-          });
-
-          setCategoryProducts(filtered);
-        }
+        setCategoryProducts(
+          data.products.filter((p: ProductData) => p.id !== product.id)
+        ); // kendini çıkar
       } catch (error) {
-        console.error("Kategori ürünleri çekilemedi:", error);
+        console.error(error);
       }
     };
 
     fetchCategoryProducts();
   }, [product]);
+  console.log("categoryProducts:", categoryProducts);
 
   const calculatedM2 = useMemo(() => {
     const m2 = (en * boy) / 10000;
@@ -290,9 +278,7 @@ export default function ProductDetailPage() {
   // ✅ Loading ve 404
   // ✅ Loading ve 404 (İyileştirilmiş Skeleton)
   if (loading) {
-    return (
-      <ProductDetailSkeleton/>
-    );
+    return <ProductDetailSkeleton />;
   }
 
   if (!product) {
@@ -448,8 +434,30 @@ export default function ProductDetailPage() {
             <p className="text-gray-700 leading-relaxed text-sm  md:text-base drop-shadow-sm border-l-4 border-rose-300/60 pl-3">
               {product.description}
             </p>
-
             <Separator className="bg-gray-300/40" />
+
+            <section>
+               <h2 className="text-sm font-semibold text-gray-800 mb-4 uppercase tracking-wide">
+                  Ürünün Diğer Renkleri
+                </h2>
+
+              <div className="flex gap-2 overflow-x-auto pb-2">
+                {categoryProducts.map((p) => (
+                  <div
+                    key={p.id}
+                    onClick={() => router.push(`/products/${p.id}`)}
+                    className="relative w-20 h-24 rounded-xs cursor-pointer overflow-hidden transition-all flex-shrink-0"
+                  >
+                    <Image
+                      src={p.mainImage}
+                      alt={p.title}
+                      fill
+                      className="object-cover w-full h-full"
+                    />
+                  </div>
+                ))}
+              </div>
+            </section>
 
             {/* Özelleştirme */}
             <div className="flex flex-col gap-6">
@@ -541,10 +549,10 @@ export default function ProductDetailPage() {
               {/* Ölçü Nasıl Alınır Butonu */}
               <Button
                 variant="outline"
-                className="h-12 rounded-xl text-gray-800 border-gray-300 hover:bg-gray-100 hover:border-gray-400 transition-all"
+                className="h-12 text-xs md:text-sm rounded-full text-gray-800 border-gray-300 hover:bg-gray-100 hover:border-gray-400 transition-all"
                 onClick={() => setShowMeasureModal(true)}
               >
-                Ölçü Nasıl Alınır?
+                Ölçü Nasıl Alınır? (Detaylı Anlatım)
               </Button>
 
               {/* Ölçü Inputları ve M² */}

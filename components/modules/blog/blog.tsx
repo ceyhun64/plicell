@@ -52,8 +52,6 @@ export default function BlogPage() {
   const fetchBlogs = async () => {
     setLoading(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 600));
-
       const res = await fetch("/api/blog");
       if (!res.ok) throw new Error("Bloglar alınamadı");
       const data = await res.json();

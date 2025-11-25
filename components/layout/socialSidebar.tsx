@@ -34,7 +34,7 @@ export default function SocialSidebar() {
     },
     {
       name: "Facebook",
-      link: "https://www.facebook.com/share/1GzHckQSvz",
+      link: "https://www.facebook.com/p/Ferudun-POLAT-100054520957916/",
       icon: <Facebook size={24} />,
       bg: "bg-[#1877f2]",
     },
