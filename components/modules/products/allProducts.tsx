@@ -142,7 +142,7 @@ export default function AllProducts() {
         </div>
       </div>
 
-      <div className="bg-gradient-to-b from-white via-amber-950/10 to-white px-2 md:px-8">
+      <div className="bg-gradient-to-b from-white via-amber-950/10 to-white md:px-8">
         <div className="flex flex-col md:flex-row gap-6">
           {/* Left Sidebar */}
           <aside className="hidden md:block md:w-64 flex-shrink-0">
@@ -169,7 +169,7 @@ export default function AllProducts() {
               setSort={setSort}
             />
 
-            <div className="mt-4 md:mt-6">
+            <div className="mt-4 md:mt-6 px-2 md:px-0 ">
               {filteredProducts.length > 0 ? (
                 <div
                   className={cn(

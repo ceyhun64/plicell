@@ -57,10 +57,10 @@ const ProductTopBar: React.FC<ProductTopBarProps> = ({
   return (
     <div
       className={cn(
-        "sticky top-14 z-50 w-full px-4 md:px-6 transition-all duration-300",
+        "sticky top-17 md:top-22 z-50 w-full px-4 md:px-6 transition-all duration-300",
         scrolled
-          ? "py-3 bg-white/80 backdrop-blur-lg shadow-sm border-b"
-          : "py-3 bg-white/80 backdrop-blur-lg shadow-sm"
+          ? "py-3 bg-white/80 backdrop-blur-lg shadow-2xl border-b "
+          : "py-5 bg-white/80"
       )}
     >
       {/* Mobil: Filtrele butonu */}
@@ -72,7 +72,6 @@ const ProductTopBar: React.FC<ProductTopBarProps> = ({
             "w-full max-w-xs flex items-center justify-center h-4 px-4 py-0 border-none bg-transparent text-[#7B0323] hover:bg-transparent transition"
           )}
         >
-          
           {mobileOpen ? (
             <ChevronUp className="h-4 w-4 ml-1" />
           ) : (
