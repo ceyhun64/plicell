@@ -142,7 +142,7 @@ export default function AllProducts() {
         </div>
       </div>
 
-      <div className="bg-gradient-to-b from-white via-amber-950/10 to-white px-1 md:px-8">
+      <div className="bg-gradient-to-b from-white via-amber-950/10 to-white px-2 md:px-8">
         <div className="flex flex-col md:flex-row gap-6">
           {/* Left Sidebar */}
           <aside className="hidden md:block md:w-64 flex-shrink-0">
