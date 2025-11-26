@@ -64,7 +64,7 @@ export default function Footer() {
                   <Link href="/" className="flex items-center gap-2">
                     <div className="relative w-18 h-12 md:w-22 md:h-14 lg:w-26 lg:h-16">
                       <Image
-                        src="/logo/logo8.png"
+                        src="/logo/logo.png"
                         alt="Moda Perde 6"
                         fill
                         quality={100}

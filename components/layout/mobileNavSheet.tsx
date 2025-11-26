@@ -121,7 +121,7 @@ export default function MobileNavSheet({
             <Link href="/" className="flex items-center gap-2">
               <div className="relative w-18 h-12">
                 <Image
-                  src="/logo/logo8.png"
+                  src="/logo/logo.png"
                   alt="Moda Perde 6"
                   fill
                   quality={100}
