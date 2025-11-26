@@ -81,7 +81,7 @@ export default function Navbar() {
       icon: Sparkles, // Sparkles
     },
     {
-      label: "İletişim",
+      label: "Bize Ulaşın",
       href: "/contact",
       icon: PhoneOutgoing, // PhoneOutgoing
     },
@@ -91,7 +91,7 @@ export default function Navbar() {
       icon: MessageCircleQuestion, // MessageCircleQuestion
     },
     {
-      label: "Blog",
+      label: "Moda Blog",
       href: "/blog",
       icon: Feather, // Feather
     },
@@ -208,7 +208,7 @@ export default function Navbar() {
           {/* Desktop Menu */}
           <div className="hidden md:flex absolute left-1/2 top-0 transform -translate-x-1/2 h-full items-center">
             <NavigationMenu>
-              <NavigationMenuList className="flex gap-1">
+              <NavigationMenuList className="flex gap-2">
                 {links.map((link, i) => (
                   <NavigationMenuItem key={i}>
                     {link.subItems ? (
@@ -242,12 +242,12 @@ export default function Navbar() {
           </div>
 
           {/* Right Icons */}
-          <div className="flex items-center gap-0 md:gap-4">
+          <div className="flex items-center gap-2 md:gap-4">
             {/* Search */}
             <Link href={"/search"}>
               <Button
                 variant="ghost"
-                size="icon-sm"
+                size="icon"
                 aria-label="Ara"
                 onClick={() => setSearchOpen(true)}
               >

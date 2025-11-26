@@ -103,7 +103,7 @@ export default function ProductCard({ product }: { product: ProductData }) {
               />
             </div>
 
-            <div className="p-4 relative">
+            <div className=" p-4 relative">
               <p className="text-xs md:text-sm font-medium text-gray-900">
                 {product.title}
               </p>

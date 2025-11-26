@@ -97,7 +97,7 @@ export default function Products() {
 
   // Yükleme bittiğinde normal içerik gösterilir
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white via-amber-950/20 to-white text-gray-900 font-sans flex flex-col items-center justify-center px-2 py-12 lg:p-16">
+    <div className="min-h-screen bg-gradient-to-b from-white via-amber-950/10 to-white text-gray-900 font-sans flex flex-col items-center justify-center px-2 py-12 lg:p-16">
       <div className="container mx-auto flex flex-col lg:flex-row gap-12 lg:gap-24 items-start">
         {/* Sol metin ve buton */}
         <div className="flex-1 flex flex-col justify-center items-center lg:items-start text-center lg:text-left lg:sticky top-30 self-start max-w-md">
