@@ -240,6 +240,12 @@ model Subscribe {
   @@map("subscribe")
 }
 
+model Banner {
+  id       Int     @id @default(autoincrement())
+  title    String?
+  subtitle String?
+}
+
 enum OrderStatus {
   pending
   paid

@@ -170,7 +170,7 @@ export default function ProductTabs({ productId }: ProductTabsProps) {
   ];
 
   return (
-    <section className="mt-16 mb-8">
+    <section className="mt-16 mb-4">
       <div className="flex border-b border-gray-200 mb-8">
         <button
           onClick={() => setActiveTab("description")}

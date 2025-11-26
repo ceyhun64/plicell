@@ -121,21 +121,21 @@ export default function Recommended() {
   }
 
   return (
-    <section className="container mx-auto px-4 lg:px-16 py-12 relative bg-gradient-to-b from-white via-amber-50/20 mb-4">
+    <section className="container mx-auto px-3 lg:px-16 py-6 md:mt-6 relative bg-gradient-to-b from-white via-amber-50/20">
       {/* Başlık */}
       <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
         <div>
           <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-2 text-gray-900 font-[Playfair_Display]">
-            Onları Alan Bunları Da Tercih Etti
+            Önerilen Ürünler
           </h2>
           <p className="text-xs md:text-lg text-gray-600 mb-2 max-w-lg font-['Mozilla_Headline']">
-            En yeni ürünlerimiz burada. Yeniliklere göz atın.
+            Bunları alan müşterilerimiz, bu ürünleri de tercih etti.
           </p>
         </div>
       </header>
 
       {/* Carousel */}
-      <div className="relative w-full min-h-[400px] sm:min-h-[500px] lg:min-h-[550px]">
+      <div className="relative w-full min-h-[300px] sm:min-h-[400px] lg:min-h-[550px]">
         <Carousel
           opts={{ align: "start", loop: true }}
           setApi={setApi}
@@ -153,11 +153,11 @@ export default function Recommended() {
           </CarouselContent>
 
           <CarouselPrevious
-            className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 flex bg-white text-gray-800 border border-gray-300 hover:bg-gray-100 rounded-full p-2 shadow-md z-20 transition-transform duration-300 hover:scale-110"
+            className="absolute left-1 sm:left-4 top-1/2 -translate-y-1/2 flex bg-white text-gray-800 border border-gray-300 hover:bg-gray-100 rounded-full p-2 shadow-md z-20 transition-transform duration-300 hover:scale-110"
             aria-label="Önceki ürün"
           />
           <CarouselNext
-            className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 flex bg-white text-gray-800 border border-gray-300 hover:bg-gray-100 rounded-full p-2 shadow-md z-20 transition-transform duration-300 hover:scale-110"
+            className="absolute right-1 sm:right-4 top-1/2 -translate-y-1/2 flex bg-white text-gray-800 border border-gray-300 hover:bg-gray-100 rounded-full p-2 shadow-md z-20 transition-transform duration-300 hover:scale-110"
             aria-label="Sonraki ürün"
           />
         </Carousel>

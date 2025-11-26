@@ -141,7 +141,7 @@ export default function HeroSection() {
       })}
 
       {/* Navigasyon Düğmeleri */}
-      <div className="absolute top-2/5 md:top-1/2 left-3 transform -translate-y-1/2 z-30 opacity-70 group-hover:opacity-100 transition-opacity duration-300 ">
+      <div className="absolute top-2/5 md:top-1/2 left-3 transform -translate-y-1/2 z-10 opacity-70 group-hover:opacity-100 transition-opacity duration-300 ">
         <Button
           variant="secondary" // Daha belirgin bir buton stili
           size="icon"
@@ -152,7 +152,7 @@ export default function HeroSection() {
           <ChevronLeft size={28} />
         </Button>
       </div>
-      <div className="absolute top-2/5 md:top-1/2 right-3 transform -translate-y-1/2 z-30 opacity-70 group-hover:opacity-100 transition-opacity duration-300">
+      <div className="absolute top-2/5 md:top-1/2 right-3 transform -translate-y-1/2 z-10 opacity-70 group-hover:opacity-100 transition-opacity duration-300">
         <Button
           variant="secondary"
           size="icon"
