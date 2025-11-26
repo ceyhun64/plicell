@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus, Instagram, Facebook, Phone } from "lucide-react";
+import Image from "next/image";
 
 export default function SocialSidebar() {
   const [isOpen, setIsOpen] = useState(true);
@@ -29,25 +30,25 @@ export default function SocialSidebar() {
     {
       name: "Instagram",
       link: "https://www.instagram.com/nataliaperde",
-      icon: <Instagram size={24} />,
+      src: "/socialMedia/instagram.webp",
       bg: "bg-gradient-to-tr from-[#feda75] via-[#fa7e1e] to-[#d62976]",
     },
     {
       name: "Facebook",
       link: "https://www.facebook.com/p/Ferudun-POLAT-100054520957916/",
-      icon: <Facebook size={24} />,
+      src: "/socialMedia/facebook.webp",
       bg: "bg-[#1877f2]",
     },
     {
       name: "WhatsApp",
       link: whatsappLink,
-      icon: <Phone size={24} />,
+      src: "/socialMedia/whatsapp.png",
       bg: "bg-[#25D366]",
     },
     {
       name: "Telefon",
       link: `tel:${whatsappNumber}`,
-      icon: <Phone size={24} />,
+      src: "/socialMedia/phone.png",
       bg: "bg-[#075E54]",
     },
   ];
@@ -58,7 +59,7 @@ export default function SocialSidebar() {
         {isOpen && (
           <motion.div
             className="flex flex-col items-center gap-3 mb-2"
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 20}}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 20 }}
             transition={{
@@ -79,13 +80,10 @@ export default function SocialSidebar() {
                   boxShadow: `0 0 18px ${icon.bg}90`,
                 }}
                 transition={{ duration: 0.4 }}
-                className={`p-2 md:p-3 rounded-full text-white flex items-center justify-center ${icon.bg} shadow-lg backdrop-blur-md`}
+                className={` rounded-full text-white flex items-center justify-center ${icon.bg} shadow-lg backdrop-blur-md`}
                 aria-label={icon.name}
               >
-                {React.cloneElement(icon.icon, {
-                  size: 20,
-                  className: "md:w-6 md:h-6 w-5 h-5",
-                })}
+                <Image className="rounded-full" src={icon.src} alt={icon.name} width={42} height={42} />
               </motion.a>
             ))}
           </motion.div>

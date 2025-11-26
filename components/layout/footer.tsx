@@ -62,15 +62,14 @@ export default function Footer() {
               <div className="md:block">
                 <div className="text-2xl font-bold mb-3 font-[Playfair_Display]">
                   <Link href="/" className="flex items-center gap-2">
-                    <div className="w-[90px] relative">
+                    <div className="relative w-18 h-12 md:w-22 md:h-14 lg:w-26 lg:h-16">
                       <Image
-                        src="/logo/logo7.png"
+                        src="/logo/logo8.png"
                         alt="Moda Perde 6"
-                        width={100}
-                        height={80}
+                        fill
                         quality={100}
                         className="object-contain"
-                        priority
+                        sizes="(max-width: 768px) 144px, (max-width: 1024px) 176px, 208px"
                       />
                     </div>
                   </Link>

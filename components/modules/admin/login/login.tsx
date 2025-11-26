@@ -12,6 +12,7 @@ import Image from "next/image";
 import { signIn } from "next-auth/react";
 import { GradientText } from "@/components/ui/shadcn-io/gradient-text/index";
 import { signOut } from "next-auth/react";
+import Link from "next/link";
 
 export default function AdminLogin() {
   const [email, setEmail] = useState("");
@@ -72,17 +73,18 @@ export default function AdminLogin() {
       >
         {/* Logo / Başlık */}
         <div className="flex flex-col items-center gap-2">
-          <div className=" relative">
-            <Image
-              src="/logo/logo7.png"
-              alt="Moda Perde 6"
-              width={160}
-              height={200}
-              quality={100}
-              className="object-contain"
-              priority
-            />
-          </div>
+          <Link href="/" className="flex items-center gap-2">
+            <div className="relative w-18 h-12 md:w-22 md:h-14 lg:w-26 lg:h-16">
+              <Image
+                src="/logo/logo8.png"
+                alt="Moda Perde 6"
+                fill
+                quality={100}
+                className="object-contain"
+                sizes="(max-width: 768px) 144px, (max-width: 1024px) 176px, 208px"
+              />
+            </div>
+          </Link>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
             Admin Panel
           </h1>
