@@ -33,7 +33,6 @@ export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     const body = await request.json();
-    console.log(body);
 
     // 🧩 Login değilse frontend'den gelen userId'yi kullan
     const userId = session?.user?.id ?? body.userId;

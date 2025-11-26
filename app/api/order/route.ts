@@ -121,7 +121,6 @@ export async function POST(req: NextRequest) {
       paymentCard,
     } = body;
 
-    console.log("api/order body:", body);
 
     if (!userId || !basketItems || basketItems.length === 0) {
       return NextResponse.json(

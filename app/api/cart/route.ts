@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/db";
 import { getServerSession } from "next-auth";
-// Düzeltme: authOptions'ı artık Route Handler'dan değil, config dosyasından içe aktarıyoruz.
-// '@/lib/auth' dosyasının içeriği, bir önceki yanıttaki authOptions yapısı olmalıdır.
 import { authOptions } from "@/lib/auth";
 
 interface CartItemRequestBody {
@@ -17,12 +15,13 @@ interface CartItemRequestBody {
 
 export async function GET(req: Request) {
   const session = await getServerSession(authOptions);
-  if (!session)
+  const userId = session?.user?.id ? Number(session.user.id) : null;
+  if (!userId)
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   try {
     const cartItems = await prisma.cartItem.findMany({
-      where: { userId: Number(session.user.id) },
+      where: { userId },
       include: { product: true },
     });
     return NextResponse.json(cartItems);
@@ -37,28 +36,32 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   const session = await getServerSession(authOptions);
-  if (!session)
+  const userId = session?.user?.id ? Number(session.user.id) : null;
+  if (!userId)
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   try {
     const body: CartItemRequestBody = await req.json();
 
-    const {
-      productId,
-      quantity = 1,
-      note = null,
-      profile = "",
-      width = 0,
-      height = 0,
-      device = "vidali",
-    } = body; // m² hesaplama
+    if (!body.productId)
+      return NextResponse.json(
+        { error: "ProductId is required" },
+        { status: 400 }
+      );
 
-    const m2 = width && height ? Math.max(1, (width * height) / 10000) : 1; // ✅ Aynı ürünü, profil, aparat ve not bilgileriyle kontrol et
+    const quantity = body.quantity ?? 1;
+    const note = body.note ?? null;
+    const profile = body.profile ?? "";
+    const device = body.device ?? "vidali";
+    const width = Number(body.width) || 0;
+    const height = Number(body.height) || 0;
+    const m2 = width && height ? Math.max(1, (width * height) / 10000) : 1;
 
+    // Aynı ürün, profil, aparat ve not ile kontrol
     const existing = await prisma.cartItem.findFirst({
       where: {
-        userId: Number(session.user.id),
-        productId,
+        userId,
+        productId: body.productId,
         profile,
         device,
         note,
@@ -66,19 +69,18 @@ export async function POST(req: Request) {
     });
 
     if (existing) {
-      // Varsa miktarı artır
       const updated = await prisma.cartItem.update({
         where: { id: existing.id },
         data: { quantity: existing.quantity + quantity },
         include: { product: true },
       });
       return NextResponse.json(updated);
-    } // Yoksa yeni kayıt oluştur
+    }
 
     const cartItem = await prisma.cartItem.create({
       data: {
-        userId: Number(session.user.id),
-        productId,
+        userId,
+        productId: body.productId,
         quantity,
         note,
         profile,
@@ -102,13 +104,12 @@ export async function POST(req: Request) {
 
 export async function DELETE(req: Request) {
   const session = await getServerSession(authOptions);
-  if (!session)
+  const userId = session?.user?.id ? Number(session.user.id) : null;
+  if (!userId)
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   try {
-    await prisma.cartItem.deleteMany({
-      where: { userId: Number(session.user.id) },
-    });
+    await prisma.cartItem.deleteMany({ where: { userId } });
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Cart DELETE error:", error);

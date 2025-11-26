@@ -25,7 +25,6 @@ export async function GET(
   try {
     const { categoryId } = await context.params;
 
-    console.log("categoryId:", categoryId);
     const products = await prisma.product.findMany({
       where: { categoryId: Number(categoryId) },
       include: { category: true, subCategory: true, room: true },
