@@ -88,7 +88,7 @@ export default function LoginForm({ onLoginSuccess }: LoginFormProps) {
   };
 
   return (
-    <div className="w-full min-h-screen flex items-center justify-center bg-white px-4 mt-24 md:mt-0">
+    <div className="w-full min-h-screen flex items-center justify-center bg-white px-4 my-24 md:mt-0 ">
       <div className="w-full max-w-5xl grid md:grid-cols-2 border-gray-200 rounded-xs overflow-hidden">
         {/* Sol taraf - Giriş */}
         <div className="p-2 md:p-10 flex flex-col justify-center h-full">
