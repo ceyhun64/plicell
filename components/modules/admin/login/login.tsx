@@ -72,11 +72,17 @@ export default function AdminLogin() {
       >
         {/* Logo / Başlık */}
         <div className="flex flex-col items-center gap-2">
-          <GradientText
-            className="text-2xl md:text-3xl font-extrabold"
-            text="Moda Perde"
-            gradient="linear-gradient(90deg, #4A0217 0%, #800020 60%, #C70039 100%)"
-          />
+          <div className=" relative">
+            <Image
+              src="/logo/logo7.png"
+              alt="Moda Perde 6"
+              width={160}
+              height={200}
+              quality={100}
+              className="object-contain"
+              priority
+            />
+          </div>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
             Admin Panel
           </h1>
