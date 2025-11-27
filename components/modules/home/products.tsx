@@ -43,8 +43,6 @@ export default function Products() {
   useEffect(() => {
     async function fetchProducts() {
       try {
-       
-
         const res = await fetch("/api/products");
         const data = await res.json();
         console.log("data:", data);

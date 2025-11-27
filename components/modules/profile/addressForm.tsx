@@ -323,14 +323,17 @@ export default function AdresForm({
         />
       </div>
 
-      {/* TC Kimlik No - Hata düzeltildi: value={formData.tcno || ""} */}
-      <div className="space-y-1">
-        <Label htmlFor="tcno">TC Kimlik No *</Label>
+      {/* TC Kimlik No */}
+      <div className="space-y-2">
+        <Label htmlFor="tcno" className="text-gray-700 font-medium">
+          TC Kimlik No *
+        </Label>
         <Input
           id="tcno"
           type="text"
           maxLength={11}
-          value={formData.tcno || ""} // 👈 DÜZELTME
+          className="rounded-lg h-11 text-[15px]" // 👈 Stil eklendi
+          value={formData.tcno || ""}
           onChange={(e) => setFormData({ ...formData, tcno: e.target.value })}
           required
         />

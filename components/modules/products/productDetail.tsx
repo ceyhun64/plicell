@@ -405,7 +405,7 @@ export default function ProductDetailPage() {
             </motion.div>
           </div>
           {/* Ürün Detayları ve Aksiyonlar */}
-          <div className=" flex flex-col gap-4 md:gap-6 p-2 py-5 sm:p-6 md:p-8 backdrop-blur-xl bg-gradient-to-br from-rose-50/70 via-white/90 to-rose-50/70 transition-all duration-300 rounded-xs shadow-md border border-rose-100">
+          <div className=" flex flex-col gap-4 md:gap-6 p-2 py-5 sm:p-6 md:p-8 backdrop-blur-xl bg-gradient-to-br from-yellow-50/50 via-white/90 to-yellow-50/50 transition-all duration-300 rounded-xs shadow-md border border-rose-100">
             {/* Ürün Başlığı */}
             {/* Ürün Başlığı */}
             <div className="flex flex-col gap-2">
@@ -523,7 +523,7 @@ export default function ProductDetailPage() {
                 </h3>
                 <Select
                   value={selectedDevice}
-                  onValueChange={(value) => console.log(value)} // setSelectedDevice
+                  onValueChange={(value) => setSelectedDevice(value)}
                 >
                   <SelectTrigger className="h-12 rounded-full border-gray-300 shadow-md hover:border-rose-400 transition text-base">
                     <SelectValue placeholder="Aparat Seçiniz" />
