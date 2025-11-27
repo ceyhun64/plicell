@@ -149,7 +149,6 @@ function CompactMegaMenuCard({
               sizes="60px"
             />
             {/* Hafif bir gölge overlay'i */}
-            <div className="absolute inset-0 bg-black/5 group-hover:bg-black/10 transition-colors"></div>
           </div>
 
           {/* Metin Alanı */}
