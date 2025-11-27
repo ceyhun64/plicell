@@ -227,7 +227,7 @@ export default function CollectionMegaMenu({
         {/* Başlık ve Tümünü Gör Butonu */}
         <div className="flex justify-between items-end border-b pb-6 mb-8 border-gray-100">
           <div>
-            <h3 className="text-3xl font-extrabold text-gray-900 mb-2 tracking-tight">
+            <h3 className="text-3xl font-bold text-gray-900 mb-2 tracking-tight">
               Perde Koleksiyonları
             </h3>
             <p className="text-base text-gray-500">
@@ -284,7 +284,7 @@ export default function CollectionMegaMenu({
               strokeWidth={1.5}
             />
             <div>
-              <p className="font-extrabold text-lg text-gray-900 leading-snug">
+              <p className="font-bold text-lg text-gray-900 leading-snug">
                 Özel Projeler ve Ölçü Desteği
               </p>
               <p className="text-sm text-gray-500 mt-0.5">
