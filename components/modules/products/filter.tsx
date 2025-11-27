@@ -51,8 +51,9 @@ const Filter: React.FC<FilterProps> = ({
   const [openCategory, setOpenCategory] = useState<string | null>(null);
   const [scrolled, setScrolled] = useState(false);
   const router = useRouter();
-  const pathname = usePathname(); // Mevcut sayfa
+  const pathname = usePathname();
 
+  // Scroll event
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 10);
     window.addEventListener("scroll", handleScroll);
@@ -77,11 +78,12 @@ const Filter: React.FC<FilterProps> = ({
 
   return (
     <div
-      className={`sticky top-20 p-6 border border-gray-100 rounded-xs shadow-sm bg-white w-full max-w-xs transition-all duration-300 hover:shadow-md ${
-        scrolled
-          ? "py-3 bg-white/80 backdrop-blur-lg shadow-md border-b"
-          : "py-5 bg-white/80"
-      }`}
+      className={`sticky top-30 p-6 border rounded-xs transition-all duration-300 ease-in-out transform hover:shadow-lg w-full max-w-xs
+        ${
+          scrolled
+            ? "bg-white/90 backdrop-blur-lg shadow-2xl border-gray-300 scale-[1.02]"
+            : "bg-white/80 shadow-sm border-gray-100"
+        }`}
     >
       <h2 className="text-xl font-semibold mb-6 flex items-center gap-2 text-[#7B0323]">
         <Funnel size={20} className="text-[#7B0323]" /> Filtrele
@@ -92,7 +94,6 @@ const Filter: React.FC<FilterProps> = ({
           const isSelected =
             pathname === category.href ||
             (category.subItems?.some((sub) => sub.href === pathname) ?? false);
-
           const isOpen = openCategory === category.label || isSelected;
 
           return (
@@ -103,7 +104,9 @@ const Filter: React.FC<FilterProps> = ({
                 onClick={() => handleCategoryClick(category)}
                 className={`group w-full justify-between rounded-xs border border-transparent hover:border-[#7B0323] hover:bg-[#7B0323] hover:text-white transition-all text-sm font-medium ${
                   isSelected
-                    ? "bg-gradient-to-r from-[#7B0323] to-[#9F1B40] text-white"
+                    ? "bg-gradient-to-r from-[#7B0323] to-[#9F1B40] text-white shadow-md"
+                    : scrolled
+                    ? "text-black shadow-xs"
                     : "text-black"
                 }`}
               >
@@ -145,7 +148,7 @@ const Filter: React.FC<FilterProps> = ({
           );
         })}
 
-        {/* Fiyat */}
+        {/* Fiyat Slider */}
         <div className="mt-4">
           <h2 className="text-lg font-semibold mb-2">Fiyat</h2>
           <Slider

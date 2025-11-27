@@ -68,6 +68,7 @@ export default function DefaultSearch() {
   if (isLoading) return <Spinner />;
 
   return (
+  
     <div className="relative bg-gradient-to-b from-white via-amber-950/20 to-white">
       {/* Sticky Navbar */}
       <div

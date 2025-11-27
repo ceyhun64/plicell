@@ -9,6 +9,7 @@ import ProductsRow from "@/components/modules/home/newArrivals";
 import Subscribe from "@/components/modules/home/subscribe";
 import ShopServices from "@/components/modules/home/services";
 import MeasurementAndWhy from "@/components/modules/home/measurement";
+import Testimonials from "@/components/layout/testimonial";
 
 export default function Home() {
   return (
@@ -20,6 +21,7 @@ export default function Home() {
       <Banner />
       <CategoriesSection />
       <ShopServices />
+      <Testimonials />
       <ProductsRow />
       <MeasurementAndWhy />
       <Subscribe />

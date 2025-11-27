@@ -1,5 +1,7 @@
 import Navbar from "@/components/layout/navbar";
 import Zebra from "@/components/modules/products/category/zebra";
+import Banner from "@/components/modules/home/banner";
+
 import Footer from "@/components/layout/footer";
 
 export default function ZebraPage() {
@@ -7,6 +9,8 @@ export default function ZebraPage() {
     <div>
       <Navbar />
       <Zebra />
+      <Banner />
+
       <Footer />
     </div>
   );
