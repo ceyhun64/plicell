@@ -35,6 +35,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { usePathname } from "next/navigation";
 import { GradientText } from "../ui/shadcn-io/gradient-text/index";
 import CartDropdown from "./cartDropdown";
 import { getGuestCartCount } from "@/utils/cart";
@@ -52,7 +53,7 @@ export default function Navbar() {
       icon: LayoutGrid, // LayoutGrid
     },
     {
-      label: "Ürünler",
+      label: "Koleksiyon",
       href: "/products",
       icon: Layers, // Layers
       subItems: [
@@ -99,6 +100,7 @@ export default function Navbar() {
 
   const [favoriteCount, setFavoriteCount] = useState(0);
 
+  const pathname = usePathname() || "/";
   const [searchOpen, setSearchOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -208,35 +210,66 @@ export default function Navbar() {
           {/* Desktop Menu */}
           <div className="hidden md:flex absolute left-1/2 top-0 transform -translate-x-1/2 h-full items-center">
             <NavigationMenu>
-              <NavigationMenuList className="flex gap-2">
-                {links.map((link, i) => (
-                  <NavigationMenuItem key={i}>
-                    {link.subItems ? (
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
+              <NavigationMenuList className="flex gap-4">
+                {links.map((link, i) => {
+                  const isActive =
+                    link.href === "/products"
+                      ? pathname.startsWith("/products")
+                      : pathname === link.href;
+
+                  return (
+                    <NavigationMenuItem key={i} className="relative">
+                      {link.subItems ? (
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              className={`px-4 py-2 font-medium relative
+                after:absolute after:bottom-0 after:left-0 after:h-[2px] after:bg-[#7B0323]
+                after:transition-all after:duration-300
+                ${isActive ? "after:w-full" : "after:w-0 hover:after:w-full"}`}
+                            >
+                              {link.label}
+                            </Button>
+                          </DropdownMenuTrigger>
+
+                          <DropdownMenuContent className="bg-white/90 backdrop-blur-md shadow-lg rounded-lg border border-gray-200 mt-2">
+                            {link.subItems.map((item, j) => {
+                              const isSubActive = pathname === item.href;
+                              return (
+                                <DropdownMenuItem key={j} asChild>
+                                  <Link
+                                    href={item.href}
+                                    className={`px-4 py-2 rounded-md transition-colors duration-200
+                      ${
+                        isSubActive
+                          ? "text-[#7B0323] font-semibold"
+                          : "hover:text-[#7B0323] hover:bg-[#7B0323]/10"
+                      }`}
+                                  >
+                                    {item.label}
+                                  </Link>
+                                </DropdownMenuItem>
+                              );
+                            })}
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      ) : (
+                        <Link href={link.href}>
                           <Button
                             variant="ghost"
-                            className="px-4 py-2 font-medium"
+                            className={`px-4 py-2 font-medium relative
+              after:absolute after:bottom-0 after:left-0 after:h-[2px] after:bg-[#7B0323]
+              after:transition-all after:duration-300
+              ${isActive ? "after:w-full" : "after:w-0 hover:after:w-full"}`}
                           >
                             {link.label}
                           </Button>
-                        </DropdownMenuTrigger>
-
-                        <DropdownMenuContent>
-                          {link.subItems.map((item, j) => (
-                            <DropdownMenuItem key={j} asChild>
-                              <Link href={item.href}>{item.label}</Link>
-                            </DropdownMenuItem>
-                          ))}
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    ) : (
-                      <Link href={link.href}>
-                        <Button variant="ghost">{link.label}</Button>
-                      </Link>
-                    )}
-                  </NavigationMenuItem>
-                ))}
+                        </Link>
+                      )}
+                    </NavigationMenuItem>
+                  );
+                })}
               </NavigationMenuList>
             </NavigationMenu>
           </div>

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import ProductCard from "../products/productCard";
 import { Skeleton } from "@/components/ui/skeleton"; // Skeleton bileşeni eklendi
+import { GradientText } from "@/components/ui/shadcn-io/gradient-text";
 
 interface ProductData {
   id: number;
@@ -100,8 +101,14 @@ export default function Products() {
         {/* Sol metin ve buton */}
         <div className="flex-1 flex flex-col justify-center items-center lg:items-start text-center lg:text-left lg:sticky top-30 self-start max-w-md">
           <h2 className="text-2xl md:text-5xl lg:text-6xl font-extrabold tracking-tight mb-4 text-gray-900 font-[Playfair_Display]">
-            Şık ve Modern Perdeler
+            Şık ve{" "}
+            <GradientText
+              text="Modern"
+              gradient="linear-gradient(90deg, #B8860B 0%, #FFD700 35%, #F6E27A 60%, #B8860B 100%)"
+            />{" "}
+            Perdeler
           </h2>
+
           <p className='text-sm md:text-xl text-gray-700 mb-8 max-w-lg font-["Mozilla_Headline"]'>
             Evinizin her odasına uygun perde koleksiyonumuzu keşfedin. Fon, tül,
             blackout ve stor perdelerle mekanlarınızı daha şık ve konforlu hâle
@@ -111,8 +118,21 @@ export default function Products() {
             seçenekleriyle her zevke uygun seçenekler sunuyoruz.
           </p>
 
-          <Link href={"/products"}>
-            <Button className="rounded-full" size="lg" variant="outline">
+          <Link href="/products">
+            <Button
+              variant="outline"
+              size={"lg"}
+              className="
+      rounded-full px-6 py-3 text-base font-semibold
+      border-2 border-amber-500 
+      text-amber-700
+      hover:text-white
+      hover:bg-amber-600
+      hover:border-amber-600
+      transition-all duration-300
+      shadow-sm hover:shadow-lg hover:shadow-amber-300/40
+    "
+            >
               Tüm Koleksiyonu Gör
             </Button>
           </Link>

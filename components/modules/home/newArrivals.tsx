@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/carousel";
 import ProductCard from "../products/productCard";
 import { Spinner } from "@/components/ui/spinner";
-import { Skeleton } from "@/components/ui/skeleton"; 
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface ProductData {
   id: number;
@@ -43,40 +43,39 @@ const ProductCardSkeleton = () => (
 );
 
 const CarouselSkeleton = () => {
-    // Görünür olması beklenen maksimum kart sayısı (örn: xl'de 4 kart)
-    const VISIBLE_SKELETON_COUNT = 4; 
-    
-    return (
-        <div className="relative w-full min-h-[400px] sm:min-h-[500px] lg:min-h-[550px] pt-4">
-            <div className="flex gap-2 sm:gap-4 lg:gap-6 overflow-hidden">
-                {/* Her bir kartı simüle eden iskelet öğeleri */}
-                {Array.from({ length: VISIBLE_SKELETON_COUNT }).map((_, index) => (
-                    <div 
-                        key={index}
-                        // Orijinal CarouselItem sınıflarını taklit ediyoruz
-                        className={`
+  // Görünür olması beklenen maksimum kart sayısı (örn: xl'de 4 kart)
+  const VISIBLE_SKELETON_COUNT = 4;
+
+  return (
+    <div className="relative w-full min-h-[400px] sm:min-h-[500px] lg:min-h-[550px] pt-4">
+      <div className="flex gap-2 sm:gap-4 lg:gap-6 overflow-hidden">
+        {/* Her bir kartı simüle eden iskelet öğeleri */}
+        {Array.from({ length: VISIBLE_SKELETON_COUNT }).map((_, index) => (
+          <div
+            key={index}
+            // Orijinal CarouselItem sınıflarını taklit ediyoruz
+            className={`
                             shrink-0 grow-0 basis-full 
                             sm:basis-1/2 lg:basis-1/3 xl:basis-1/4 
                             p-1 h-full
                         `}
-                    >
-                        <ProductCardSkeleton />
-                    </div>
-                ))}
-            </div>
-            {/* Oklar ve ilerleme çubuğu için yer tutucular */}
-            <Skeleton className="absolute left-4 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full z-20" />
-            <Skeleton className="absolute right-4 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full z-20" />
-            <div className="absolute -bottom-10 md:bottom-0 left-0 right-0 flex justify-center space-x-2 pb-4 z-10">
-                <Skeleton className="h-1 w-8 rounded-full bg-gray-300" />
-                <Skeleton className="h-1 w-4 rounded-full bg-gray-300" />
-                <Skeleton className="h-1 w-4 rounded-full bg-gray-300" />
-            </div>
-        </div>
-    );
+          >
+            <ProductCardSkeleton />
+          </div>
+        ))}
+      </div>
+      {/* Oklar ve ilerleme çubuğu için yer tutucular */}
+      <Skeleton className="absolute left-4 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full z-20" />
+      <Skeleton className="absolute right-4 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full z-20" />
+      <div className="absolute -bottom-10 md:bottom-0 left-0 right-0 flex justify-center space-x-2 pb-4 z-10">
+        <Skeleton className="h-1 w-8 rounded-full bg-gray-300" />
+        <Skeleton className="h-1 w-4 rounded-full bg-gray-300" />
+        <Skeleton className="h-1 w-4 rounded-full bg-gray-300" />
+      </div>
+    </div>
+  );
 };
 // ------------------------------------
-
 
 export default function YeniUrunlerCarousel() {
   const [api, setApi] = useState<any>(null);
@@ -128,12 +127,12 @@ export default function YeniUrunlerCarousel() {
       <div className="container mx-auto px-2 lg:px-16 py-12 relative bg-gradient-to-b from-white via-amber-950/20 mb-2">
         {/* Başlık İskeleti */}
         <div className="flex justify-between items-center mb-6 px-4">
-            <div>
-                <Skeleton className="h-8 w-64 md:h-10 md:w-96 mb-2" />
-                <Skeleton className="h-4 w-48 md:w-64" />
-            </div>
+          <div>
+            <Skeleton className="h-8 w-64 md:h-10 md:w-96 mb-2" />
+            <Skeleton className="h-4 w-48 md:w-64" />
+          </div>
         </div>
-        
+
         {/* Karusel İskeletini Göster */}
         <CarouselSkeleton />
       </div>

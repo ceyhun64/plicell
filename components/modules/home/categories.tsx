@@ -160,7 +160,7 @@ export default function CategoriesSection() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="text-3xl sm:text-4xl md:text-5xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-gray-600 to-gray-800 drop-shadow-lg"
+          className="text-3xl sm:text-4xl md:text-5xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-gray-700 to-gray-800 drop-shadow-lg"
         >
           Ev Dekorasyonunuzu Baştan Yaratın
         </motion.h2>
