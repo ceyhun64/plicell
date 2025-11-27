@@ -1,4 +1,4 @@
-// components/Navbar.tsx (Güncellenmiş)
+// components/navbar/Navbar.tsx
 "use client";
 
 import { useState, useEffect, useRef } from "react";
@@ -18,9 +18,8 @@ import {
   PhoneOutgoing,
   MessageCircleQuestion,
   Feather,
+  ChevronDown,
 } from "lucide-react";
-// motion ve AnimatePresence artık gerekli değil
-// import { motion, AnimatePresence } from "framer-motion";
 
 import {
   NavigationMenu,
@@ -35,39 +34,34 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { GradientText } from "../ui/shadcn-io/gradient-text/index";
 import CartDropdown from "./cartDropdown";
 import { getGuestCartCount } from "@/utils/cart";
 import { useFavorite } from "@/contexts/favoriteContext";
 import Image from "next/image";
 
-// Yeni import
 import MobileNavSheet from "./mobileNavSheet";
+import CollectionMegaMenu from "./collectionMegaMenu"; // <<< YENİ İÇE AKTARMA
 
 export default function Navbar() {
   const links = [
     {
       label: "Anasayfa",
       href: "/",
-      icon: LayoutGrid, // LayoutGrid
+      icon: LayoutGrid,
     },
     {
       label: "Koleksiyon",
       href: "/products",
-      icon: Layers, // Layers
+      icon: Layers,
       subItems: [
         { label: "Tüm Perdeler", href: "/products" },
         { label: "Dikey", href: "/products/vertical" },
         { label: "Ahşap Jaluzi", href: "/products/wooden" },
         { label: "Metal Jaluzi", href: "/products/metal" },
-        {
-          label: "Stor",
-          href: "/products/roller",
-          subItems: [
-            { label: "Lazer Kesim Stor", href: "/products/roller/laser-cut" },
-          ],
-        },
+        { label: "Stor", href: "/products/roller" },
+        { label: "Lazer Kesim Stor", href: "/products/roller/laser-cut" },
         { label: "Zebra", href: "/products/zebra" },
         { label: "Rüstik", href: "/products/rustic" },
         { label: "Tüller", href: "/products/sheer" },
@@ -79,28 +73,31 @@ export default function Navbar() {
     {
       label: "Hakkımızda",
       href: "/about",
-      icon: Sparkles, // Sparkles
+      icon: Sparkles,
     },
     {
       label: "Bize Ulaşın",
       href: "/contact",
-      icon: PhoneOutgoing, // PhoneOutgoing
+      icon: PhoneOutgoing,
     },
     {
       label: "S.S.S",
       href: "/faq",
-      icon: MessageCircleQuestion, // MessageCircleQuestion
+      icon: MessageCircleQuestion,
     },
     {
       label: "Moda Blog",
       href: "/blog",
-      icon: Feather, // Feather
+      icon: Feather,
     },
   ];
 
-  const [favoriteCount, setFavoriteCount] = useState(0);
+  const collectionLink = links.find((l) => l.label === "Koleksiyon")!; // Koleksiyon linkini al
 
+  const [favoriteCount, setFavoriteCount] = useState(0);
+  const [collectionOpen, setCollectionOpen] = useState(false);
   const pathname = usePathname() || "/";
+  const router = useRouter();
   const [searchOpen, setSearchOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -109,16 +106,15 @@ export default function Navbar() {
   );
   const cartDropdownRef = useRef<{ open: () => void }>(null);
   const { favorites } = useFavorite();
-
-  // Favori ve Kullanıcı kontrolü useEffect'leri aynı kalır...
+  // const collectionRef = useRef<HTMLLIElement>(null); // <<< KALDIRILDI
 
   useEffect(() => {
-    // Sayfa yüklendiğinde API’den favori sayısını al
+    // ... (Favori çekme ve dinleme mantığı) ...
     const fetchFavorites = async () => {
       try {
         const res = await fetch("/api/favorites", { credentials: "include" });
         if (res.status === 401) {
-          setFavoriteCount(0); // login değilse hata verme
+          setFavoriteCount(0);
           return;
         }
         if (!res.ok) return;
@@ -131,7 +127,6 @@ export default function Navbar() {
 
     fetchFavorites();
 
-    // Event listener ekle
     const handleFavoriteChange = (e: any) => {
       setFavoriteCount((prev) => prev + e.detail);
     };
@@ -144,7 +139,7 @@ export default function Navbar() {
   }, []);
 
   useEffect(() => {
-    // Component mount olduğunda API'yi çağır
+    // ... (Kullanıcı kontrolü mantığı) ...
     const checkUser = async () => {
       try {
         const res = await fetch("/api/account/check");
@@ -161,10 +156,10 @@ export default function Navbar() {
     };
     checkUser();
   }, []);
-  // 🔹 Yeni: guest cart dinle
+
   useEffect(() => {
+    // ... (Misafir sepeti mantığı) ...
     if (!user) {
-      // Guest sepetini dinle ve güncelle
       const updateCart = () => {
         const count = getGuestCartCount();
         const event = new CustomEvent("cartCountUpdated", { detail: count });
@@ -176,24 +171,39 @@ export default function Navbar() {
       return () => window.removeEventListener("cartUpdated", updateCart);
     }
   }, [user]);
-  // Scroll event for shadow / blur
+
   useEffect(() => {
+    // ... (Scroll mantığı) ...
     const handleScroll = () => setScrolled(window.scrollY > 10);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  // <<< DIŞARI TIKLAMA EFFECT'i KALDIRILDI, CollectionMegaMenu'ye taşındı.
+  // useEffect(() => {
+  //   const handleClickOutside = (event: MouseEvent) => {
+  //     // ... (Kaldırılan kod) ...
+  //   };
+
+  //   if (collectionOpen) {
+  //     document.addEventListener("mousedown", handleClickOutside);
+  //   }
+
+  //   return () => {
+  //     document.removeEventListener("mousedown", handleClickOutside);
+  //   };
+  // }, [collectionOpen]);
+
   return (
     <>
       <nav
-        className={`sticky top-0 z-20 transition-all duration-300 ${
+        className={`sticky top-0 z-50 transition-all duration-300 ${
           scrolled
-            ? "py-3 bg-white/80 backdrop-blur-lg shadow-2xl border-b"
-            : "py-5 bg-white/80"
+            ? "py-3 bg-white/90 backdrop-blur-xl shadow-md border-b border-gray-100"
+            : "py-5 bg-white/90 backdrop-blur-sm"
         }`}
       >
         <div className="flex items-center justify-between px-4 md:px-10 max-w-7xl mx-auto">
-          {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
             <div className="relative w-18 h-12 md:w-22 md:h-14 lg:w-26 lg:h-16">
               <Image
@@ -207,7 +217,6 @@ export default function Navbar() {
             </div>
           </Link>
 
-          {/* Desktop Menu */}
           <div className="hidden md:flex absolute left-1/2 top-0 transform -translate-x-1/2 h-full items-center">
             <NavigationMenu>
               <NavigationMenuList className="flex gap-4">
@@ -218,22 +227,53 @@ export default function Navbar() {
                       : pathname === link.href;
 
                   return (
-                    <NavigationMenuItem key={i} className="relative">
-                      {link.subItems ? (
+                    <NavigationMenuItem
+                      key={i}
+                      className="relative"
+                      // ref={link.label === "Koleksiyon" ? collectionRef : null} // <<< KALDIRILDI
+                    >
+                      {link.label === "Koleksiyon" ? (
+                        <>
+                          <Button
+                            variant="ghost"
+                            className={`px-4 py-2 font-medium relative flex items-center gap-1 text-gray-700 hover:text-[#7B0323] transition-colors
+                                after:absolute after:bottom-0 after:left-0 after:h-[2px] after:bg-gradient-to-r after:from-[#7B0323] after:to-[#C70039]
+                                after:transition-all after:duration-300
+                                ${
+                                  isActive || collectionOpen
+                                    ? "after:w-full text-[#7B0323]"
+                                    : "after:w-0 hover:after:w-full"
+                                }`}
+                            onClick={() => setCollectionOpen(!collectionOpen)}
+                            data-id="collection-button"
+                          >
+                            {link.label}
+                            <ChevronDown
+                              className={`h-4 w-4 transition-transform duration-300 ${
+                                collectionOpen ? "rotate-180" : ""
+                              }`}
+                            />
+                          </Button>
+                        </>
+                      ) : link.subItems ? (
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button
                               variant="ghost"
-                              className={`px-4 py-2 font-medium relative
-                after:absolute after:bottom-0 after:left-0 after:h-[2px] after:bg-[#7B0323]
-                after:transition-all after:duration-300
-                ${isActive ? "after:w-full" : "after:w-0 hover:after:w-full"}`}
+                              className={`px-4 py-2 font-medium relative text-gray-700 hover:text-[#7B0323] transition-colors
+                                after:absolute after:bottom-0 after:left-0 after:h-[2px] after:bg-gradient-to-r after:from-[#7B0323] after:to-[#C70039]
+                                after:transition-all after:duration-300
+                                ${
+                                  isActive
+                                    ? "after:w-full text-[#7B0323]"
+                                    : "after:w-0 hover:after:w-full"
+                                }`}
                             >
                               {link.label}
                             </Button>
                           </DropdownMenuTrigger>
 
-                          <DropdownMenuContent className="bg-white/90 backdrop-blur-md shadow-lg rounded-lg border border-gray-200 mt-2">
+                          <DropdownMenuContent className="bg-white/95 backdrop-blur-md shadow-lg rounded-lg border border-gray-100 mt-2">
                             {link.subItems.map((item, j) => {
                               const isSubActive = pathname === item.href;
                               return (
@@ -241,11 +281,11 @@ export default function Navbar() {
                                   <Link
                                     href={item.href}
                                     className={`px-4 py-2 rounded-md transition-colors duration-200
-                      ${
-                        isSubActive
-                          ? "text-[#7B0323] font-semibold"
-                          : "hover:text-[#7B0323] hover:bg-[#7B0323]/10"
-                      }`}
+                                        ${
+                                          isSubActive
+                                            ? "text-[#7B0323] font-semibold bg-[#7B0323]/5"
+                                            : "hover:text-[#7B0323] hover:bg-[#7B0323]/5"
+                                        }`}
                                   >
                                     {item.label}
                                   </Link>
@@ -258,10 +298,14 @@ export default function Navbar() {
                         <Link href={link.href}>
                           <Button
                             variant="ghost"
-                            className={`px-4 py-2 font-medium relative
-              after:absolute after:bottom-0 after:left-0 after:h-[2px] after:bg-[#7B0323]
-              after:transition-all after:duration-300
-              ${isActive ? "after:w-full" : "after:w-0 hover:after:w-full"}`}
+                            className={`px-4 py-2 font-medium relative text-gray-700 hover:text-[#7B0323] transition-colors
+                                after:absolute after:bottom-0 after:left-0 after:h-[2px] after:bg-gradient-to-r after:from-[#7B0323] after:to-[#C70039]
+                                after:transition-all after:duration-300
+                                ${
+                                  isActive
+                                    ? "after:w-full text-[#7B0323]"
+                                    : "after:w-0 hover:after:w-full"
+                                }`}
                           >
                             {link.label}
                           </Button>
@@ -274,24 +318,28 @@ export default function Navbar() {
             </NavigationMenu>
           </div>
 
-          {/* Right Icons */}
           <div className="flex items-center gap-2 md:gap-4">
-            {/* Search */}
             <Link href={"/search"}>
               <Button
                 variant="ghost"
                 size="icon"
                 aria-label="Ara"
+                className="hover:bg-gray-100 transition-colors"
                 onClick={() => setSearchOpen(true)}
               >
-                <Search className="h-5 w-5" />
+                <Search className="h-5 w-5 text-gray-700" />
               </Button>
             </Link>
-            {/* User / Profile Dropdown */}
+
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon-sm" aria-label="Kullanıcı">
-                  <User className="h-5 w-5" />
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  aria-label="Kullanıcı"
+                  className="hover:bg-gray-100 transition-colors"
+                >
+                  <User className="h-5 w-5 text-gray-700" />
                 </Button>
               </DropdownMenuTrigger>
 
@@ -347,39 +395,58 @@ export default function Navbar() {
                 )}
               </DropdownMenuContent>
             </DropdownMenu>
-            {/* Favorites */}
+
             <Link href="/favorites" aria-label="Favoriler" className="relative">
-              <Button variant="ghost" size="icon-sm">
-                <Heart className="h-5 w-5" />
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                className="hover:bg-gray-100 transition-colors"
+              >
+                <Heart className="h-5 w-5 text-gray-700" />
               </Button>
               {favorites.length > 0 && (
-                <span className="absolute -top-2 -right-1.5 h-5 w-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center">
+                <span className="absolute -top-2 -right-1.5 h-5 w-5 rounded-full bg-gradient-to-r from-[#7B0323] to-[#C70039] text-white text-xs flex items-center justify-center font-medium shadow-md">
                   {favorites.length}
                 </span>
               )}
             </Link>
 
             <CartDropdown />
-            {/* Mobile Menu Button (Menu ikonunu kullanıyoruz) */}
+
             <div className="md:hidden">
               <Button
                 variant="ghost"
                 size="icon-sm"
-                onClick={() => setMobileOpen(true)} // Açmak için true
+                onClick={() => setMobileOpen(true)}
                 aria-label="Mobil menüyü aç"
+                className="hover:bg-gray-100 transition-colors"
               >
-                <Menu className="h-5 w-5" /> {/* Sadece Menü ikonu */}
+                <Menu className="h-5 w-5 text-gray-700" />
               </Button>
             </div>
           </div>
         </div>
       </nav>
 
-      {/* Sheet Bileşeni (Yeni Mobil Menü) */}
+      {/* YENİ BİLEŞEN BURAYA EKLENDİ */}
+      <CollectionMegaMenu
+        collectionOpen={collectionOpen}
+        setCollectionOpen={setCollectionOpen}
+        collectionLink={{
+          ...collectionLink,
+          subItems: collectionLink.subItems?.filter(
+            (item) =>
+              item.label !== "Tüm Perdeler" && item.label !== "Lazer Kesim Stor"
+          ),
+        }}
+      />
+
+      {/* YENİ BİLEŞEN BURAYA EKLENDİ */}
+
       <MobileNavSheet
         isOpen={mobileOpen}
-        onClose={() => setMobileOpen(false)} // Kapatmak için false
-        links={links as any} // Link türünü uyumluluk için "as any" kullanıyoruz
+        onClose={() => setMobileOpen(false)}
+        links={links as any}
       />
     </>
   );
