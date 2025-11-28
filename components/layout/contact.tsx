@@ -121,7 +121,7 @@ export default function Contact() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          recipients: ["info@modaperde.com"],
+          recipients: ["modaperdeofficial@gmail.com"],
           subject: "Web Sitesi İletişim Formu",
           message: `
 Ad Soyad: ${formData.name}
@@ -172,10 +172,10 @@ Mesaj: ${formData.message}
       title: "E-posta",
       content: (
         <a
-          href="mailto:info@modaperde.com"
+          href="mailto:modaperdeofficial@gmail.com"
           className="hover:text-rose-600 transition"
         >
-          info@modaperde.com
+          modaperdeofficial@gmail.com
         </a>
       ),
     },

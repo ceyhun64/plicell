@@ -128,10 +128,10 @@ const Testimonials: React.FC = () => {
       </div>
 
       <div className="relative max-w-8xl mx-auto px-6">
-        <h2 className="text-center text-5xl font-semibold  text-gray-900 tracking-tight drop-shadow-sm mb-3 font-serif">
+        <h2 className="text-center text-3xl md:text-5xl font-semibold  text-gray-900 tracking-tight drop-shadow-sm mb-3 font-serif">
           Sizden Gelenler
         </h2>
-        <p className="text-lg text-center text-gray-600 mb-14 font-sans">
+        <p className="text-sm md:text-lg text-center text-gray-600 mb-14 font-sans">
           Gerçek kullanıcı deneyimlerine göz atın.
         </p>
 

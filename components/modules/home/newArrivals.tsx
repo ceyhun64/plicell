@@ -148,7 +148,7 @@ export default function YeniUrunlerCarousel() {
           <h2 className="text-3xl md:text-5xl lg:text-5xl font-extrabold tracking-tight mb-2 text-gray-900 font-[Playfair_Display]">
             Yeni Gelenler
           </h2>
-          <p className='text-xs md:text-lg text-gray-600 mb-2 max-w-lg font-["Mozilla_Headline"]'>
+          <p className='text-sm md:text-lg text-gray-600 mb-2 max-w-lg font-["Mozilla_Headline"]'>
             En yeni ürünlerimiz burada. Yeniliklere göz atın.
           </p>
         </div>
