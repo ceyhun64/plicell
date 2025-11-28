@@ -145,10 +145,10 @@ export default function YeniUrunlerCarousel() {
       {/* Başlık */}
       <div className="flex justify-between items-center mb-6 px-4">
         <div>
-          <h2 className="text-3xl md:text-5xl lg:text-5xl font-extrabold tracking-tight mb-2 text-gray-900 font-[Playfair_Display]">
+          <h2 className="text-3xl md:text-5xl lg:text-5xl font-extrabold tracking-tight mb-2 text-gray-900 ">
             Yeni Gelenler
           </h2>
-          <p className='text-sm md:text-lg text-gray-600 mb-2 max-w-lg font-["Mozilla_Headline"]'>
+          <p className='text-sm md:text-lg text-gray-600 mb-2 max-w-lg '>
             En yeni ürünlerimiz burada. Yeniliklere göz atın.
           </p>
         </div>
@@ -161,7 +161,7 @@ export default function YeniUrunlerCarousel() {
           setApi={setApi}
           className="w-full h-full"
         >
-          <CarouselContent className="h-full">
+          <CarouselContent className="h-full font-sans">
             {products.map((product) => (
               <CarouselItem
                 key={product.id}

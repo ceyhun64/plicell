@@ -42,11 +42,7 @@ export default function Vertical() {
   const [sort, setSort] = useState<"az" | "za" | "priceLow" | "priceHigh">(
     "az"
   );
-  // GridCols tek bir state olarak hem mobil hem masaüstü değeri tutacak.
-  // Varsayılan olarak mobil 2, masaüstü 3 ayarını yansıtması için 3 veya 2 ile başlayabiliriz.
-  // Geniş ekranda daha çok ürün gösterileceği için 3 ile başlayalım.
   const [gridCols, setGridCols] = useState<1 | 2 | 3 | 4>(3);
-  // mobileGridCols state'i kaldırıldı.
   const [products, setProducts] = useState<ProductData[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -66,9 +62,7 @@ export default function Vertical() {
     }
     fetchProducts();
   }, []);
-  console.log("products:", products);
 
-  // room zaten API'den geliyor, ek işlem yok
   const productsWithRoom: ProductData[] = products;
 
   const filteredProducts = useMemo(() => {
@@ -102,11 +96,7 @@ export default function Vertical() {
   }
 
   const getGridClasses = (currentCols: 1 | 2 | 3 | 4) => {
-    // Mobil (Varsayılan): Eğer currentCols 1 ise grid-cols-1, değilse grid-cols-2
-    // (Çünkü mobil grid seçenekleri sadece 1 ve 2)
     const mobileCols = currentCols === 1 ? "grid-cols-1" : "grid-cols-2";
-
-    // Tablet/Masaüstü (sm:): currentCols değerine göre
     let desktopCols = "";
     if (currentCols === 2) {
       desktopCols = "sm:grid-cols-2";
@@ -115,45 +105,115 @@ export default function Vertical() {
     } else if (currentCols === 4) {
       desktopCols = "sm:grid-cols-4";
     } else {
-      // currentCols 1 ise masaüstünde varsayılan 3 sütuna düşme davranışı sergileyebiliriz
-      // ya da sadece 2'ye zorlayabiliriz. Burada 2 olarak varsayalım
       desktopCols = "sm:grid-cols-2";
     }
-
     return `${mobileCols} ${desktopCols}`;
   };
 
   return (
     <div className="max-w-8xl mx-auto mb-20">
-      {/* Banner */}
-      <div className="relative w-full h-40 md:h-60 mb-0 md:mb-6 overflow-hidden rounded-xs">
-        <Image
-          src="/categoryBanners/wooden.jpg"
-          alt="Ahşap Jaluzi Perde Banner"
-          fill
-          className="object-cover"
-          sizes="100vw"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/50 to-black/40"></div>
-        <div className="absolute inset-0 flex flex-col justify-center items-start px-6 md:px-12 max-w-7xl mx-auto">
-          <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold font-serif text-white drop-shadow-xl">
-            Ahşap Jaluzi Perde
+      {/* Premium Wooden Banner with Natural Theme */}
+      <div className="relative w-full h-[50vh] md:h-[70vh] md:mb-12 overflow-hidden">
+        {/* Background Image with Overlay */}
+        <div className="absolute inset-0">
+          <Image
+            src="/heroes/142.jpg"
+            alt="Dikey Perde Banner"
+            fill
+            className="object-cover scale-100 md:scale-105 transition-transform duration-700 hover:scale-100"
+            sizes="100vw"
+            priority
+          />
+          {/* Modern Gradient Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-br from-black/80 via-amber-950/50 to-transparent"></div>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+        </div>
+
+        {/* Decorative Elements */}
+        <div className="absolute top-0 right-0 w-48 h-48 sm:w-72 sm:h-72 bg-amber-500/10 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 left-0 w-48 h-48 sm:w-72 sm:h-72 bg-amber-700/10 rounded-full blur-3xl"></div>
+
+        {/* Content */}
+        <div className="relative h-full flex flex-col justify-end px-4 sm:px-6 md:px-12 lg:px-16 pb-8 sm:pb-12 md:pb-16 max-w-3xl md:max-w-7xl mx-auto">
+          {/* Category Badge */}
+          <div className="mb-4 sm:mb-6 inline-flex items-center gap-2 w-fit">
+            <div className="h-px w-8 sm:w-12 bg-amber-400"></div>
+            <span className="text-amber-400 text-xs sm:text-sm md:text-base font-medium tracking-widest uppercase">
+              Doğal Ahşap Koleksiyonu
+            </span>
+          </div>
+
+          {/* Main Title */}
+          <h1 className="text-3xl sm:text-4xl md:text-7xl lg:text-8xl font-bold text-white mb-3 sm:mb-4 md:mb-6 tracking-tight">
+            Ahşap Jaluzi
+            <span className="block text-lg sm:text-xl md:text-4xl lg:text-5xl font-light text-amber-200 mt-1 sm:mt-2 md:mt-4">
+              Doğanın Sıcaklığı
+            </span>
           </h1>
+
+          {/* Description */}
+          <p className="text-white/90 text-sm sm:text-base md:text-lg lg:text-xl max-w-full sm:max-w-2xl mb-6 sm:mb-8 leading-relaxed">
+            Doğal ahşabın zamansız güzelliğini evinize taşıyın. Her detayda
+            hissedilen kalite ve zarafet.
+          </p>
+
+          {/* Stats */}
+          <div className="flex flex-wrap gap-4 sm:gap-6 md:gap-8 text-white">
+            <div className="flex flex-col">
+              <span className="text-2xl sm:text-3xl md:text-4xl font-bold text-amber-400">
+                {products.length}+
+              </span>
+              <span className="text-xs sm:text-sm md:text-base text-white/80 mt-1">
+                Model Çeşidi
+              </span>
+            </div>
+            <div className="w-px h-10 sm:h-16 bg-white/20"></div>
+            <div className="flex flex-col">
+              <span className="text-2xl sm:text-3xl md:text-4xl font-bold text-amber-400">
+                10+
+              </span>
+              <span className="text-xs sm:text-sm md:text-base text-white/80 mt-1">
+                Yıl Garanti
+              </span>
+            </div>
+            <div className="w-px h-10 sm:h-16 bg-white/20"></div>
+            <div className="flex flex-col">
+              <span className="text-2xl sm:text-3xl md:text-4xl font-bold text-amber-400">
+                100%
+              </span>
+              <span className="text-xs sm:text-sm md:text-base text-white/80 mt-1">
+                El İşçiliği
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Scroll Indicator */}
+        <div className="absolute bottom-4 sm:bottom-8 left-1/2 -translate-x-1/2 hidden md:flex flex-col items-center gap-1 sm:gap-2 animate-bounce">
+          <span className="text-white/60 text-xs uppercase tracking-wider">
+            Aşağı Kaydır
+          </span>
+          <div className="w-5 h-8 sm:w-6 sm:h-10 border-2 border-white/30 rounded-full flex items-start justify-center p-1 sm:p-2">
+            <div className="w-1 h-2 bg-white/60 rounded-full"></div>
+          </div>
         </div>
       </div>
 
-      <div className="bg-gradient-to-b from-white via-amber-950/10 to-white md:px-8">
+      {/* Main Content */}
+      <div className="bg-gradient-to-b from-amber-50/40 via-white to-orange-50/30 md:px-8">
         <div className="flex flex-col md:flex-row gap-6">
           {/* Left Sidebar */}
           <aside className="hidden md:block md:w-64 flex-shrink-0">
-            <Filter
-              colorFilter={colorFilter}
-              setColorFilter={setColorFilter}
-              maxPrice={maxPrice}
-              setMaxPrice={setMaxPrice}
-              minPrice={minPrice}
-              setMinPrice={setMinPrice}
-            />
+            <div className="sticky top-24">
+              <Filter
+                colorFilter={colorFilter}
+                setColorFilter={setColorFilter}
+                maxPrice={maxPrice}
+                setMaxPrice={setMaxPrice}
+                minPrice={minPrice}
+                setMinPrice={setMinPrice}
+              />
+            </div>
           </aside>
 
           {/* Right Side */}
@@ -162,19 +222,17 @@ export default function Vertical() {
               productRooms={productRooms}
               roomFilter={roomFilter}
               setRoomFilter={setRoomFilter}
-              // gridCols artık tek bir state
               gridCols={gridCols}
               setGridCols={setGridCols}
               sort={sort}
               setSort={setSort}
             />
 
-            <div className="mt-4 md:mt-6 px-2 md:px-0 ">
+            <div className="mt-4 md:mt-8 px-2 md:px-0">
               {filteredProducts.length > 0 ? (
                 <div
                   className={cn(
-                    "grid gap-2 md:gap-6 font-sans",
-                    // Dinamik grid sınıfı ataması:
+                    "grid gap-4 md:gap-6 font-sans",
                     getGridClasses(gridCols)
                   )}
                 >
@@ -183,8 +241,34 @@ export default function Vertical() {
                   ))}
                 </div>
               ) : (
-                <div className="p-10 text-center text-gray-500 text-lg bg-white rounded-xs border border-gray-100 shadow-sm">
-                  Bu kategoride ürün bulunamadı.
+                <div className="relative p-12 md:p-20 text-center bg-gradient-to-br from-amber-50 to-orange-50 rounded-3xl border-2 border-amber-100 shadow-xl overflow-hidden">
+                  <div className="absolute top-0 right-0 w-64 h-64 bg-amber-200/40 rounded-full blur-3xl"></div>
+                  <div className="absolute bottom-0 left-0 w-64 h-64 bg-orange-200/40 rounded-full blur-3xl"></div>
+                  <div className="relative">
+                    <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-to-br from-amber-200 to-orange-200 flex items-center justify-center shadow-lg">
+                      <svg
+                        className="w-12 h-12 text-amber-700"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                        />
+                      </svg>
+                    </div>
+                    <h3 className="text-2xl font-bold text-gray-800 mb-3">
+                      Ürün Bulunamadı
+                    </h3>
+                    <p className="text-gray-600 text-lg max-w-md mx-auto">
+                      Aradığınız kriterlere uygun ahşap jaluzi ürünü
+                      bulunmamaktadır. Lütfen filtreleri değiştirerek tekrar
+                      deneyin.
+                    </p>
+                  </div>
                 </div>
               )}
             </div>

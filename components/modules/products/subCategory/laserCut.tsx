@@ -126,23 +126,92 @@ export default function Vertical() {
   return (
     <div className="max-w-8xl mx-auto mb-20">
       {/* Banner */}
-      <div className="relative w-full h-40 md:h-60 mb-0 md:mb-6 overflow-hidden rounded-xs">
-        <Image
-          src="/categoryBanners/laser.png"
-          alt="Laser Kesim Stor Perde Banner"
-          fill
-          className="object-cover"
-          sizes="100vw"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/50 to-black/40"></div>
-        <div className="absolute inset-0 flex flex-col justify-center items-start px-6 md:px-12 max-w-7xl mx-auto">
-          <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold font-serif text-white drop-shadow-xl">
+      <div className="relative w-full h-[50vh] md:h-[70vh] md:mb-12 overflow-hidden">
+        {/* Background Image with Overlay */}
+        <div className="absolute inset-0">
+          <Image
+            src="/categoryBanners/laser.png"
+            alt="Stor Perde Banner"
+            fill
+            className="object-cover"
+            sizes="100vw"
+          />
+          {/* Modern Gradient Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-br from-black/80 via-blue-950/50 to-transparent"></div>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+        </div>
+
+        {/* Decorative Elements */}
+        <div className="absolute top-0 right-0 w-48 h-48 sm:w-72 sm:h-72 bg-blue-500/10 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 left-0 w-48 h-48 sm:w-72 sm:h-72 bg-blue-700/10 rounded-full blur-3xl"></div>
+
+        {/* Content */}
+        <div className="relative h-full flex flex-col justify-end px-4 sm:px-6 md:px-12 lg:px-16 pb-8 sm:pb-12 md:pb-16 max-w-3xl md:max-w-7xl mx-auto">
+          {/* Category Badge */}
+          <div className="mb-4 sm:mb-6 inline-flex items-center gap-2 w-fit">
+            <div className="h-px w-8 sm:w-12 bg-blue-400"></div>
+            <span className="text-blue-400 text-xs sm:text-sm md:text-base font-medium tracking-widest uppercase">
+              Pratik Çözümler
+            </span>
+          </div>
+
+          {/* Main Title */}
+          <h1 className="text-3xl sm:text-4xl md:text-7xl lg:text-8xl font-bold text-white mb-3 sm:mb-4 md:mb-6 tracking-tight">
             Lazer Kesim Stor Perde
+            <span className="block text-lg sm:text-xl md:text-4xl lg:text-5xl font-light text-blue-200 mt-1 sm:mt-2 md:mt-4">
+              Minimalist Zarafet
+            </span>
           </h1>
+
+          {/* Description */}
+          <p className="text-white/90 text-sm sm:text-base md:text-lg lg:text-xl max-w-full sm:max-w-2xl mb-6 sm:mb-8 leading-relaxed">
+            Modern ve minimalist tasarımıyla her mekan için ideal stor perde
+            koleksiyonumuzu keşfedin.
+          </p>
+
+          {/* Stats */}
+          <div className="flex flex-wrap gap-4 sm:gap-6 md:gap-8 text-white">
+            <div className="flex flex-col">
+              <span className="text-2xl sm:text-3xl md:text-4xl font-bold text-blue-400">
+                {products.length}+
+              </span>
+              <span className="text-xs sm:text-sm md:text-base text-white/80 mt-1">
+                Ürün Çeşidi
+              </span>
+            </div>
+            <div className="w-px h-10 sm:h-16 bg-white/20"></div>
+            <div className="flex flex-col">
+              <span className="text-2xl sm:text-3xl md:text-4xl font-bold text-blue-400">
+                100%
+              </span>
+              <span className="text-xs sm:text-sm md:text-base text-white/80 mt-1">
+                Kalite Garantisi
+              </span>
+            </div>
+            <div className="w-px h-10 sm:h-16 bg-white/20"></div>
+            <div className="flex flex-col">
+              <span className="text-2xl sm:text-3xl md:text-4xl font-bold text-blue-400">
+                24/7
+              </span>
+              <span className="text-xs sm:text-sm md:text-base text-white/80 mt-1">
+                Müşteri Desteği
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* Scroll Indicator */}
+        <div className="absolute bottom-4 sm:bottom-8 left-1/2 -translate-x-1/2 hidden md:flex flex-col items-center gap-1 sm:gap-2 animate-bounce">
+          <span className="text-white/60 text-xs uppercase tracking-wider">
+            Aşağı Kaydır
+          </span>
+          <div className="w-5 h-8 sm:w-6 sm:h-10 border-2 border-white/30 rounded-full flex items-start justify-center p-1 sm:p-2">
+            <div className="w-1 h-2 bg-white/60 rounded-full"></div>
+          </div>
         </div>
       </div>
 
-     <div className="bg-gradient-to-b from-white via-amber-950/10 to-white md:px-8">
+      <div className="bg-gradient-to-b from-white via-amber-950/10 to-white md:px-8">
         <div className="flex flex-col md:flex-row gap-6">
           {/* Left Sidebar */}
           <aside className="hidden md:block md:w-64 flex-shrink-0">

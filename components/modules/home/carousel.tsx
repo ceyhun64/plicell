@@ -10,39 +10,129 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 const heroes = [
   {
     id: 1,
-    title: "Modern Perdelerle Dekorasyon",
+    title: "Lazer Kesim Stor: Sanatsal Işık",
     description:
-      "Evinize şıklık ve konfor katacak en yeni perde koleksiyonumuzu keşfedin.",
-    image: "/heroes/2.webp",
-    buttonText: "Hemen İncele",
-    href: "/products",
+      "Modern bir dokunuşla ışık oyunları yaratın. Eşsiz desenleriyle mekanınıza derinlik katan stor perdeler.",
+    image: "/heroes/102.jpg",
+    buttonText: "Lazer Kesim Storları Keşfet",
+    href: "/products/roller/laser-cut",
   },
   {
     id: 2,
-    title: "Zebra Perde ile Zarif Dokunuşlar",
+    title: "Doğal Ahşap Jaluzi",
     description:
-      "Odanızın havasını değiştirecek şık ve modern fon perde seçeneklerimizi görün.",
-    image: "/heroes/8.webp",
-    buttonText: "Zebra Perdeleri Gör",
-    href: "/products/zebra",
+      "Sıcak bir atmosfer ve mükemmel ışık kontrolü. Evinizin karakterini doğal ahşap dokusuyla güçlendirin.",
+    image: "/heroes/110.jpg",
+    buttonText: "Ahşap Jaluzileri Gör",
+    href: "/products/wooden",
   },
   {
     id: 3,
-    title: "Fon Perdelerle Konforlu Uyku",
+    title: "Zebra Perde: İkisi Bir Arada",
     description:
-      "Işığı tamamen engelleyen blackout perdelerle hem estetik hem de fonksiyonel çözümler.",
-    image: "/heroes/17.webp",
-    buttonText: "Fon Koleksiyonu",
-    href: "/products/drapes",
+      "Şeffaf ve opak bantlarıyla gün ışığını dilediğiniz gibi ayarlayın. Pratik ve modern bir çözüm!",
+    image: "/heroes/111.jpg",
+    buttonText: "Zebra Perde Modelleri",
+    href: "/products/zebra",
   },
   {
     id: 4,
-    title: "Tül Perdelerle Ferah Mekanlar",
+    title: "Minimalist Plise Perdeler",
     description:
-      "Doğal ışığı korurken dekoratif dokunuşlar sağlayan tül ve stor perdelerimizi keşfedin.",
-    image: "/heroes/9.webp",
+      "Katlanabilir, zarif yapısıyla hem cam üstü hem de tavan uygulamalarına uygun, minimalist tasarım.",
+    image: "/heroes/112.jpg",
+    buttonText: "Plise Çözümlerini İncele",
+    href: "/products/plicell",
+  },
+  {
+    id: 5,
+    title: "Rüstik: Otantik Dokunuşlar",
+    description:
+      "Evinize otantik ve bohem bir hava katın. Klasik görünümü en yeni kumaş teknolojisiyle birleştirin.",
+    image: "/heroes/116.jpg",
+    buttonText: "Rüstik Perdeleri Gör",
+    href: "/products/rustic",
+  },
+  {
+    id: 6,
+    title: "Dikey Perdeler: Büyük Cam Çözümü",
+    description:
+      "Geniş cam yüzeylerde şık bir çözüm. 180 derece dönebilen dikey panellerle ışığı kusursuz yönetin.",
+    image: "/heroes/123.jpg",
+    buttonText: "Dikey Perde Çeşitleri",
+    href: "/products/vertical",
+  },
+  {
+    id: 7,
+    title: "Fon Perdeler: Mekana Derinlik",
+    description:
+      "Tül perdelerinizle mükemmel uyum sağlayacak, renk ve doku zenginliği sunan dekoratif çözümler.",
+    image: "/heroes/124.jpg",
+    buttonText: "Fon Perde Koleksiyonu",
+    href: "/products/drapes",
+  },
+  {
+    id: 8,
+    title: "Metal Jaluzi: Keskin Çizgiler",
+    description:
+      "Minimalist ve endüstriyel tasarımlar için ideal. Dayanıklı yapısıyla net ve kontrollü ışık sağlar.",
+    image: "/heroes/128.jpg",
+    buttonText: "Metal Jaluzileri Keşfet",
+    href: "/products/metal",
+  },
+  {
+    id: 9,
+    title: "Klasik Stor Perdeler",
+    description:
+      "Mekanınızda temiz, düz bir görünüm isteyenler için. Yüzlerce renk ve kumaş seçeneği tek bir yerde.",
+    image: "/heroes/134.jpg",
+    buttonText: "Tüm Stor Perdeler",
+    href: "/products/roller",
+  },
+  {
+    id: 10,
+    title: "Zarif Tül Perde Modelleri",
+    description:
+      "Güneş ışığını filtreleyerek odaya davet eden, ince ve zarif dokularla huzurlu bir atmosfer yaratın.",
+    image: "/heroes/135.jpg",
+    buttonText: "Tül Perde Modelleri",
+    href: "/products/sheer",
+  },
+  {
+    id: 11,
+    title: "Perde Aksesuarları",
+    description:
+      "Perdelerinizin ömrünü uzatan ve kullanım konforunu artıran kaliteli montaj ve dekorasyon ürünleri.",
+    image: "/heroes/136.jpg",
+    buttonText: "Aksesuarları Gör",
+    href: "/products/accessories",
+  },
+  {
+    id: 12,
+    title: "Tüm Perde Çeşitleri",
+    description:
+      "Klasikten moderne, fon perdeden jaluziye kadar tüm perde koleksiyonlarımızı bu sayfada keşfedin.",
+    image: "/heroes/140.jpg",
+    buttonText: "Tüm Perdeleri Gör",
+    href: "/products",
+  },
+  {
+    id: 13,
+    title: "Soft Işık Dağılımı (Tül)",
+    description:
+      "İç mekânlarınızı daha yumuşak ve dengeli bir aydınlığa kavuşturan tül perde çeşitleri.",
+    image: "/heroes/144.jpg",
     buttonText: "Tül Perdeleri Gör",
     href: "/products/sheer",
+  },
+  {
+    id: 14,
+    title: "Ahşap Jaluzi: Doğanın Huzuru",
+    description:
+      "Evinizde doğal ve organik bir görünüm yaratmak için ahşap jaluzi koleksiyonumuza göz atın.",
+    image: "/heroes/19.jpg",
+    buttonText: "Ahşap Jaluzileri Gör",
+    href: "/products/wooden",
   },
 ];
 
@@ -108,6 +198,7 @@ export default function HeroSection() {
               src={slide.image}
               alt={slide.title}
               fill
+              quality={100}
               style={{ objectFit: "cover" }} // layout="fill" yerine modern Next.js 13+ style kullanımı
               priority={index === 0} // İlk slayt için öncelik
             />
@@ -122,7 +213,7 @@ export default function HeroSection() {
               tabIndex={isActive ? 0 : -1}
               aria-label={`${slide.title} sayfasına git`}
             >
-              <h1 className="text-3xl sm:text-5xl lg:text-7xl font-extrabold tracking-tight text-left drop-shadow-xl font-serif break-words">
+              <h1 className="text-3xl sm:text-5xl lg:text-7xl font-extrabold tracking-tight text-left drop-shadow-xl  break-words">
                 {slide.title}
               </h1>
               <p className="text-sm sm:text-lg mt-3 sm:mt-5 font-light opacity-95 drop-shadow-md break-words">
@@ -163,7 +254,6 @@ export default function HeroSection() {
           <ChevronRight size={28} />
         </Button>
       </div>
-
     </div>
   );
 }

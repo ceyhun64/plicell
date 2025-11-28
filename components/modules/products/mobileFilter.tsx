@@ -77,7 +77,7 @@ const MobileFilter: React.FC<FilterProps> = ({
   return (
     <div className="md:hidden flex-1">
       <Select value={currentSelection} onValueChange={handleCategoryChange}>
-        <SelectTrigger className="w-full bg-white/80 backdrop-blur-sm border-none rounded-xs shadow-sm hover:shadow-md transition-all">
+        <SelectTrigger className="w-full bg-white border border-gray-200 rounded-lg h-12 shadow-sm hover:shadow-md transition-all">
           <SelectValue placeholder="Kategori Seç" />
         </SelectTrigger>
         <SelectContent>

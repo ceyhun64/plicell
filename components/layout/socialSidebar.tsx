@@ -54,7 +54,7 @@ export default function SocialSidebar() {
   ];
 
   return (
-    <div className="fixed left-4 bottom-6 z-50 flex flex-col items-center">
+    <div className="fixed left-2 bottom-6 z-50 flex flex-col items-center">
       <AnimatePresence>
         {isOpen && (
           <motion.div
