@@ -42,7 +42,8 @@ import { useFavorite } from "@/contexts/favoriteContext";
 import Image from "next/image";
 
 import MobileNavSheet from "./mobileNavSheet";
-import CollectionMegaMenu from "./collectionMegaMenu"; // <<< YENİ İÇE AKTARMA
+import CollectionMegaMenu from "./collectionMegaMenu";
+import UserMegaMenu from "./userMegaMenu";
 
 export default function Navbar() {
   const links = [
@@ -92,7 +93,7 @@ export default function Navbar() {
     },
   ];
 
-  const collectionLink = links.find((l) => l.label === "Koleksiyon")!; // Koleksiyon linkini al
+  const collectionLink = links.find((l) => l.label === "Koleksiyon")!;
 
   const [favoriteCount, setFavoriteCount] = useState(0);
   const [collectionOpen, setCollectionOpen] = useState(false);
@@ -100,16 +101,15 @@ export default function Navbar() {
   const router = useRouter();
   const [searchOpen, setSearchOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [user, setUser] = useState<{ name?: string; email?: string } | null>(
     null
   );
   const cartDropdownRef = useRef<{ open: () => void }>(null);
   const { favorites } = useFavorite();
-  // const collectionRef = useRef<HTMLLIElement>(null); // <<< KALDIRILDI
 
   useEffect(() => {
-    // ... (Favori çekme ve dinleme mantığı) ...
     const fetchFavorites = async () => {
       try {
         const res = await fetch("/api/favorites", { credentials: "include" });
@@ -139,7 +139,6 @@ export default function Navbar() {
   }, []);
 
   useEffect(() => {
-    // ... (Kullanıcı kontrolü mantığı) ...
     const checkUser = async () => {
       try {
         const res = await fetch("/api/account/check");
@@ -158,7 +157,6 @@ export default function Navbar() {
   }, []);
 
   useEffect(() => {
-    // ... (Misafir sepeti mantığı) ...
     if (!user) {
       const updateCart = () => {
         const count = getGuestCartCount();
@@ -173,26 +171,10 @@ export default function Navbar() {
   }, [user]);
 
   useEffect(() => {
-    // ... (Scroll mantığı) ...
     const handleScroll = () => setScrolled(window.scrollY > 10);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
-  // <<< DIŞARI TIKLAMA EFFECT'i KALDIRILDI, CollectionMegaMenu'ye taşındı.
-  // useEffect(() => {
-  //   const handleClickOutside = (event: MouseEvent) => {
-  //     // ... (Kaldırılan kod) ...
-  //   };
-
-  //   if (collectionOpen) {
-  //     document.addEventListener("mousedown", handleClickOutside);
-  //   }
-
-  //   return () => {
-  //     document.removeEventListener("mousedown", handleClickOutside);
-  //   };
-  // }, [collectionOpen]);
 
   return (
     <>
@@ -227,11 +209,7 @@ export default function Navbar() {
                       : pathname === link.href;
 
                   return (
-                    <NavigationMenuItem
-                      key={i}
-                      className="relative"
-                      // ref={link.label === "Koleksiyon" ? collectionRef : null} // <<< KALDIRILDI
-                    >
+                    <NavigationMenuItem key={i} className="relative">
                       {link.label === "Koleksiyon" ? (
                         <>
                           <Button
@@ -330,72 +308,21 @@ export default function Navbar() {
                 <Search className="h-5 w-5 text-gray-700" />
               </Button>
             </Link>
-
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon-sm"
-                  aria-label="Kullanıcı"
-                  className="hover:bg-gray-100 transition-colors"
-                >
-                  <User className="h-5 w-5 text-gray-700" />
-                </Button>
-              </DropdownMenuTrigger>
-
-              <DropdownMenuContent align="end" className="w-48">
-                {user ? (
-                  <>
-                    <DropdownMenuItem asChild>
-                      <Link href="/profile" className="flex items-center gap-2">
-                        <User className="h-4 w-4" />
-                        <span>Profilim</span>
-                      </Link>
-                    </DropdownMenuItem>
-
-                    <DropdownMenuItem asChild>
-                      <Link
-                        href="/profile/addresses"
-                        className="flex items-center gap-2"
-                      >
-                        <MapPin className="h-4 w-4" />
-                        <span>Adreslerim</span>
-                      </Link>
-                    </DropdownMenuItem>
-
-                    <DropdownMenuItem asChild>
-                      <Link
-                        href="/profile/orders"
-                        className="flex items-center gap-2"
-                      >
-                        <Package className="h-4 w-4" />
-                        <span>Siparişlerim</span>
-                      </Link>
-                    </DropdownMenuItem>
-                  </>
-                ) : (
-                  <>
-                    <DropdownMenuItem asChild>
-                      <Link href="/login" className="flex items-center gap-2">
-                        <LogIn className="h-4 w-4" />
-                        <span>Giriş Yap</span>
-                      </Link>
-                    </DropdownMenuItem>
-
-                    <DropdownMenuItem asChild>
-                      <Link
-                        href="/register"
-                        className="flex items-center gap-2"
-                      >
-                        <UserPlus className="h-4 w-4" />
-                        <span>Kayıt Ol</span>
-                      </Link>
-                    </DropdownMenuItem>
-                  </>
-                )}
-              </DropdownMenuContent>
-            </DropdownMenu>
-
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              aria-label="Kullanıcı Menüsü"
+              className={`hover:bg-gray-100 transition-colors relative ${
+                userMenuOpen ? "bg-gray-100" : ""
+              }`}
+              onClick={() => setUserMenuOpen(!userMenuOpen)}
+              data-id="user-button"
+            >
+              <User className="h-5 w-5 text-gray-700" />
+              {user && (
+                <span className="absolute top-1 right-1 h-2 w-2 rounded-full bg-green-500 border border-white"></span>
+              )}
+            </Button>
             <Link href="/favorites" aria-label="Favoriler" className="relative">
               <Button
                 variant="ghost"
@@ -410,9 +337,7 @@ export default function Navbar() {
                 </span>
               )}
             </Link>
-
             <CartDropdown />
-
             <div className="md:hidden">
               <Button
                 variant="ghost"
@@ -428,7 +353,7 @@ export default function Navbar() {
         </div>
       </nav>
 
-      {/* YENİ BİLEŞEN BURAYA EKLENDİ */}
+      {/* Koleksiyon Mega Menü */}
       <CollectionMegaMenu
         collectionOpen={collectionOpen}
         setCollectionOpen={setCollectionOpen}
@@ -441,7 +366,14 @@ export default function Navbar() {
         }}
       />
 
-      {/* YENİ BİLEŞEN BURAYA EKLENDİ */}
+      {/* Kullanıcı Mega Menü (Burada kalmalı) */}
+      <UserMegaMenu
+        user={user}
+        userMenuOpen={userMenuOpen}
+        setUserMenuOpen={setUserMenuOpen}
+        scrolled={scrolled}
+        pathname={pathname} // 🚨 YOLU GÖNDERİYORUZ
+      />
 
       <MobileNavSheet
         isOpen={mobileOpen}

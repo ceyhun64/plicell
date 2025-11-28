@@ -1,20 +1,25 @@
-// components/navbar/CollectionMegaMenu.tsx
 "use client";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { PhoneOutgoing, ArrowRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import React, { useEffect, useRef } from "react";
-import Image from "next/image"; // Resimler için Image bileşeni
-import { motion } from "framer-motion"; // Animasyonlar için
+import { PhoneOutgoing, ArrowRight, X } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import Image from "next/image";
+import { useEffect, useRef } from "react";
 
-// Menü verilerinin tip tanımı (Navbar'dan gelen yapıya göre)
+// --- TYPES ---
 interface NavLink {
   label: string;
   href: string;
   icon: React.ElementType;
   subItems?: { label: string; href: string }[];
+}
+
+interface CategoryData {
+  name: string;
+  desc: string;
+  image: string;
+  href: string;
 }
 
 interface CollectionMegaMenuProps {
@@ -23,20 +28,6 @@ interface CollectionMegaMenuProps {
   collectionLink: NavLink;
 }
 
-// Daha modern ve elegant stil için sabitler
-const PRIMARY_COLOR = "#7B0323"; // Derin Kırmızı / Bordo
-const ACTIVE_COLOR = "#C70039"; // Vurgu Kırmızı
-
-// Kategori verilerinin tipini tanımlayalım (Sizin verdiğiniz örneğe uygun)
-interface CategoryData {
-  name: string;
-  desc: string;
-  image: string;
-  href: string;
-}
-
-// Navbar'dan gelen subItems verisini görsellerle eşleştiren yardımcı fonksiyon/veri.
-// Bu liste, collectionLink.subItems'a uygun bir eşleştirme tablosudur.
 const CATEGORY_MAP: { [key: string]: CategoryData } = {
   Dikey: {
     name: "Dikey",
@@ -100,202 +91,166 @@ const CATEGORY_MAP: { [key: string]: CategoryData } = {
   },
 };
 
-// Mega Menüye özel, daha küçük ve yatay tasarımlı görsel kart bileşeni
-function CompactMegaMenuCard({
+const CARD_VARIANT = {
+  initial: { opacity: 0, y: 15, scale: 0.98 },
+  animate: { opacity: 1, y: 0, scale: 1 },
+};
+
+// --- Category Card ---
+function CategoryCard({
   item,
-  setCollectionOpen,
   pathname,
+  closeMenu,
 }: {
   item: { label: string; href: string };
-  setCollectionOpen: (isOpen: boolean) => void;
   pathname: string;
+  closeMenu: () => void;
 }) {
-  // collectionLink.subItems'dan gelen label ile eşleştirme yapılıyor
   const data = CATEGORY_MAP[item.label] || {
     name: item.label,
-    desc: "Ürünleri incele",
-    image: "/categoryBanners/default.jpg", // Varsayılan resim yolu
+    desc: "Tüm ürünleri keşfedin",
+    image: "/categoryBanners/default.jpg",
     href: item.href,
   };
-  const isActive = pathname === item.href;
+
+  const active = pathname === data.href;
 
   return (
-    <motion.div
-      whileHover={{ scale: 1.02 }}
-      transition={{ type: "tween", duration: 0.2 }}
-    >
-      <Link href={data.href} onClick={() => setCollectionOpen(false)}>
-        <div
-          className={`relative flex items-center gap-3 p-2 rounded-xs transition-all duration-300 border border-gray-100 group shadow-sm ${
-            isActive
-              ? `bg-red-50 ring-2 ring-red-200 `
-              : "hover:bg-gray-50 hover:shadow-md"
-          }`}
-        >
-          {/* Resim Alanı (Küçük Daire/Kare) */}
-          <div
-            className={`relative w-20 h-16 overflow-hidden rounded-xs flex-shrink-0 transition-all duration-300 ${
-              isActive
-                ? "ring-2 ring-white shadow-lg"
-                : "group-hover:ring-2 group-hover:ring-red-100"
+    <motion.div variants={CARD_VARIANT}>
+      <Link
+        href={data.href}
+        onClick={closeMenu}
+        className="group block rounded-sm overflow-hidden bg-white/70 backdrop-blur-sm shadow-sm border border-gray-100 transition-all hover:shadow-lg"
+      >
+        {/* Image */}
+        <div className="relative w-full h-22 overflow-hidden">
+          <Image
+            src={data.image}
+            alt={data.name}
+            fill
+            className="object-cover transition-transform duration-500 group-hover:scale-105"
+          />
+        </div>
+
+        {/* Text */}
+        <div className="p-3">
+          <h3
+            className={`text-sm font-semibold mb-1
+            ${
+              active
+                ? "text-[#7B0323]"
+                : "text-gray-800 group-hover:text-[#7B0323]"
             }`}
           >
-            <Image
-              src={data.image}
-              alt={data.name}
-              fill
-              quality={100}
-              className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-105"
-              sizes="60px"
-            />
-            {/* Hafif bir gölge overlay'i */}
-          </div>
-
-          {/* Metin Alanı */}
-          <div className="flex flex-col min-w-0 flex-1">
-            <h3
-              className={`text-base font-semibold truncate transition-colors duration-300 ${
-                isActive
-                  ? `text-gray-900`
-                  : "text-gray-800 group-hover:text-red-800"
-              }`}
-              style={{ color: isActive ? PRIMARY_COLOR : undefined }}
-            >
-              {data.name}
-            </h3>
-            <p className="text-xs text-gray-400 truncate mt-0.5">{data.desc}</p>
-          </div>
-          <ArrowRight
-            className={`w-4 h-4 text-gray-400 ml-auto transition-colors duration-300 ${
-              isActive ? "text-red-500" : "group-hover:text-red-700"
-            }`}
-          />
+            {data.name}
+          </h3>
+          <p className="text-xs text-gray-500 truncate">{data.desc}</p>
         </div>
       </Link>
     </motion.div>
   );
 }
 
+// --- Main Component ---
 export default function CollectionMegaMenu({
   collectionOpen,
   setCollectionOpen,
   collectionLink,
 }: CollectionMegaMenuProps) {
   const pathname = usePathname() || "/";
-  const menuRef = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLDivElement>(null);
 
-  // Dışarı tıklama olayını yönetme (Kod aynı kaldı)
+  // Click outside
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      const isCollectionButton = (event.target as HTMLElement).closest(
+    const handleClick = (e: MouseEvent) => {
+      const isButton = (e.target as HTMLElement).closest(
         '[data-id="collection-button"]'
       );
-
-      if (
-        collectionOpen &&
-        menuRef.current &&
-        !menuRef.current.contains(event.target as Node) &&
-        !isCollectionButton
-      ) {
+      if (!isButton && ref.current && !ref.current.contains(e.target as Node)) {
         setCollectionOpen(false);
       }
     };
 
-    if (collectionOpen) {
-      document.addEventListener("mousedown", handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+    if (collectionOpen) document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
   }, [collectionOpen, setCollectionOpen]);
 
   return (
-    // Sticky Collection Mega Menu
-    <div
-      ref={menuRef}
-      className={`sticky top-[72px] md:top-[88px] z-40 bg-white transition-all duration-500  overflow-hidden shadow-2xl/50 shadow-gray-200 ${
-        collectionOpen
-          ? "max-h-[600px] opacity-100" // Yükseklik korundu
-          : "max-h-0 opacity-0 pointer-events-none"
-      }`}
-      style={{
-        boxShadow: collectionOpen ? "0 10px 30px rgba(0,0,0,0.08)" : "none",
-      }}
-    >
-      <div className="max-w-7xl mx-auto px-6 md:px-10 py-10">
-        {/* Başlık ve Tümünü Gör Butonu */}
-        <div className="flex justify-between items-end border-b pb-6 mb-8 border-gray-100">
-          <div>
-            <h3 className="text-3xl font-bold text-gray-900 mb-2 tracking-tight">
-              Perde Koleksiyonları
-            </h3>
-            <p className="text-base text-gray-500">
-              Evinizin ambiyansını değiştirecek modern ve sofistike çözümler.
-            </p>
-          </div>
-          <Link href="/products" onClick={() => setCollectionOpen(false)}>
-            <Button
-              variant="outline"
-              className={`transition-all duration-300 font-semibold rounded-full px-5`}
-              style={{
-                borderColor: PRIMARY_COLOR,
-                color: PRIMARY_COLOR,
-                transition: "all 0.3s",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = PRIMARY_COLOR;
-                e.currentTarget.style.color = "white";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = "transparent";
-                e.currentTarget.style.color = PRIMARY_COLOR;
-              }}
-            >
-              Tüm Koleksiyonu Keşfet
-              <ArrowRight className="w-4 h-4 ml-2" />
-            </Button>
-          </Link>
-        </div>
-
-        {/* Koleksiyon Linkleri Grid (Kompakt Resimli Kartlar) */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {collectionLink.subItems?.map((item, idx) => {
-            return (
-              <CompactMegaMenuCard
-                key={idx}
-                item={item}
-                setCollectionOpen={setCollectionOpen}
-                pathname={pathname}
-              />
-            );
-          })}
-        </div>
-
-        {/* İletişim / Ek Bilgi Alanı */}
-        <div className="mt-4 pt-6 border-t border-gray-100">
-          <Link
-            href="/contact"
-            className={`flex items-center gap-5 p-5 bg-gradient-to-r from-white to-red-50 rounded-xl transition-all duration-300 border border-gray-100 hover:border-red-200 shadow-sm hover:shadow-lg hover:shadow-red-500/10`}
+    <AnimatePresence>
+      {collectionOpen && (
+        <motion.div
+          ref={ref}
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: "auto" }}
+          exit={{ opacity: 0, height: 0 }}
+          transition={{ duration: 0.35, ease: "easeOut" }}
+          className="sticky left-0 right-0 top-[74px] md:top-[85px] z-50 bg-white/80 backdrop-blur-2xl border-b shadow-xl"
+        >
+          {/* Close Button */}
+          <button
             onClick={() => setCollectionOpen(false)}
+            className="absolute top-4 right-6 p-2 rounded-full bg-white/70 hover:bg-white shadow transition"
           >
-            <PhoneOutgoing
-              className="w-7 h-7 text-red-700 flex-shrink-0"
-              strokeWidth={1.5}
-            />
-            <div>
-              <p className="font-bold text-lg text-gray-900 leading-snug">
-                Özel Projeler ve Ölçü Desteği
-              </p>
-              <p className="text-sm text-gray-500 mt-0.5">
-                Uzmanlarımızla anında iletişime geçin ve ücretsiz danışmanlık
-                alın.
-              </p>
+            <X className="w-5 h-5 text-gray-700" />
+          </button>
+
+          <div className="max-w-7xl mx-auto px-6 md:px-10 py-10">
+            {/* Header */}
+            <div className="flex justify-between items-end mb-8">
+              <div>
+                <h3 className="text-3xl font-bold text-gray-900 tracking-tight">
+                  Perde Koleksiyonları
+                </h3>
+                <p className="text-gray-500 mt-1">
+                  İç mekanınıza modern bir dokunuş katın.
+                </p>
+              </div>
+
+              <Link
+                href="/products"
+                onClick={() => setCollectionOpen(false)}
+                className="px-5 py-2.5 font-medium rounded-full border border-[#7B0323] text-[#7B0323] hover:bg-[#7B0323] hover:text-white transition"
+              >
+                Tümünü Gör
+              </Link>
             </div>
-            <ArrowRight className="w-5 h-5 ml-auto text-red-500 flex-shrink-0" />
-          </Link>
-        </div>
-      </div>
-    </div>
+
+            {/* Category Grid */}
+            <motion.div
+              initial="initial"
+              animate="animate"
+              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-5"
+            >
+              {collectionLink.subItems?.map((item, index) => (
+                <CategoryCard
+                  key={index}
+                  item={item}
+                  pathname={pathname}
+                  closeMenu={() => setCollectionOpen(false)}
+                />
+              ))}
+            </motion.div>
+
+            {/* Support Area */}
+            <Link
+              href="/contact"
+              onClick={() => setCollectionOpen(false)}
+              className="flex items-center gap-5 mt-10 p-6 rounded-2xl border bg-gradient-to-r from-white to-red-50 hover:shadow-lg transition"
+            >
+              <PhoneOutgoing className="text-[#7B0323] w-7 h-7 flex-shrink-0" />
+              <div>
+                <p className="font-semibold text-lg text-gray-900">
+                  Ücretsiz ölçü ve proje desteği
+                </p>
+                <p className="text-sm text-gray-600 mt-1">
+                  Uzmanlarımızla hemen görüşün.
+                </p>
+              </div>
+              <ArrowRight className="w-6 h-6 text-[#7B0323] ml-auto" />
+            </Link>
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }
