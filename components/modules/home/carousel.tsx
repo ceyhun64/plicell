@@ -10,7 +10,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 const heroes = [
   {
     id: 1,
-    title: "Lazer Kesim Stor: Sanatsal Işık",
+    title: "Lazer Kesim Stor Sanatsal Işık",
     description:
       "Modern bir dokunuşla ışık oyunları yaratın. Eşsiz desenleriyle mekanınıza derinlik katan stor perdeler.",
     image: "/heroes/102.jpg",
@@ -222,7 +222,7 @@ export default function HeroSection() {
 
               <Button
                 asChild
-                className="mt-6 bg-[#7B0323] hover:bg-[#A30530] text-white py-3 sm:py-4 px-6 sm:px-10 rounded-full text-sm sm:text-lg font-semibold shadow-xl transition-all duration-300 transform hover:scale-[1.02]"
+                className="mt-6 bg-[#7B0323] hover:bg-[#A30530] text-white  px-6 sm:px-10 rounded-full text-sm sm:text-lg font-semibold shadow-xl transition-all duration-300 transform hover:scale-[1.02]"
               >
                 <span>{slide.buttonText}</span>
               </Button>

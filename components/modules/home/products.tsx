@@ -6,6 +6,7 @@ import Link from "next/link";
 import ProductCard from "../products/productCard";
 import { Skeleton } from "@/components/ui/skeleton"; // Skeleton bileşeni eklendi
 import { GradientText } from "@/components/ui/shadcn-io/gradient-text";
+import { ArrowRight, Sparkles } from "lucide-react";
 
 interface ProductData {
   id: number;
@@ -120,20 +121,25 @@ export default function Products() {
 
           <Link href="/products">
             <Button
-              variant="outline"
-              size={"lg"}
+              size="lg"
               className="
-      rounded-full px-6 py-3 text-base font-semibold
-      border-2 border-amber-500 
-      text-amber-700
-      hover:text-white
-      hover:bg-amber-600
-      hover:border-amber-600
-      transition-all duration-300
-      shadow-sm hover:shadow-lg hover:shadow-amber-300/40
-    "
+          group relative overflow-hidden
+          rounded-full px-8 py-6 text-base font-semibold
+          bg-gradient-to-r from-amber-500 via-amber-600 to-amber-700
+          text-white
+          border-none
+          shadow-lg shadow-amber-500/30
+          hover:shadow-2xl hover:shadow-amber-500/50
+          transition-all duration-500
+          hover:scale-105
+          active:scale-95
+        "
             >
-              Tüm Koleksiyonu Gör
+              <span className="relative z-10 flex items-center gap-2">
+                Tüm Koleksiyonu Gör
+                <ArrowRight className="h-5 w-5 transition-transform duration-300 group-hover:translate-x-1" />
+              </span>
+              <div className="absolute inset-0 bg-gradient-to-r from-amber-600 via-amber-700 to-amber-800 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
             </Button>
           </Link>
         </div>
