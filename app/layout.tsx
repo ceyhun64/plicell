@@ -1,28 +1,40 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import ClientLayoutWrapper from "@/components/layout/ClientLayoutWrapper";
 import ScrollToTopButton from "@/components/layout/scrollToTop";
 import { CartProvider } from "@/contexts/cartContext";
 import { FavoriteProvider } from "@/contexts/favoriteContext";
 import { Toaster } from "sonner";
-import Head from "next/head"; // 👈 ekledik
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
+  display: "swap",
+  preload: true,
 });
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+  display: "swap",
+  preload: true,
+});
+
+// ✅ Playfair Display'i Next.js ile yükle - HIZLI VE OPTİMİZE
+const playfairDisplay = Playfair_Display({
+  weight: ["400", "700"],
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-playfair",
+  preload: true,
 });
 
 export const metadata: Metadata = {
   title:
     "Moda Perde | Online Perde Mağazası – Plicell, Zebra, Store ve Ahşap Jaluzi Perde Modelleri",
   description:
-    "Moda Perde – Kaliteli, şık ve uygun fiyatlı perde modelleri. Tül, stor, zebra ve fon perdelerle evinize zarafet katın. Türkiye’nin güvenilir online perde mağazası!",
+    "Moda Perde – Kaliteli, şık ve uygun fiyatlı perde modelleri. Tül, stor, zebra ve fon perdelerle evinize zarafet katın. Türkiye'nin güvenilir online perde mağazası!",
   openGraph: {
     title: "Moda Perde | Online Perde Mağazası",
     description:
@@ -40,22 +52,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="tr">
-      <Head>
-        {/* 🔹 Kritik performans optimizasyonları */}
-        <link rel="preconnect" href="https://www.nowartplicell.com" />
-        <link rel="preload" as="style" href="/css/6ded801ecd631cf3.css" />
-        <link rel="preload" as="style" href="/css/de70bee13400563f.css" />
-        <link
-          rel="preload"
-          as="font"
-          type="font/woff2"
-          href="/media/ba015fad6dcf6784-s.woff2"
-          crossOrigin="anonymous"
-        />
-      </Head>
+    <html lang="tr" className={`${playfairDisplay.variable}`}>
+      <head>
+        <link rel="preconnect" href="https://res.cloudinary.com" />
+        <link rel="dns-prefetch" href="https://res.cloudinary.com" />
+      </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${playfairDisplay.className} antialiased`}
       >
         <CartProvider>
           <FavoriteProvider>

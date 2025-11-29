@@ -2,8 +2,6 @@
 @import "tw-animate-css";
 
 
-
-
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
