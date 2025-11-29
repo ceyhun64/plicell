@@ -125,15 +125,6 @@ const heroes = [
     buttonText: "Tül Perdeleri Gör",
     href: "/products/sheer",
   },
-  {
-    id: 14,
-    title: "Ahşap Jaluzi: Doğanın Huzuru",
-    description:
-      "Evinizde doğal ve organik bir görünüm yaratmak için ahşap jaluzi koleksiyonumuza göz atın.",
-    image: "/heroes/19.jpg",
-    buttonText: "Ahşap Jaluzileri Gör",
-    href: "/products/wooden",
-  },
 ];
 
 const SLIDE_INTERVAL_MS = 6000; // Otomatik geçiş süresi (5 saniyeden 6 saniyeye çıkarıldı)

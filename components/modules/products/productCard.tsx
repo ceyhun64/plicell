@@ -26,13 +26,13 @@ interface ProductData {
 }
 
 const roomColors: Record<string, string> = {
-  Salon: "bg-gray-500",
-  "Çocuk Odası": "bg-pink-500",
-  Mutfak: "bg-green-500",
-  "Yatak Odası": "bg-purple-500",
-  "Oturma Odası": "bg-orange-500",
-  Banyo: "bg-cyan-500",
-  Tümü: "bg-blue-500",
+  Salon: "bg-gray-700",
+  "Çocuk Odası": "bg-pink-700",
+  Mutfak: "bg-green-700",
+  "Yatak Odası": "bg-purple-700",
+  "Oturma Odası": "bg-orange-700",
+  Banyo: "bg-cyan-700",
+  Tümü: "bg-blue-700",
 };
 
 export default function ProductCard({ product }: { product: ProductData }) {
@@ -116,6 +116,7 @@ export default function ProductCard({ product }: { product: ProductData }) {
                 onClick={handleFavoriteClick}
               >
                 <Heart
+                  aria-label="favori ekle"
                   className={`h-4 w-4 transition-colors duration-300 ${
                     favorited ? "text-red-500" : "text-gray-300"
                   }`}

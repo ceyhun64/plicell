@@ -291,7 +291,10 @@ const CartDropdown = forwardRef(
           {/* Footer */}
           <SheetFooter className="flex flex-col gap-3 pt-3">
             <Link href="/cart">
-              <Button className="w-full py-3 text-sm bg-[#7B0323] text-white rounded-full shadow-sm hover:bg-[#5E021A] transition flex items-center justify-center gap-2">
+              <Button
+                aria-label="Sepete Git"
+                className="w-full py-3 text-sm bg-[#7B0323] text-white rounded-full shadow-sm hover:bg-[#5E021A] transition flex items-center justify-center gap-2"
+              >
                 <ShoppingCart className="h-5 w-5" />
                 Sepete Git
               </Button>

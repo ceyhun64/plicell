@@ -5,7 +5,7 @@ export default function ProductSkeleton() {
   return (
     <div className="max-w-8xl mx-auto mb-20">
       {/* Banner Skeleton */}
-      <div className="relative w-full h-40 md:h-60 mb-6 overflow-hidden rounded-xs">
+      <div className="relative w-full h-[60vh] md:h-[75vh] mb-6 overflow-hidden rounded-xs">
         <Skeleton className="w-full h-full" />
       </div>
 

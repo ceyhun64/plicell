@@ -327,6 +327,7 @@ export default function Navbar() {
               <Button
                 variant="ghost"
                 size="icon-sm"
+                aria-label="Favoriler"
                 className="hover:bg-gray-100 transition-colors"
               >
                 <Heart className="h-5 w-5 text-gray-700" />
