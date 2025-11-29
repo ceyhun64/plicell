@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback ,useMemo} from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -127,18 +127,12 @@ const heroes = [
   // },
 ];
 
-const SLIDE_INTERVAL_MS = 6000;
+const SLIDE_INTERVAL_MS = 6000; // Otomatik geçiş süresi (5 saniyeden 6 saniyeye çıkarıldı)
 
 export default function HeroSection() {
   const [current, setCurrent] = useState(0);
-  const [isClient, setIsClient] = useState(false);
 
-  // Client-side rendering kontrolü
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-  // Navigasyon fonksiyonları
+  // Navigasyon fonksiyonları için useCallback kullanımı
   const prevSlide = useCallback(() => {
     setCurrent((prev) => (prev === 0 ? heroes.length - 1 : prev - 1));
   }, []);
@@ -147,21 +141,16 @@ export default function HeroSection() {
     setCurrent((prev) => (prev === heroes.length - 1 ? 0 : prev + 1));
   }, []);
 
-  // Otomatik slayt geçişi
+  // Otomatik slayt geçişi ve temizleme
   useEffect(() => {
-    if (!isClient) return;
-
     const interval = setInterval(() => {
       nextSlide();
     }, SLIDE_INTERVAL_MS);
-
     return () => clearInterval(interval);
-  }, [nextSlide, isClient]);
+  }, [nextSlide]); // Bağımlılık olarak nextSlide eklendi
 
-  // Klavye erişilebilirliği
+  // Klavye erişilebilirliği için event listener
   useEffect(() => {
-    if (!isClient) return;
-
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "ArrowLeft") {
         prevSlide();
@@ -169,60 +158,44 @@ export default function HeroSection() {
         nextSlide();
       }
     };
-
     document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [prevSlide, nextSlide, isClient]);
-
-  // Sadece görünür ve komşu slaytları preload et
-  const shouldLoadImage = useMemo(() => {
-    return (index: number) => {
-      if (index === current) return true;
-      const prev = current === 0 ? heroes.length - 1 : current - 1;
-      const next = current === heroes.length - 1 ? 0 : current + 1;
-      return index === prev || index === next;
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [current]);
+  }, [prevSlide, nextSlide]);
 
   return (
-    <section
+    <div
       className="relative w-full h-[500px] sm:h-[600px] lg:h-[700px] overflow-hidden group"
       aria-roledescription="carousel"
       aria-label="Ürün Tanıtım Kaydırıcısı"
     >
       {heroes.map((slide, index) => {
         const isActive = index === current;
-        const shouldLoad = shouldLoadImage(index);
 
         return (
           <div
             key={slide.id}
+            // Sadece tek bir slaytı gösterip diğerlerini gizlemek için daha temiz bir yol
             className={`absolute inset-0 transition-opacity duration-1000 ease-in-out font-serif ${
               isActive ? "opacity-100 z-10" : "opacity-0 z-0"
             }`}
-            aria-hidden={!isActive}
+            aria-hidden={!isActive} // Erişilebilirlik için gizli
             role="group"
             aria-label={`${index + 1} / ${heroes.length}`}
           >
-            {/* Görüntü - Kritik optimizasyon */}
-            {shouldLoad && (
-              <Image
-                src={slide.image}
-                alt={slide.title}
-                fill
-                sizes="100vw"
-                quality={85}
-                priority={index === 0}
-                loading={index === 0 ? "eager" : "lazy"}
-                fetchPriority={index === 0 ? "high" : "low"}
-                style={{ objectFit: "cover" }}
-                placeholder="blur"
-                blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCwABmX/9k="
-              />
-            )}
+            {/* Görüntü */}
+            <Image
+              src={slide.image}
+              alt={slide.title}
+              fill
+              quality={100}
+              style={{ objectFit: "cover" }} // layout="fill" yerine modern Next.js 13+ style kullanımı
+              priority={index === 0} // İlk slayt için öncelik
+            />
 
             {/* Gradyan Kaplama */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/40 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/40  to-transparent"></div>
 
             {/* Metin ve Buton Blok */}
             <Link
@@ -231,7 +204,7 @@ export default function HeroSection() {
               tabIndex={isActive ? 0 : -1}
               aria-label={`${slide.title} sayfasına git`}
             >
-              <h1 className="text-3xl sm:text-5xl lg:text-7xl font-extrabold tracking-tight text-left drop-shadow-xl break-words">
+              <h1 className="text-3xl sm:text-5xl lg:text-7xl font-extrabold tracking-tight text-left drop-shadow-xl  break-words">
                 {slide.title}
               </h1>
               <p className="text-sm sm:text-lg mt-3 sm:mt-5 font-light opacity-95 drop-shadow-md break-words">
@@ -240,7 +213,7 @@ export default function HeroSection() {
 
               <Button
                 asChild
-                className="mt-6 font-sans bg-[#7B0323] hover:bg-[#A30530] text-white px-6 sm:px-10 rounded-full text-sm sm:text-lg font-semibold shadow-xl transition-all duration-300 transform hover:scale-[1.02]"
+                className="mt-6 font-sans bg-[#7B0323] hover:bg-[#A30530] text-white  px-6 sm:px-10 rounded-full text-sm sm:text-lg font-semibold shadow-xl transition-all duration-300 transform hover:scale-[1.02]"
               >
                 <span>{slide.buttonText}</span>
               </Button>
@@ -250,9 +223,9 @@ export default function HeroSection() {
       })}
 
       {/* Navigasyon Düğmeleri */}
-      <div className="absolute top-2/5 md:top-1/2 left-3 transform -translate-y-1/2 z-10 opacity-70 group-hover:opacity-100 transition-opacity duration-300">
+      <div className="absolute top-2/5 md:top-1/2 left-3 transform -translate-y-1/2 z-10 opacity-70 group-hover:opacity-100 transition-opacity duration-300 ">
         <Button
-          variant="secondary"
+          variant="secondary" // Daha belirgin bir buton stili
           size="icon"
           onClick={prevSlide}
           aria-label="Önceki Slayt"
@@ -272,6 +245,6 @@ export default function HeroSection() {
           <ChevronRight size={28} />
         </Button>
       </div>
-    </section>
+    </div>
   );
 }
