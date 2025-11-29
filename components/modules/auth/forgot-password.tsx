@@ -41,23 +41,23 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-white via-amber-950/10 to-white dark:bg-gray-900 px-4">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-b from-white via-amber-950/10 to-white px-4">
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="w-full max-w-md bg-white/80 dark:bg-gray-800 rounded-xs shadow-2xl p-10 flex flex-col gap-6"
+        className="w-full max-w-md bg-white/80 rounded-xs shadow-2xl p-10 flex flex-col gap-6"
       >
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 text-center">
+        <h1 className="text-3xl font-bold text-gray-900  text-center">
           Şifremi Unuttum
         </h1>
-        <p className="text-center text-gray-500 dark:text-gray-400 text-sm">
+        <p className="text-center text-gray-500 text-sm">
           Şifrenizi almak için sistemimize kayıt olduğunuz e-posta adresinizi
           girin.
         </p>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <Label htmlFor="email" className="text-gray-700 dark:text-gray-200">
+          <Label htmlFor="email" className="text-gray-700 ">
             E-posta Adresiniz
           </Label>
           <Input
@@ -67,7 +67,7 @@ export default function ForgotPasswordPage() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            className="rounded-lg bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-red-500"
+            className="rounded-lg bg-gray-50  border border-gray-300  focus:ring-2 focus:ring-red-500"
           />
 
           <Button
@@ -84,7 +84,7 @@ export default function ForgotPasswordPage() {
         <div className="text-center mt-4">
           <Link
             href="/login"
-            className="text-sm text-red-600 hover:underline dark:text-red-400"
+            className="text-sm text-red-600 hover:underline "
           >
             Giriş Ekranına Dön
           </Link>

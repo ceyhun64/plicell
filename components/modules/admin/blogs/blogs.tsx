@@ -54,7 +54,7 @@ export const DeleteDialog: React.FC<DeleteDialogProps> = ({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
-      <DialogContent className="sm:max-w-[400px] bg-white text-gray-800 rounded-xs border border-gray-200 shadow-lg">
+      <DialogContent className="sm:max-w-[400px] bg-white text-gray-800 rounded-xs border border-gray-200 shadow-lg font-sans">
         <DialogHeader>
           <DialogTitle className="text-lg font-bold text-[#001e59]">
             {title}
@@ -177,7 +177,7 @@ export default function Blogs(): React.ReactElement {
   };
 
   return (
-    <div className="flex flex-col md:flex-row min-h-screen bg-gray-50 text-gray-900">
+    <div className="flex flex-col md:flex-row min-h-screen bg-gray-50 text-gray-900 font-sans">
       <Sidebar />
       <main className={`flex-1 p-4 md:p-8 ${isMobile ? "" : "md:ml-64"}`}>
         {/* Başlık */}

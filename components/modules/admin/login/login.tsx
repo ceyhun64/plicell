@@ -13,12 +13,12 @@ import { signIn } from "next-auth/react";
 import { GradientText } from "@/components/ui/shadcn-io/gradient-text/index";
 import { signOut } from "next-auth/react";
 import Link from "next/link";
+import { toast } from "sonner";
 
 export default function AdminLogin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [loginMessage, setLoginMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   useEffect(() => {
@@ -30,7 +30,6 @@ export default function AdminLogin() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setLoginMessage("");
 
     try {
       const res = await signIn("credentials", {
@@ -40,36 +39,36 @@ export default function AdminLogin() {
       });
 
       if (res?.error) {
-        setLoginMessage("❌ Hatalı email veya şifre!");
-      } else if (res?.ok) {
+        toast.error(" Hatalı email veya şifre!");
+        return;
+      }
+
+      if (res?.ok) {
         const sessionRes = await fetch("/api/auth/session");
         const sessionData = await sessionRes.json();
 
         if (sessionData?.user?.role !== "ADMIN") {
-          setLoginMessage("❌ Bu alan sadece adminler için!");
+          toast.error(" Bu alan sadece adminler içindir!");
           return;
         }
 
-        setLoginMessage("✅ Giriş başarılı! Yönlendiriliyorsunuz...");
+        toast.success(" Giriş başarılı! Yönlendiriliyorsunuz...");
         setTimeout(() => router.push("/admin/dashboard"), 1000);
-      } else {
-        setLoginMessage("❌ Bilinmeyen bir hata oluştu.");
       }
-    } catch (error) {
-      console.error(error);
-      setLoginMessage("❌ Giriş sırasında bir hata oluştu.");
+    } catch (err) {
+      toast.error(" Giriş sırasında bir hata oluştu.");
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-100 dark:bg-gray-900 px-4">
+    <div className="flex min-h-screen items-center justify-center bg-gray-100px-4 font-sans">
       <motion.div
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="relative w-full max-w-md bg-white dark:bg-gray-800 backdrop-blur-md rounded-xs shadow-2xl p-10 flex flex-col gap-6"
+        className="relative w-full max-w-md bg-white/80 backdrop-blur-md rounded-xs shadow-2xl p-10 flex flex-col gap-6"
       >
         {/* Logo / Başlık */}
         <div className="flex flex-col items-center gap-2">
@@ -85,10 +84,10 @@ export default function AdminLogin() {
               />
             </div>
           </Link>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+          <h1 className="text-3xl font-bold text-gray-900 ">
             Admin Panel
           </h1>
-          <p className="text-sm text-gray-500 dark:text-gray-300 text-center">
+          <p className="text-sm text-gray-500 text-center">
             Yönetici girişi için kimlik doğrulaması yapın
           </p>
         </div>
@@ -100,7 +99,7 @@ export default function AdminLogin() {
           <div className="flex flex-col gap-1">
             <Label
               htmlFor="email"
-              className="flex items-center gap-2 text-gray-700 dark:text-gray-200 font-medium"
+              className="flex items-center gap-2 text-gray-700  font-medium"
             >
               <Mail size={16} /> E-posta
             </Label>
@@ -111,14 +110,14 @@ export default function AdminLogin() {
               onChange={(e) => setEmail(e.target.value)}
               placeholder="admin@Moda Perde.com"
               required
-              className="rounded-lg"
+              className="rounded-lg "
             />
           </div>
 
           <div className="flex flex-col gap-1 relative">
             <Label
               htmlFor="password"
-              className="flex items-center gap-2 text-gray-700 dark:text-gray-200 font-medium"
+              className="flex items-center gap-2 text-gray-700 font-medium"
             >
               <Lock size={16} /> Şifre
             </Label>
@@ -133,7 +132,7 @@ export default function AdminLogin() {
             />
             <button
               type="button"
-              className="absolute right-3 mt-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition"
+              className="absolute right-3 mt-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition"
               onClick={() => setShowPassword(!showPassword)}
             >
               {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -148,18 +147,6 @@ export default function AdminLogin() {
             {isLoading ? "Yükleniyor..." : "Giriş Yap"}
           </Button>
         </form>
-
-        {loginMessage && (
-          <p
-            className={`text-center text-sm mt-2 ${
-              loginMessage.includes("başarılı")
-                ? "text-green-500"
-                : "text-red-500"
-            }`}
-          >
-            {loginMessage}
-          </p>
-        )}
 
         <p className="text-center text-xs text-gray-400 mt-6">
           © {new Date().getFullYear()} Moda Perde Admin System

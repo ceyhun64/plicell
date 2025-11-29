@@ -19,7 +19,7 @@ const StepIndicator: React.FC<StepIndicatorProps> = ({ step, currentStep, label 
   return (
     <div
       className={`flex flex-col items-center w-1/2 ${
-        step > 1 ? "border-l pl-4 border-gray-200 dark:border-gray-700" : ""
+        step > 1 ? "border-l pl-4 border-gray-200 " : ""
       }`}
     >
       <div
@@ -28,7 +28,7 @@ const StepIndicator: React.FC<StepIndicatorProps> = ({ step, currentStep, label 
             ? "bg-green-500 text-white"
             : isActive
             ? "bg-primary text-primary-foreground"
-            : "bg-gray-200 text-gray-500 dark:bg-gray-700 dark:text-gray-400"
+            : "bg-gray-200 text-gray-500 "
         }`}
       >
         {isCompleted ? "✓" : step}

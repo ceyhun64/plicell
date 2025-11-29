@@ -188,7 +188,7 @@ export default function AdminDashboard() {
     );
 
   return (
-    <div className="flex flex-col md:flex-row min-h-screen bg-gray-50 text-gray-900">
+    <div className="flex flex-col md:flex-row min-h-screen bg-gray-50 text-gray-900 font-sans">
       <Sidebar />
       <main className={`flex-1 p-4 md:p-8 ${isMobile ? "" : "md:ml-64"}`}>
         <div className="flex flex-col sm:flex-row justify-between items-center mb-6 mt-3 gap-4">

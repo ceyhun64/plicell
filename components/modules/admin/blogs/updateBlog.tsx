@@ -71,7 +71,7 @@ export default function UpdateBlogDialog({
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="bg-white text-gray-900 max-w-5xl w-full border border-gray-300 rounded-xs shadow-2xl sm:max-h-[90vh] sm:overflow-y-auto">
+      <DialogContent className="bg-white text-gray-900 max-w-5xl w-full border border-gray-300 rounded-xs shadow-2xl font-sans sm:max-h-[90vh] sm:overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-xl font-semibold text-[#001e59]">
             Blog Düzenle

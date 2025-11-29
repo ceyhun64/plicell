@@ -53,17 +53,17 @@ export default function ResetPasswordPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-white via-amber-950/10 to-white dark:bg-gray-900 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-white via-amber-950/10 to-white  px-4">
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="w-full max-w-md bg-white/80 dark:bg-gray-800 rounded-xs shadow-2xl p-8 md:p-10 flex flex-col gap-6"
+        className="w-full max-w-md bg-white/80 rounded-xs shadow-2xl p-8 md:p-10 flex flex-col gap-6"
       >
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 text-center">
+        <h1 className="text-3xl font-bold text-gray-900 text-center">
           Şifre Sıfırlama
         </h1>
-        <p className="text-center text-gray-500 dark:text-gray-400">
+        <p className="text-center text-gray-500 ">
           Şifrenizi sıfırlamak için yeni şifrenizi girin.
         </p>
 
@@ -75,7 +75,7 @@ export default function ResetPasswordPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-red-500"
+              className="bg-gray-50 border border-gray-300  rounded-xl focus:ring-2 focus:ring-red-500"
             />
             <button
               type="button"
@@ -100,7 +100,7 @@ export default function ResetPasswordPage() {
         <div className="text-center mt-4">
           <Link
             href="/login"
-            className="text-sm text-red-600 hover:underline dark:text-red-400"
+            className="text-sm text-red-600 hover:underline "
           >
             Giriş Ekranına Dön
           </Link>

@@ -141,7 +141,7 @@ export default function Subscribers() {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-50 text-gray-900">
+    <div className="flex min-h-screen bg-gray-50 text-gray-900 font-sans">
       <Sidebar />
       <main className={`flex-1 p-4 md:p-8 ${isMobile ? "" : "ml-64"}`}>
         <div className="flex flex-col sm:flex-row justify-center md:justify-between md:items-start items-center mb-6 mt-3 gap-4">

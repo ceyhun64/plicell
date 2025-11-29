@@ -70,9 +70,9 @@ console.log("products",products)
   };
 
   return (
-    <ScrollArea className="w-full rounded-xs border border-gray-200 bg-white shadow-md p-2">
+    <ScrollArea className="w-full rounded-xs border border-gray-200 bg-white shadow-md p-2 font-sans">
       {/* DESKTOP TABLE */}
-      <div className="hidden md:block overflow-x-auto w-full">
+      <div className="hidden md:block overflow-x-auto w-full ">
         <Table className="min-w-[1000px] text-sm">
           <TableHeader className="bg-gray-50 text-[#001e59]">
             <TableRow>

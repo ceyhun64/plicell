@@ -198,7 +198,7 @@ export default function Users(): React.JSX.Element {
   if (loading) return <Spinner />;
 
   return (
-    <div className="flex flex-col md:flex-row min-h-screen bg-gray-50 text-gray-900">
+    <div className="flex flex-col md:flex-row min-h-screen bg-gray-50 text-gray-900 font-sans">
       <Sidebar />
 
       <main

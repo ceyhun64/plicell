@@ -53,7 +53,7 @@ export default function OrderDetailDialog({
       </DialogHeader>
 
       {/* Ödeme ve Durum */}
-      <div className="my-5 space-y-3">
+      <div className="my-5 space-y-3 font-sans">
         <h3 className="text-lg font-semibold flex items-center gap-2 text-gray-700">
           <Wallet className="w-5 h-5" /> Ödeme & Durum
         </h3>

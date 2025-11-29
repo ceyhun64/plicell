@@ -250,7 +250,7 @@ export default function Products(): React.ReactElement {
 
   // ===================== RENDER =====================
   return (
-    <div className="flex flex-col md:flex-row min-h-screen bg-gray-50 text-gray-900">
+    <div className="flex flex-col md:flex-row min-h-screen bg-gray-50 text-gray-900 font-sans">
       {/* Sidebar: mobilde collapsible veya üstte hamburger olabilir */}
       <Sidebar />
 

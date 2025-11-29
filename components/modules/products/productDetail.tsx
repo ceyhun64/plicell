@@ -25,6 +25,8 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { ImageZoom } from "@/components/ui/shadcn-io/image-zoom";
 import { addToGuestCart } from "@/utils/cart"; // en üste import et
+import { useFavorite } from "@/contexts/favoriteContext";
+
 import {
   Select,
   SelectContent,
@@ -90,6 +92,7 @@ export default function ProductDetailPage() {
   const [selectedProfileImage, setSelectedProfileImage] = useState<
     string | null
   >(null);
+  const { favorites, addFavorite, removeFavorite, isFavorited } = useFavorite();
 
   const [categoryProducts, setCategoryProducts] = useState<ProductData[]>([]);
   const [isFavorite, setIsFavorite] = useState(false);
@@ -240,30 +243,18 @@ export default function ProductDetailPage() {
     }
   };
 
-  const handleFavoriteToggle = async () => {
-    if (!isLoggedIn) return;
+  const handleFavoriteToggle = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
 
     if (!product) return;
-    try {
-      if (!isFavorite) {
-        const res = await fetch("/api/favorites", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ productId: product.id }),
-          credentials: "include",
-        });
 
-        if (res.ok) setIsFavorite(true);
-      } else {
-        const res = await fetch(`/api/favorites/${product.id}`, {
-          method: "DELETE",
-          credentials: "include", // ⚡ Burayı ekle
-        });
-
-        if (res.ok) setIsFavorite(false);
-      }
-    } catch (error) {
-      console.error(error);
+    if (isFavorited(product.id)) {
+      removeFavorite(product.id);
+      toast.success("Favorilerden kaldırıldı");
+    } else {
+      addFavorite(product.id);
+      toast.success("Favorilere eklendi");
     }
   };
 
@@ -288,6 +279,8 @@ export default function ProductDetailPage() {
       </div>
     );
   }
+  const favorited = isFavorited(product.id);
+
   return (
     <div className="bg-white min-h-screen mb-2 mt-1">
       <div className="container mx-auto px-3 sm:px-6 md:px-12">
@@ -673,21 +666,22 @@ export default function ProductDetailPage() {
                   Sepete Ekle
                 </motion.button>
 
-                <Button
-                  variant="outline"
-                  size="icon"
-                  aria-label="Favoriye Ekle"
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
                   onClick={handleFavoriteToggle}
-                  className="h-14 w-14 rounded-full border-rose-400 bg-white/70 hover:bg-rose-50 transition-all shadow-md"
-                  disabled={loadingFavorite}
+                  className="h-14 w-14 rounded-full hover:bg-rose-50 transition-all flex items-center justify-center"
                 >
                   <Heart
-                    size={26}
+                    size={28}
                     strokeWidth={2}
-                    fill={isFavorite ? "#9F1B40" : "none"} // Daha koyu kırmızı
-                    color={isFavorite ? "#9F1B40" : "currentColor"}
+                    fill={favorited ? "#7B0323" : "none"}
+                    className={cn(
+                      "transition-all duration-300",
+                      favorited ? "text-[#7B0323] scale-110" : "text-gray-400"
+                    )}
                   />
-                </Button>
+                </motion.button>
               </div>
             </div>
           </div>

@@ -17,7 +17,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
-
+import { toast } from "sonner";
 interface MenuItem {
   id: string;
   label: string;
@@ -70,18 +70,35 @@ export default function AdminSidebar(): React.ReactElement {
   )?.id;
 
   const handleLogout = async () => {
-    await router.push("/admin");
+    try {
+      const res = await fetch("/api/auth/logout", {
+        method: "POST",
+      });
+
+      if (!res.ok) {
+        toast.error("Çıkış yapılırken bir hata oluştu");
+        return;
+      }
+
+      toast.success("Başarıyla çıkış yapıldı!");
+
+      setTimeout(() => {
+        router.push("/admin");
+      }, 1000); // Toast görünmesi için delay
+    } catch (error) {
+      toast.error("Sunucu hatası! Çıkış yapılamadı.");
+    }
   };
 
   const AdminInfo = (
-    <div className="flex flex-col gap-2 p-4 border-t border-gray-200 bg-gray-50 dark:bg-gray-800 rounded-md shadow-sm">
+    <div className="flex flex-col gap-2 p-4 border-t border-gray-200  rounded-md shadow-sm font-sans">
       {/* Kullanıcı Adı */}
-      <span className="font-semibold text-gray-900 dark:text-gray-100">
+      <span className="font-semibold text-gray-900 ">
         Feridun Polat
       </span>
 
       {/* Uyarı Mesajı */}
-      <div className="flex items-center gap-2 text-yellow-700 dark:text-yellow-400 bg-yellow-50 dark:bg-yellow-900/20 p-2 rounded-md">
+      <div className="flex items-center gap-2 text-amber-700  bg-yellow-50  p-2 rounded-md">
         <Info size={24} />
         <p className="text-sm">
           Lütfen admin sayfasından ayrılmadan önce çıkış yapınız.

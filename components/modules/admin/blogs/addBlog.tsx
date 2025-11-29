@@ -96,7 +96,7 @@ export default function AddBlogDialog({ onAdd }: AddBlogDialogProps) {
               handleAddBlog();
             }}
           >
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-8 mt-2">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2 md:gap-8 mt-2 font-sans">
               {/* Sol sütun: Form */}
               <div className="bg-gray-50 p-2 sm:p-3 md:p-6 rounded-xs border border-gray-200">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-3 gap-y-2 md:grid-cols-1 md:gap-4">

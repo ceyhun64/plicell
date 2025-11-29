@@ -216,7 +216,7 @@ const ProductDialog = forwardRef<HTMLDivElement, ProductDialogProps>(
               </DialogTitle>
             </DialogHeader>
 
-            <form onSubmit={handleSubmit} className="mt-6 space-y-6">
+            <form onSubmit={handleSubmit} className="mt-6 space-y-6 font-sans">
               {/* Sol Form Alanı */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Sol: Form alanları */}
