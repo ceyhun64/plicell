@@ -5,7 +5,7 @@ import { Phone, Globe } from "lucide-react";
 
 export default function PlisePerdeAdvantages() {
   return (
-    <div className="max-w-7xl mx-auto px-6 py-16 space-y-12 ">
+    <div className="max-w-7xl mx-auto px-6 py-16 space-y-12 font-sans">
       {/* Başlık */}
       <div className="text-center space-y-2">
         <h1 className="text-4xl font-bold text-gray-900">

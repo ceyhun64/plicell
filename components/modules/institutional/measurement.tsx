@@ -21,7 +21,7 @@ export default function MeasurementUnitsPage() {
   ];
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-16 space-y-16">
+    <div className="max-w-7xl mx-auto px-6 py-16 space-y-16 font-sans">
       {/* Başlık */}
       <div className="text-center space-y-2">
         <div className="flex justify-center gap-2 items-center text-[#92e676]">
