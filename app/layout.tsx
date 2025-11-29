@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     description:
       "Plicell, zebra, stor ve ahşap jaluzi perde modelleriyle evinize zarafet katın.",
     siteName: "Moda Perde",
-    images: ["/og-image.png"],
+    images: ["/og-image.webp"],
     locale: "tr_TR",
     type: "website",
   },

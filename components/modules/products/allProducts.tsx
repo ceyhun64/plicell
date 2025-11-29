@@ -117,7 +117,7 @@ export default function AllProducts() {
         {/* Background */}
         <div className="absolute inset-0">
           <Image
-            src="/heroes/132.jpg"
+            src="/categories/all.webp"
             alt="Tüm Perdeler Banner"
             fill
             className="object-cover scale-100 md:scale-105 transition-transform duration-700"

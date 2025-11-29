@@ -13,7 +13,7 @@ const heroes = [
     title: "Lazer Kesim Stor Sanatsal Işık",
     description:
       "Modern bir dokunuşla ışık oyunları yaratın. Eşsiz desenleriyle mekanınıza derinlik katan stor perdeler.",
-    image: "/heroes/102.jpg",
+    image: "/heroes/102.webp",
     buttonText: "Lazer Kesim Storları Keşfet",
     href: "/products/roller/laser-cut",
   },
@@ -22,7 +22,7 @@ const heroes = [
     title: "Doğal Ahşap Jaluzi",
     description:
       "Sıcak bir atmosfer ve mükemmel ışık kontrolü. Evinizin karakterini doğal ahşap dokusuyla güçlendirin.",
-    image: "/heroes/110.jpg",
+    image: "/heroes/110.webp",
     buttonText: "Ahşap Jaluzileri Gör",
     href: "/products/wooden",
   },
@@ -31,7 +31,7 @@ const heroes = [
     title: "Zebra Perde: İkisi Bir Arada",
     description:
       "Şeffaf ve opak bantlarıyla gün ışığını dilediğiniz gibi ayarlayın. Pratik ve modern bir çözüm!",
-    image: "/heroes/111.jpg",
+    image: "/heroes/111.webp",
     buttonText: "Zebra Perde Modelleri",
     href: "/products/zebra",
   },
@@ -40,7 +40,7 @@ const heroes = [
     title: "Minimalist Plise Perdeler",
     description:
       "Katlanabilir, zarif yapısıyla hem cam üstü hem de tavan uygulamalarına uygun, minimalist tasarım.",
-    image: "/heroes/112.jpg",
+    image: "/heroes/112.webp",
     buttonText: "Plise Çözümlerini İncele",
     href: "/products/plicell",
   },
@@ -49,7 +49,7 @@ const heroes = [
     title: "Rüstik: Otantik Dokunuşlar",
     description:
       "Evinize otantik ve bohem bir hava katın. Klasik görünümü en yeni kumaş teknolojisiyle birleştirin.",
-    image: "/heroes/116.jpg",
+    image: "/heroes/116.webp",
     buttonText: "Rüstik Perdeleri Gör",
     href: "/products/rustic",
   },
@@ -58,7 +58,7 @@ const heroes = [
     title: "Dikey Perdeler: Büyük Cam Çözümü",
     description:
       "Geniş cam yüzeylerde şık bir çözüm. 180 derece dönebilen dikey panellerle ışığı kusursuz yönetin.",
-    image: "/heroes/123.jpg",
+    image: "/heroes/123.webp",
     buttonText: "Dikey Perde Çeşitleri",
     href: "/products/vertical",
   },
@@ -67,7 +67,7 @@ const heroes = [
     title: "Fon Perdeler: Mekana Derinlik",
     description:
       "Tül perdelerinizle mükemmel uyum sağlayacak, renk ve doku zenginliği sunan dekoratif çözümler.",
-    image: "/heroes/124.jpg",
+    image: "/heroes/124.webp",
     buttonText: "Fon Perde Koleksiyonu",
     href: "/products/drapes",
   },
@@ -76,7 +76,7 @@ const heroes = [
     title: "Metal Jaluzi: Keskin Çizgiler",
     description:
       "Minimalist ve endüstriyel tasarımlar için ideal. Dayanıklı yapısıyla net ve kontrollü ışık sağlar.",
-    image: "/heroes/128.jpg",
+    image: "/heroes/128.webp",
     buttonText: "Metal Jaluzileri Keşfet",
     href: "/products/metal",
   },
@@ -85,7 +85,7 @@ const heroes = [
     title: "Klasik Stor Perdeler",
     description:
       "Mekanınızda temiz, düz bir görünüm isteyenler için. Yüzlerce renk ve kumaş seçeneği tek bir yerde.",
-    image: "/heroes/134.jpg",
+    image: "/heroes/134.webp",
     buttonText: "Tüm Stor Perdeler",
     href: "/products/roller",
   },
@@ -94,7 +94,7 @@ const heroes = [
     title: "Zarif Tül Perde Modelleri",
     description:
       "Güneş ışığını filtreleyerek odaya davet eden, ince ve zarif dokularla huzurlu bir atmosfer yaratın.",
-    image: "/heroes/135.jpg",
+    image: "/heroes/135.webp",
     buttonText: "Tül Perde Modelleri",
     href: "/products/sheer",
   },
@@ -103,7 +103,7 @@ const heroes = [
     title: "Perde Aksesuarları",
     description:
       "Perdelerinizin ömrünü uzatan ve kullanım konforunu artıran kaliteli montaj ve dekorasyon ürünleri.",
-    image: "/heroes/136.jpg",
+    image: "/heroes/136.webp",
     buttonText: "Aksesuarları Gör",
     href: "/products/accessories",
   },
@@ -112,7 +112,7 @@ const heroes = [
     title: "Tüm Perde Çeşitleri",
     description:
       "Klasikten moderne, fon perdeden jaluziye kadar tüm perde koleksiyonlarımızı bu sayfada keşfedin.",
-    image: "/heroes/140.jpg",
+    image: "/heroes/140.webp",
     buttonText: "Tüm Perdeleri Gör",
     href: "/products",
   },
@@ -121,7 +121,7 @@ const heroes = [
     title: "Soft Işık Dağılımı (Tül)",
     description:
       "İç mekânlarınızı daha yumuşak ve dengeli bir aydınlığa kavuşturan tül perde çeşitleri.",
-    image: "/heroes/144.jpg",
+    image: "/heroes/144.webp",
     buttonText: "Tül Perdeleri Gör",
     href: "/products/sheer",
   },

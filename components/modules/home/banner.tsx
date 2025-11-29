@@ -47,7 +47,7 @@ export default function Banner() {
     <section className="relative w-full h-[350px] sm:h-[450px] md:h-[550px] overflow-hidden shadow-2xl mb-12">
       {/* Arka Plan */}
       <Image
-        src="/categoryBanners/all.jpg"
+        src="/banner/banner.webp"
         alt="Kampanya Banner"
         fill
         className="object-cover brightness-90"

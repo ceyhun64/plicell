@@ -56,13 +56,13 @@ interface ProductData {
 }
 
 const profiles = [
-  { name: "ANTRASİT", src: "/profiles/antrasit.png" },
-  { name: "BEYAZ", src: "/profiles/beyaz.png" },
+  { name: "ANTRASİT", src: "/profiles/antrasit.webp" },
+  { name: "BEYAZ", src: "/profiles/beyaz.webp" },
   // { name: "BRONZ", src: "/profiles/parlak_bronz.webp" },
-  { name: "GRİ", src: "/profiles/gri.png" },
-  { name: "KAHVE", src: "/profiles/kahve.png" },
-  { name: "KREM", src: "/profiles/krem.png" },
-  { name: "SİYAH", src: "/profiles/siyah.png" },
+  { name: "GRİ", src: "/profiles/gri.webp" },
+  { name: "KAHVE", src: "/profiles/kahve.webp" },
+  { name: "KREM", src: "/profiles/krem.webp" },
+  { name: "SİYAH", src: "/profiles/siyah.webp" },
 ];
 
 export default function ProductDetailPage() {
@@ -666,6 +666,7 @@ export default function ProductDetailPage() {
                   disabled={!accepted || en <= 0 || boy <= 0}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
+                  aria-label="Sepete Ekle"
                   className="flex-1 bg-gradient-to-br from-[#7B0323] to-[#9F1B40] hover:from-[#7B0323]/90 hover:to-[#9F1B40]/90 text-white py-0  md:py-2 rounded-full shadow-2xl text-xl font-extrabold transition disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center gap-2"
                 >
                   <ShoppingCart size={24} className="" />

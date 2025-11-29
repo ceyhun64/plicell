@@ -32,61 +32,61 @@ const CATEGORY_MAP: { [key: string]: CategoryData } = {
   Dikey: {
     name: "Dikey",
     desc: "Modern ve fonksiyonel çözümler",
-    image: "/categoryBanners/vertical.jpg",
+    image: "/categories/vertical.webp",
     href: "/products/vertical",
   },
   "Ahşap Jaluzi": {
     name: "Ahşap Jaluzi",
     desc: "Doğal ve sıcak görünüm",
-    image: "/categoryBanners/wooden.jpg",
+    image: "/categories/wooden.webp",
     href: "/products/wooden",
   },
   "Metal Jaluzi": {
     name: "Metal Jaluzi",
     desc: "Dayanıklı modern tasarım",
-    image: "/categoryBanners/metal.jpg",
+    image: "/categories/metal.webp",
     href: "/products/metal",
   },
   "Perde Aksesuarları": {
     name: "Aksesuarlar",
     desc: "Tamamlayıcı detaylar",
-    image: "/categoryBanners/accessories.jpg",
+    image: "/categories/accessories.webp",
     href: "/products/accessories",
   },
   Stor: {
     name: "Stor Perde",
     desc: "Minimalist modern çözümler",
-    image: "/categoryBanners/stor.jpg",
+    image: "/categories/stor.webp",
     href: "/products/roller",
   },
   Zebra: {
     name: "Zebra Perde",
     desc: "Zarif ışık kontrolü",
-    image: "/categoryBanners/zebra.jpg",
+    image: "/categories/zebra.webp",
     href: "/products/zebra",
   },
   Rüstik: {
     name: "Rüstik",
     desc: "Doğal estetik",
-    image: "/categoryBanners/rustic.jpeg",
+    image: "/categories/rustic.webp",
     href: "/products/rustic",
   },
   Tüller: {
     name: "Tüller",
     desc: "Hafif ve şık dokular",
-    image: "/categoryBanners/sheer.jpg",
+    image: "/categories/sheer.webp",
     href: "/products/sheer",
   },
   Fon: {
     name: "Fon",
     desc: "Güçlü dekoratif etki",
-    image: "/categoryBanners/drapes.avif",
+    image: "/categories/drapes.webp",
     href: "/products/drapes",
   },
   Plise: {
     name: "Plise",
     desc: "Enerji tasarruflu modern yapı",
-    image: "/categoryBanners/plicell.jpg",
+    image: "/categories/plicell.webp",
     href: "/products/picell",
   },
 };
@@ -109,7 +109,7 @@ function CategoryCard({
   const data = CATEGORY_MAP[item.label] || {
     name: item.label,
     desc: "Tüm ürünleri keşfedin",
-    image: "/categoryBanners/default.jpg",
+    image: "/categories/default.webp",
     href: item.href,
   };
 
@@ -123,11 +123,14 @@ function CategoryCard({
         className="group block rounded-sm overflow-hidden bg-white/70 backdrop-blur-sm shadow-sm border border-gray-100 transition-all hover:shadow-lg"
       >
         {/* Image */}
-        <div className="relative w-full h-22 overflow-hidden">
+        <div className="relative w-full aspect-[2/1] overflow-hidden">
           <Image
             src={data.image}
             alt={data.name}
             fill
+            sizes="(max-width: 768px) 100vw,
+           (max-width: 1200px) 50vw,
+           20vw"
             className="object-cover transition-transform duration-500 group-hover:scale-105"
           />
         </div>

@@ -169,8 +169,8 @@ export async function POST(req: Request): Promise<Response> {
       html: htmlTemplate,
       attachments: [
         {
-          filename: "logo.png", // Filename belirtilmeli ama görünmez
-          path: "./public/logo/logo.png",
+          filename: "logo.webp", // Filename belirtilmeli ama görünmez
+          path: "./public/logo/logo.webp",
           cid: "modaperde-logo", // Content-ID ile gömülü kullanım
           contentDisposition: "inline", // Inline olarak göm
         },

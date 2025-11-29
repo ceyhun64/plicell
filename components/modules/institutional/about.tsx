@@ -127,7 +127,7 @@ export default function AboutPage() {
         Üretim süreçlerimizde kalite kontrol, estetik ve işlevselliği bir araya
         getiriyoruz. Evlerden ofislere, otellerden mağazalara kadar geniş bir
         müşteri kitlesine hitap eden ürünlerimizle, yaşam alanlarınıza değer katıyoruz.`,
-      image: "/heroes/2.webp",
+      image: "/about/about1.webp",
       alt: "Moda modern üretim tesisimiz",
       reverse: false,
     },
@@ -141,7 +141,7 @@ export default function AboutPage() {
         
         Moda Perde ve Moda Tekstil olarak amacımız sadece ürün satmak değil; 
         aynı zamanda yaşam alanlarına estetik ve fonksiyonel çözümler sunmaktır.`,
-      image: "/heroes/8.webp",
+      image: "/about/about2.webp",
       alt: "Moda Tekstil kumaş ve ürün görselleri",
       reverse: true,
     },
@@ -149,7 +149,7 @@ export default function AboutPage() {
       title: "Misyon & Vizyon",
       text: `Misyonumuz, kaliteli ve güvenilir perde sistemlerini ulaşılabilir kılmak,
         müşteri memnuniyetini en üst seviyede tutmak ve sektörde fark yaratmaktır.`,
-      image: "/heroes/9.webp",
+      image: "/about/about3.webp",
       alt: "Moda Plise Perde Sistemleri",
       list: [
         "Yüksek Kalite: En iyi malzemeleri, en son teknolojiyle işliyoruz.",

@@ -217,8 +217,8 @@ const CartDropdown = forwardRef(
     return (
       <Sheet open={isOpen} onOpenChange={setIsOpen}>
         <SheetTrigger asChild>
-          <Button variant="ghost" className="relative" size="icon-sm">
-            <ShoppingCart className="h-5 w-5" />
+          <Button variant="ghost" className="relative" size="icon-sm"  aria-label="Sepete git">
+            <ShoppingCart  className="h-5 w-5" />
             {showCount && cartItems.length > 0 && (
               <span className="absolute -top-2 -right-1.5 h-5 w-5 rounded-full bg-[#7B0323] text-white text-xs flex items-center justify-center">
                 {cartItems.length}
@@ -250,7 +250,7 @@ const CartDropdown = forwardRef(
                 <ShoppingCart className="h-12 w-12 text-gray-400 animate-bounce" />
                 <p className="text-lg font-semibold">Sepetiniz boş</p>
                 <Link href="/products">
-                  <Button variant="outline" className="mt-2 rounded-full">
+                  <Button variant="outline" className="mt-2 rounded-full" aria-label="Sepete git">
                     Ürünlere Göz At
                   </Button>
                 </Link>

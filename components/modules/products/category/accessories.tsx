@@ -130,7 +130,7 @@ export default function Vertical() {
         {/* Background Image with Overlay */}
         <div className="absolute inset-0">
           <Image
-            src="/categoryBanners/accessories2.jpg"
+            src="/categories/accessories.webp"
             alt="Perde AksesuarlarıBanner"
             fill
             className="object-cover"

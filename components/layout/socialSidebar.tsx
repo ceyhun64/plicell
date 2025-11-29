@@ -42,13 +42,13 @@ export default function SocialSidebar() {
     {
       name: "WhatsApp",
       link: whatsappLink,
-      src: "/socialMedia/whatsapp.png",
+      src: "/socialMedia/whatsapp.webp",
       bg: "bg-[#25D366]",
     },
     {
       name: "Telefon",
       link: `tel:${whatsappNumber}`,
-      src: "/socialMedia/phone.png",
+      src: "/socialMedia/phone.webp",
       bg: "bg-[#075E54]",
     },
   ];

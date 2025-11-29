@@ -64,7 +64,7 @@ export default function Footer() {
                   <Link href="/" className="flex items-center gap-2">
                     <div className="relative w-18 h-12 md:w-22 md:h-14 lg:w-26 lg:h-16">
                       <Image
-                        src="/logo/logo.png"
+                        src="/logo/logo.webp"
                         alt="Moda Perde 6"
                         fill
                         quality={100}
@@ -201,7 +201,7 @@ export default function Footer() {
             >
               <div className="flex space-x-4 mb-4">
                 <a
-                  href="https://instagram.com"
+                  href="https://www.instagram.com/nataliaperde"
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Instagram"
@@ -209,14 +209,14 @@ export default function Footer() {
                   <Instagram size={24} className="text-gray-800" />
                 </a>
                 <a
-                  href="https://facebook.com"
+                  href="https://www.facebook.com/p/Ferudun-POLAT-100054520957916/"
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Facebook"
                 >
                   <Facebook size={24} className="text-gray-800" />
                 </a>
-                <a href="tel:+905301303084" aria-label="Telefon">
+                <a href="tel:+90 533 387 40 74" aria-label="Telefon">
                   <Phone size={24} className="text-gray-800" />
                 </a>
               </div>

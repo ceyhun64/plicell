@@ -118,7 +118,7 @@ export default function Vertical() {
         {/* Background Image with Overlay */}
         <div className="absolute inset-0">
           <Image
-            src="/categoryBanners/vertical.jpg"
+            src="/categories/vertical.webp"
             alt="Dikey Perde Banner"
             fill
             className="object-cover scale-100 md:scale-105 transition-transform duration-700 hover:scale-100"
