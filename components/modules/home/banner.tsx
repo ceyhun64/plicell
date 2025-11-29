@@ -87,7 +87,7 @@ export default function Banner() {
         >
           <Button
             onClick={() => (window.location.href = "/products")}
-            className="bg-gradient-to-r from-rose-500 to-rose-700 hover:from-rose-600 hover:to-rose-800 text-white shadow-lg shadow-rose-700/50 text-lg px-8 py-6 transform transition-all hover:scale-110 rounded-full"
+            className="bg-gradient-to-r from-rose-500 to-rose-700 hover:from-rose-600 hover:to-rose-800 text-white shadow-lg shadow-rose-700/50 text-lg px-8 py-6 transform transition-all hover:scale-110 rounded-full font-sans"
           >
             Fırsatı Yakala
           </Button>

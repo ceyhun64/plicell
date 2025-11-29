@@ -154,13 +154,13 @@ export default function CategoriesSection() {
 
   // Yükleme bittiğinde normal içerik gösterilir
   return (
-    <section className="container mx-auto px-4 md:px-12 py-12 max-w-8xl space-y-6">
+    <section className="container mx-auto px-4 md:px-12 py-12 max-w-8xl space-y-6 font-serif">
       <div className="text-center mb-12">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="text-3xl sm:text-4xl md:text-5xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-gray-700 to-gray-800 drop-shadow-lg"
+          className="text-2xl sm:text-4xl md:text-5xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-gray-700 to-gray-800 drop-shadow-lg"
         >
           Ev Dekorasyonunuzu Baştan Yaratın
         </motion.h2>

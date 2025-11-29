@@ -66,7 +66,7 @@ export default function AboneOl() {
           placeholder="E-posta adresinizi girin"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="w-full rounded-full py-5 px-6 pr-20 text-gray-900 bg-white shadow-md focus:ring-2 focus:ring-yellow-300 focus:border-yellow-400 transition"
+          className="w-full rounded-full py-5 px-6 pr-20 text-white/90 bg-white shadow-md focus:ring-2 focus:ring-yellow-300 focus:border-yellow-400 transition placeholder:text-gray-200"
           required
         />
 
@@ -82,9 +82,7 @@ export default function AboneOl() {
 
         {/* Status mesajı */}
         {status && (
-          <p className="mt-3 text-sm text-white/90 font-medium">
-            {status}
-          </p>
+          <p className="mt-3 text-sm text-white/90 font-medium">{status}</p>
         )}
       </form>
     </section>

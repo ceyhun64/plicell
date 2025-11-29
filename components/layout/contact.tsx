@@ -208,7 +208,7 @@ Mesaj: ${formData.message}
               </p>
             </div>
 
-            <div className="space-y-4">
+            <div className="space-y-4 font-sans">
               {contactDetails.map((item, index) => (
                 <ContactInfoCard
                   key={index}
@@ -227,7 +227,7 @@ Mesaj: ${formData.message}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.6 }}
-            className="bg-white p-6 sm:p-10 rounded-xs shadow-2xl shadow-rose-400/20 border border-gray-100 space-y-6"
+            className="bg-white p-6 sm:p-10 rounded-xs shadow-2xl shadow-rose-400/20 border border-gray-100 space-y-6 font-sans"
           >
             <div className="space-y-6">
               <InputField

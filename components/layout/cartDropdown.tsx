@@ -22,7 +22,7 @@ import { Button } from "@/components/ui/button";
 import { ShoppingCart, ArrowRight, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
-import CartItemDropdown from "./cartItem";
+import CartItemDropdown from "./cartItem"; // <-- Burayı ekledik
 import {
   getCart,
   updateGuestCartQuantity,
@@ -136,51 +136,34 @@ const CartDropdown = forwardRef(
       }
     }, []);
 
-    // İlk yüklemede sadece giriş yapmış kullanıcılar için API'ye istek at
     useEffect(() => {
       (async () => {
         debug("Initial login + cart load");
         const logged = await checkLogin();
-        if (logged && !guest) {
-          // Sadece giriş yapmış kullanıcılar için API'ye istek at
-          await fetchCart();
-        } else {
-          // Giriş yapmamış kullanıcılar için sadece local storage kullan
-          loadGuestCart();
-        }
+        if (logged && !guest) await fetchCart();
+        else loadGuestCart();
       })();
     }, [checkLogin, fetchCart, loadGuestCart, guest]);
 
-    // Sheet açıldığında sadece giriş yapmış kullanıcılar için API'ye istek at
     useEffect(() => {
       if (isOpen) {
-        if (isLoggedIn && !guest) {
-          fetchCart();
-        } else {
-          loadGuestCart();
-        }
+        if (isLoggedIn && !guest) fetchCart();
+        else loadGuestCart();
       }
     }, [isOpen, isLoggedIn, fetchCart, loadGuestCart, guest]);
 
     useImperativeHandle(ref, () => ({
       open: () => setIsOpen(true),
       refreshCart: () => {
-        if (isLoggedIn && !guest) {
-          fetchCart();
-        } else {
-          loadGuestCart();
-        }
+        if (isLoggedIn && !guest) fetchCart();
+        else loadGuestCart();
       },
     }));
 
-    // cartUpdated event'inde sadece giriş yapmış kullanıcılar için API'ye istek at
     useEffect(() => {
       const handleCartUpdate = () => {
-        if (isLoggedIn && !guest) {
-          fetchCart();
-        } else {
-          loadGuestCart();
-        }
+        if (isLoggedIn && !guest) fetchCart();
+        else loadGuestCart();
       };
       window.addEventListener("cartUpdated", handleCartUpdate);
       return () => window.removeEventListener("cartUpdated", handleCartUpdate);
@@ -188,13 +171,10 @@ const CartDropdown = forwardRef(
 
     const handleQuantityChange = async (id: number, delta: number) => {
       if (!isLoggedIn) {
-        // GUEST - Sadece local storage kullan
         updateGuestCartQuantity(id, delta);
         loadGuestCart();
         return;
       }
-
-      // LOGGED-IN - API kullan
       try {
         const res = await fetch(`/api/cart/${id}`, {
           method: "PATCH",
@@ -211,13 +191,10 @@ const CartDropdown = forwardRef(
 
     const handleRemove = async (id: number) => {
       if (!isLoggedIn) {
-        // GUEST - Sadece local storage kullan
         removeFromGuestCart(id);
         loadGuestCart();
         return;
       }
-
-      // LOGGED-IN - API kullan
       try {
         const res = await fetch(`/api/cart/${id}`, {
           method: "DELETE",
@@ -307,7 +284,7 @@ const CartDropdown = forwardRef(
 
           {/* Toplamlar */}
           {cartItems.length > 0 && (
-            <div className="border-t border-gray-100 pt-3 mt-3 mb-3 space-y-1 text-gray-800 text-sm">
+            <div className="border-t border-gray-100 pt-3 mt-3 mb-3 space-y-1 text-gray-800 text-sm font-sans">
               <div className="flex justify-between">
                 Ara Toplam <span>₺{subtotal.toFixed(2)}</span>
               </div>
@@ -321,7 +298,7 @@ const CartDropdown = forwardRef(
           )}
 
           {/* Footer */}
-          <SheetFooter className="flex flex-col gap-3 pt-3">
+          <SheetFooter className="flex flex-col gap-3 pt-3 font-sans">
             <Link href="/cart">
               <Button
                 aria-label="Sepete Git"

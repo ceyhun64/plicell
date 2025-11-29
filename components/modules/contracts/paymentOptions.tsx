@@ -11,7 +11,7 @@ import {
 
 export default function PaymentOptions() {
   return (
-    <div className="max-w-7xl mx-auto px-6 py-16 space-y-12">
+    <div className="max-w-7xl mx-auto px-6 py-16 space-y-1 font-sans2">
       {/* Başlık */}
       <div className="text-center space-y-2">
         <h1 className="text-4xl font-bold text-gray-900">Ödeme Seçenekleri</h1>

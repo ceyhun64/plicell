@@ -367,7 +367,7 @@ export default function Adreslerim() {
 
           {/* Adresler */}
           {!yeniAdresForm && !duzenleForm && (
-            <div className="flex flex-col gap-5">
+            <div className="flex flex-col gap-5 font-sans">
               {adresler.length > 0 ? (
                 adresler.map((a) => (
                   <Card

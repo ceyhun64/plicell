@@ -11,7 +11,7 @@ interface CartSummaryProps {
 
 export default function CartSummary({ subtotal }: CartSummaryProps) {
   return (
-    <div className="w-full md:w-[360px] flex-shrink-0 p-6 bg-white h-fit rounded-xs shadow-lg border border-gray-100">
+    <div className="w-full md:w-[360px] flex-shrink-0 p-6 bg-white h-fit rounded-xs shadow-lg border border-gray-100 font-sans">
       <h2 className="text-xl font-semibold mb-6">Sipariş Özeti</h2>
 
       <div className="space-y-2 text-gray-600">

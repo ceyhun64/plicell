@@ -199,7 +199,7 @@ export default function Navbar() {
             </div>
           </Link>
 
-          <div className="hidden md:flex absolute left-1/2 top-0 transform -translate-x-1/2 h-full items-center">
+          <div className="hidden md:flex absolute left-1/2 top-0 transform -translate-x-1/2 h-full items-center ">
             <NavigationMenu>
               <NavigationMenuList className="flex gap-4">
                 {links.map((link, i) => {
@@ -296,7 +296,7 @@ export default function Navbar() {
             </NavigationMenu>
           </div>
 
-          <div className="flex items-center gap-2 md:gap-4">
+          <div className="flex items-center gap-2 md:gap-4 font-sans">
             <Link href={"/search"}>
               <Button
                 variant="ghost"

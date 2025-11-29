@@ -130,7 +130,7 @@ export default function DefaultSearch() {
       </div>
 
       {/* Ürün Grid */}
-      <div className="max-w-7xl mx-auto px-2 md:px-10 mt-4 bg-gradient-to-b ">
+      <div className="max-w-7xl mx-auto px-2 md:px-10 mt-4 bg-gradient-to-b font-sans">
         {filteredProducts.length > 0 ? (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 md:p-6">
             {filteredProducts.map((product) => (

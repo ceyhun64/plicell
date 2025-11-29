@@ -487,7 +487,7 @@ export default function PaymentPage() {
   };
 
   return (
-    <div className="container mx-auto p-4 md:p-8 max-w-7xl">
+    <div className="container mx-auto p-4 md:p-8 max-w-7xl font-sans" >
       <h1 className="text-3xl font-bold mb-8 text-center text-gray-900">
         Ödeme İşlemleri
       </h1>

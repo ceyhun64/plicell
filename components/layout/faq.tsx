@@ -59,7 +59,7 @@ export default function FaqSection() {
             Siparişiniz kargoya verildiğinde, kargo takip numaranız da bu alanda
             yer alır. Böylece kargonuzu anlık olarak takip edebilirsiniz.
           </p>
-          <p className="mt-4 p-3 bg-rose-50 border-l-4 border-rose-400 text-rose-800 rounded-lg">
+          <p className="mt-4 p-3 bg-rose-50 border-l-4 border-rose-400 text-rose-800 rounded-lg font-sans">
             Herhangi bir sorunla karşılaşırsanız, müşteri hizmetlerimize
             ulaşmaktan çekinmeyin!
             <br />

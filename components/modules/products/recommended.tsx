@@ -125,17 +125,17 @@ export default function Recommended() {
       {/* Başlık */}
       <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
         <div>
-          <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-2 text-gray-900 font-[Playfair_Display]">
+          <h2 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-2 text-gray-900 font-serif ">
             Önerilen Ürünler
           </h2>
-          <p className="text-xs md:text-lg text-gray-600 mb-2 max-w-lg font-['Mozilla_Headline']">
+          <p className="text-xs md:text-lg text-gray-600 mb-2 max-w-lg font-serif ">
             Bunları alan müşterilerimiz, bu ürünleri de tercih etti.
           </p>
         </div>
       </header>
 
       {/* Carousel */}
-      <div className="relative w-full min-h-[300px] sm:min-h-[400px] lg:min-h-[550px]">
+      <div className="relative w-full min-h-[300px] sm:min-h-[400px] lg:min-h-[550px] font-sans">
         <Carousel
           opts={{ align: "start", loop: true }}
           setApi={setApi}

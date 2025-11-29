@@ -151,7 +151,7 @@ export default function AllProducts() {
           </p>
 
           {/* Stats */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 md:gap-6 max-w-xl mx-auto md:mx-0">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 md:gap-6 max-w-xl mx-auto md:mx-0 font-sans">
             {[
               {
                 label: "Farklı Model",

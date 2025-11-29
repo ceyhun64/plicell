@@ -558,7 +558,7 @@ export default function ProductDetailPage() {
               </Button>
 
               {/* Ölçü Inputları ve M² */}
-              <div className="flex gap-1 md:gap-2 mt-2">
+              <div className="flex gap-1 md:gap-2 mt-2 font-sans">
                 <Input
                   type="number"
                   placeholder="EN (cm)"
@@ -628,10 +628,10 @@ export default function ProductDetailPage() {
                   <span className="text-lg font-medium text-gray-600 uppercase">
                     Toplam Fiyat
                   </span>
-                  <p className="text-3xl font-extrabold text-rose-700 drop-shadow-lg leading-none mt-1">
+                  <p className="text-3xl font-extrabold text-rose-700 drop-shadow-lg leading-none mt-1 font-sans">
                     ₺{totalPrice}
                   </p>
-                  <span className="text-xs text-gray-500 mt-2">
+                  <span className="text-xs text-gray-500 mt-2 font-sans">
                     ({calculatedM2.toFixed(2)} m² x {quantity} adet)
                   </span>
                 </div>

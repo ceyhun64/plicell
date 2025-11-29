@@ -178,7 +178,7 @@ export default function Orders() {
 
           {/* Yükleniyor */}
           {loading ? (
-            <div className="space-y-6">
+            <div className="space-y-6 ">
               {[1, 2].map((i) => (
                 <Card
                   key={i}
@@ -206,7 +206,7 @@ export default function Orders() {
               </Button>
             </div>
           ) : (
-            <div className="space-y-6">
+            <div className="space-y-6 font-sans">
               {orders.map((order) => {
                 const iptalEdilebilir = ![
                   "cancelled",

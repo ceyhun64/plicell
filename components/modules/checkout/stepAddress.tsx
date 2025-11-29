@@ -78,7 +78,7 @@ export default function StepAddress({
         </CardDescription>
       </CardHeader>
 
-      <CardContent className="space-y-6">
+      <CardContent className="space-y-6 font-sans">
         {/* Kaydedilmiş adresler */}
         {addresses.length > 0 ? (
           <div className="space-y-2">

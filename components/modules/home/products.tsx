@@ -97,7 +97,7 @@ export default function Products() {
 
   // Yükleme bittiğinde normal içerik gösterilir
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white via-amber-950/10 to-white text-gray-900 font-sans flex flex-col items-center justify-center px-2 py-12 lg:p-16">
+    <div className="min-h-screen bg-gradient-to-b from-white via-amber-950/10 to-white text-gray-900 font-serif flex flex-col items-center justify-center px-2 py-12 lg:p-16">
       <div className="container mx-auto flex flex-col lg:flex-row gap-12 lg:gap-24 items-start">
         {/* Sol metin ve buton */}
         <div className="flex-1 flex flex-col justify-center items-center lg:items-start text-center lg:text-left lg:sticky top-30 self-start max-w-md">
@@ -110,7 +110,7 @@ export default function Products() {
             Perdeler
           </h2>
 
-          <p className='text-sm md:text-xl text-gray-700 mb-8 max-w-lg font-["Mozilla_Headline"]'>
+          <p className='text-sm md:text-xl text-gray-700 mb-8 max-w-lg '>
             Evinizin her odasına uygun perde koleksiyonumuzu keşfedin. Fon, tül,
             blackout ve stor perdelerle mekanlarınızı daha şık ve konforlu hâle
             getirin. Yüksek kaliteli kumaşlar ve modern tasarımlar sayesinde
@@ -145,7 +145,7 @@ export default function Products() {
         </div>
 
         {/* Ürün kartları */}
-        <div className="flex-2 grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-8">
+        <div className="flex-2 grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-8 font-sans">
           {products.slice(0, 9).map((product, index) => (
             <div
               key={index}

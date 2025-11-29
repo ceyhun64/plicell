@@ -19,7 +19,7 @@ const CartItemDropdown: React.FC<CartItemDropdownProps> = ({
   const itemPrice = (item.product.pricePerM2 || 0) * (item.m2 || 1);
 
   return (
-    <div className="flex items-center justify-between p-4 bg-white/60 rounded-xs border border-gray-200 shadow-sm">
+    <div className="flex items-center justify-between p-4 bg-white/60 rounded-xs border border-gray-200 shadow-sm font-sans">
       <div className="w-20 h-20 flex-shrink-0 rounded-xs overflow-hidden bg-transparent ">
         <img
           src={item.product.mainImage}

@@ -172,10 +172,10 @@ export default function AboutPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white font-serif">
       {/* py-20 -> py-12 (Dikey sayfa paddingi azaltıldı) */}
       {/* space-y-28 -> space-y-16 (Ana bölümler arası boşluk azaltıldı) */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12 space-y-16 font-sans">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-12 space-y-16 ">
         {/* BAŞLIK VE GİRİŞ - Mobil Optimizasyon */}
         <header className="text-center space-y-3">
           {" "}
@@ -255,7 +255,7 @@ export default function AboutPage() {
         </section>
 
         {/* İLETİŞİM KARTLARI - Mobil Optimizasyon */}
-        <section className="pt-10 md:pt-20">
+        <section className="pt-10 md:pt-20 font-sans">
           {" "}
           {/* Dikey boşluk daraltıldı */}
           <h2 className="text-center text-3xl md:text-4xl font-extrabold text-gray-900 mb-8">

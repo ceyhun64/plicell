@@ -72,7 +72,7 @@ export default function BlogDetailPage() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.8 }}
-      className="min-h-screen bg-white"
+      className="min-h-screen bg-white "
     >
       {/* ---------------- HERO (Görsel ve Başlık) ---------------- */}
       <div className="relative w-full h-[400px] md:h-[550px] lg:h-[700px] overflow-hidden">
@@ -96,7 +96,7 @@ export default function BlogDetailPage() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="flex items-center justify-center text-sm font-semibold uppercase tracking-widest text-rose-300 mb-4"
+            className="flex items-center justify-center text-sm font-semibold uppercase tracking-widest text-rose-300 mb-4 font-sans"
           >
             <Calendar className="w-4 h-4 mr-2" />
             {formattedDate}

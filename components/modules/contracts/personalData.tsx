@@ -5,7 +5,7 @@ import { MapPin, Phone, Globe, Mail, ShieldCheck } from "lucide-react";
 
 export default function PersonalDataConsent() {
   return (
-    <div className="max-w-7xl mx-auto px-6 py-16 space-y-12">
+    <div className="max-w-7xl mx-auto px-6 py-16 space-y-12 font-sans">
       {/* Başlık */}
       <div className="text-center space-y-2">
         <h1 className="text-4xl font-bold text-gray-900">
@@ -15,7 +15,7 @@ export default function PersonalDataConsent() {
       </div>
 
       {/* İçerik */}
-      <div className="space-y-6 text-gray-700 leading-relaxed">
+      <div className="space-y-6 text-gray-700 leading-relaxed ">
         <p>
           Tarafıma ait kişisel verilerin,{" "}
           <strong>6698 sayılı Kişisel Verilerin Korunması Kanunu (KVKK)</strong>

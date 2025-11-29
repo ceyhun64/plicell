@@ -109,26 +109,21 @@ export default function Cart() {
   useEffect(() => {
     (async () => {
       const logged = await checkLogin();
-      if (logged) {
-        // Sadece giriş yapmış kullanıcılar için API'ye istek at
-        await fetchCart();
-      } else {
-        // Giriş yapmamış kullanıcılar için sadece local storage'ı kullan
-        loadGuestCart();
-      }
+      if (logged) fetchCart();
+      else loadGuestCart();
     })();
   }, [checkLogin, fetchCart, loadGuestCart]);
 
   // ---------- Quantity Update ----------
   const handleQuantityChange = async (id: number, delta: number) => {
     if (!isLoggedIn) {
-      // GUEST CART - Sadece local storage kullan
+      // GUEST CART
       updateGuestCartQuantity(id, delta);
       loadGuestCart();
       return;
     }
 
-    // LOGGED-IN CART - API kullan
+    // LOGGED-IN CART
     const item = cartItems.find((c) => c.id === id);
     if (!item) return;
 
@@ -161,13 +156,11 @@ export default function Cart() {
   // ---------- Remove ----------
   const handleRemove = async (id: number) => {
     if (!isLoggedIn) {
-      // GUEST CART - Sadece local storage kullan
       removeFromGuestCart(id);
       loadGuestCart();
       return;
     }
 
-    // LOGGED-IN CART - API kullan
     try {
       const res = await fetch(`/api/cart/${id}`, {
         method: "DELETE",

@@ -24,7 +24,7 @@ export default function CartItem({
   const finalPrice = (product.pricePerM2 || 0) * (m2 || 1) * quantity;
 
   return (
-    <div className="flex flex-row sm:flex-row w-full gap-4 sm:gap-6 p-4 sm:p-6 bg-white rounded-xs border border-gray-100 shadow-md hover:shadow-lg transition-shadow">
+    <div className="flex flex-row sm:flex-row w-full gap-4 sm:gap-6 p-4 sm:p-6 bg-white rounded-xs border border-gray-100 shadow-md hover:shadow-lg transition-shadow font-sans">
       {/* Product Image */}
       <div className="relative w-24 h-30 md:w-28 md:h-32 flex-shrink-0 rounded-xs overflow-hidden">
         <Image
