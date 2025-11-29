@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
-// Kahraman verisi (Değişiklik yok)
+// heroes verisi (Değişiklik yok)
 const heroes = [
   {
     id: 1,
@@ -17,24 +17,24 @@ const heroes = [
     buttonText: "Lazer Kesim Storları Keşfet",
     href: "/products/roller/laser-cut",
   },
-  {
-    id: 2,
-    title: "Doğal Ahşap Jaluzi",
-    description:
-      "Sıcak bir atmosfer ve mükemmel ışık kontrolü. Evinizin karakterini doğal ahşap dokusuyla güçlendirin.",
-    image: "/heroes/110.webp",
-    buttonText: "Ahşap Jaluzileri Gör",
-    href: "/products/wooden",
-  },
-  {
-    id: 3,
-    title: "Zebra Perde: İkisi Bir Arada",
-    description:
-      "Şeffaf ve opak bantlarıyla gün ışığını dilediğiniz gibi ayarlayın. Pratik ve modern bir çözüm!",
-    image: "/heroes/111.webp",
-    buttonText: "Zebra Perde Modelleri",
-    href: "/products/zebra",
-  },
+  // {
+  //   id: 2,
+  //   title: "Doğal Ahşap Jaluzi",
+  //   description:
+  //     "Sıcak bir atmosfer ve mükemmel ışık kontrolü. Evinizin karakterini doğal ahşap dokusuyla güçlendirin.",
+  //   image: "/heroes/110.webp",
+  //   buttonText: "Ahşap Jaluzileri Gör",
+  //   href: "/products/wooden",
+  // },
+  // {
+  //   id: 3,
+  //   title: "Zebra Perde: İkisi Bir Arada",
+  //   description:
+  //     "Şeffaf ve opak bantlarıyla gün ışığını dilediğiniz gibi ayarlayın. Pratik ve modern bir çözüm!",
+  //   image: "/heroes/111.webp",
+  //   buttonText: "Zebra Perde Modelleri",
+  //   href: "/products/zebra",
+  // },
   // {
   //   id: 4,
   //   title: "Minimalist Plise Perdeler",
