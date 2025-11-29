@@ -22,7 +22,7 @@ import { Button } from "@/components/ui/button";
 import { ShoppingCart, ArrowRight, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
-import CartItemDropdown from "./cartItem"; // <-- Burayı ekledik
+import CartItemDropdown from "./cartItem";
 import {
   getCart,
   updateGuestCartQuantity,
@@ -136,34 +136,51 @@ const CartDropdown = forwardRef(
       }
     }, []);
 
+    // İlk yüklemede sadece giriş yapmış kullanıcılar için API'ye istek at
     useEffect(() => {
       (async () => {
         debug("Initial login + cart load");
         const logged = await checkLogin();
-        if (logged && !guest) await fetchCart();
-        else loadGuestCart();
+        if (logged && !guest) {
+          // Sadece giriş yapmış kullanıcılar için API'ye istek at
+          await fetchCart();
+        } else {
+          // Giriş yapmamış kullanıcılar için sadece local storage kullan
+          loadGuestCart();
+        }
       })();
     }, [checkLogin, fetchCart, loadGuestCart, guest]);
 
+    // Sheet açıldığında sadece giriş yapmış kullanıcılar için API'ye istek at
     useEffect(() => {
       if (isOpen) {
-        if (isLoggedIn && !guest) fetchCart();
-        else loadGuestCart();
+        if (isLoggedIn && !guest) {
+          fetchCart();
+        } else {
+          loadGuestCart();
+        }
       }
     }, [isOpen, isLoggedIn, fetchCart, loadGuestCart, guest]);
 
     useImperativeHandle(ref, () => ({
       open: () => setIsOpen(true),
       refreshCart: () => {
-        if (isLoggedIn && !guest) fetchCart();
-        else loadGuestCart();
+        if (isLoggedIn && !guest) {
+          fetchCart();
+        } else {
+          loadGuestCart();
+        }
       },
     }));
 
+    // cartUpdated event'inde sadece giriş yapmış kullanıcılar için API'ye istek at
     useEffect(() => {
       const handleCartUpdate = () => {
-        if (isLoggedIn && !guest) fetchCart();
-        else loadGuestCart();
+        if (isLoggedIn && !guest) {
+          fetchCart();
+        } else {
+          loadGuestCart();
+        }
       };
       window.addEventListener("cartUpdated", handleCartUpdate);
       return () => window.removeEventListener("cartUpdated", handleCartUpdate);
@@ -171,10 +188,13 @@ const CartDropdown = forwardRef(
 
     const handleQuantityChange = async (id: number, delta: number) => {
       if (!isLoggedIn) {
+        // GUEST - Sadece local storage kullan
         updateGuestCartQuantity(id, delta);
         loadGuestCart();
         return;
       }
+
+      // LOGGED-IN - API kullan
       try {
         const res = await fetch(`/api/cart/${id}`, {
           method: "PATCH",
@@ -191,10 +211,13 @@ const CartDropdown = forwardRef(
 
     const handleRemove = async (id: number) => {
       if (!isLoggedIn) {
+        // GUEST - Sadece local storage kullan
         removeFromGuestCart(id);
         loadGuestCart();
         return;
       }
+
+      // LOGGED-IN - API kullan
       try {
         const res = await fetch(`/api/cart/${id}`, {
           method: "DELETE",
@@ -217,8 +240,13 @@ const CartDropdown = forwardRef(
     return (
       <Sheet open={isOpen} onOpenChange={setIsOpen}>
         <SheetTrigger asChild>
-          <Button variant="ghost" className="relative" size="icon-sm"  aria-label="Sepete git">
-            <ShoppingCart  className="h-5 w-5" />
+          <Button
+            variant="ghost"
+            className="relative"
+            size="icon-sm"
+            aria-label="Sepete git"
+          >
+            <ShoppingCart className="h-5 w-5" />
             {showCount && cartItems.length > 0 && (
               <span className="absolute -top-2 -right-1.5 h-5 w-5 rounded-full bg-[#7B0323] text-white text-xs flex items-center justify-center">
                 {cartItems.length}
@@ -250,7 +278,11 @@ const CartDropdown = forwardRef(
                 <ShoppingCart className="h-12 w-12 text-gray-400 animate-bounce" />
                 <p className="text-lg font-semibold">Sepetiniz boş</p>
                 <Link href="/products">
-                  <Button variant="outline" className="mt-2 rounded-full" aria-label="Sepete git">
+                  <Button
+                    variant="outline"
+                    className="mt-2 rounded-full"
+                    aria-label="Sepete git"
+                  >
                     Ürünlere Göz At
                   </Button>
                 </Link>
