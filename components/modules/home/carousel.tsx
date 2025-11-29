@@ -105,7 +105,7 @@ export default function HeroSection() {
 
   return (
     <div
-      className="relative w-full h-[600px] sm:h-[600px] lg:h-[700px] overflow-hidden group"
+      className="relative w-full h-[530px] sm:h-[600px] lg:h-[700px] overflow-hidden group"
       aria-roledescription="carousel"
       aria-label="Ürün Tanıtım Kaydırıcısı"
     >
