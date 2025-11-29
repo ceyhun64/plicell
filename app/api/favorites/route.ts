@@ -6,10 +6,7 @@ import { authOptions } from "@/lib/auth";
 // Tüm favorileri getir
 export async function GET() {
   const session = await getServerSession(authOptions);
-  if (!session || !session.user || !session.user.id) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
+  if (!session) return NextResponse.json([], { status: 200 }); // Giriş yok, boş liste dön
   try {
     const favorites = await prisma.favorite.findMany({
       where: { userId: Number(session.user.id) },

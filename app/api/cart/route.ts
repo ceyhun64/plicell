@@ -17,8 +17,7 @@ interface CartItemRequestBody {
 
 export async function GET(req: Request) {
   const session = await getServerSession(authOptions);
-  if (!session)
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session) return NextResponse.json([], { status: 200 }); // Giriş yok, boş liste dön
 
   try {
     const cartItems = await prisma.cartItem.findMany({
