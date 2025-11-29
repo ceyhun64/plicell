@@ -35,96 +35,96 @@ const heroes = [
     buttonText: "Zebra Perde Modelleri",
     href: "/products/zebra",
   },
-  {
-    id: 4,
-    title: "Minimalist Plise Perdeler",
-    description:
-      "Katlanabilir, zarif yapısıyla hem cam üstü hem de tavan uygulamalarına uygun, minimalist tasarım.",
-    image: "/heroes/112.webp",
-    buttonText: "Plise Çözümlerini İncele",
-    href: "/products/plicell",
-  },
-  {
-    id: 5,
-    title: "Rüstik: Otantik Dokunuşlar",
-    description:
-      "Evinize otantik ve bohem bir hava katın. Klasik görünümü en yeni kumaş teknolojisiyle birleştirin.",
-    image: "/heroes/116.webp",
-    buttonText: "Rüstik Perdeleri Gör",
-    href: "/products/rustic",
-  },
-  {
-    id: 6,
-    title: "Dikey Perdeler: Büyük Cam Çözümü",
-    description:
-      "Geniş cam yüzeylerde şık bir çözüm. 180 derece dönebilen dikey panellerle ışığı kusursuz yönetin.",
-    image: "/heroes/123.webp",
-    buttonText: "Dikey Perde Çeşitleri",
-    href: "/products/vertical",
-  },
-  {
-    id: 7,
-    title: "Fon Perdeler: Mekana Derinlik",
-    description:
-      "Tül perdelerinizle mükemmel uyum sağlayacak, renk ve doku zenginliği sunan dekoratif çözümler.",
-    image: "/heroes/124.webp",
-    buttonText: "Fon Perde Koleksiyonu",
-    href: "/products/drapes",
-  },
-  {
-    id: 8,
-    title: "Metal Jaluzi: Keskin Çizgiler",
-    description:
-      "Minimalist ve endüstriyel tasarımlar için ideal. Dayanıklı yapısıyla net ve kontrollü ışık sağlar.",
-    image: "/heroes/128.webp",
-    buttonText: "Metal Jaluzileri Keşfet",
-    href: "/products/metal",
-  },
-  {
-    id: 9,
-    title: "Klasik Stor Perdeler",
-    description:
-      "Mekanınızda temiz, düz bir görünüm isteyenler için. Yüzlerce renk ve kumaş seçeneği tek bir yerde.",
-    image: "/heroes/134.webp",
-    buttonText: "Tüm Stor Perdeler",
-    href: "/products/roller",
-  },
-  {
-    id: 10,
-    title: "Zarif Tül Perde Modelleri",
-    description:
-      "Güneş ışığını filtreleyerek odaya davet eden, ince ve zarif dokularla huzurlu bir atmosfer yaratın.",
-    image: "/heroes/135.webp",
-    buttonText: "Tül Perde Modelleri",
-    href: "/products/sheer",
-  },
-  {
-    id: 11,
-    title: "Perde Aksesuarları",
-    description:
-      "Perdelerinizin ömrünü uzatan ve kullanım konforunu artıran kaliteli montaj ve dekorasyon ürünleri.",
-    image: "/heroes/136.webp",
-    buttonText: "Aksesuarları Gör",
-    href: "/products/accessories",
-  },
-  {
-    id: 12,
-    title: "Tüm Perde Çeşitleri",
-    description:
-      "Klasikten moderne, fon perdeden jaluziye kadar tüm perde koleksiyonlarımızı bu sayfada keşfedin.",
-    image: "/heroes/140.webp",
-    buttonText: "Tüm Perdeleri Gör",
-    href: "/products",
-  },
-  {
-    id: 13,
-    title: "Soft Işık Dağılımı (Tül)",
-    description:
-      "İç mekânlarınızı daha yumuşak ve dengeli bir aydınlığa kavuşturan tül perde çeşitleri.",
-    image: "/heroes/144.webp",
-    buttonText: "Tül Perdeleri Gör",
-    href: "/products/sheer",
-  },
+  // {
+  //   id: 4,
+  //   title: "Minimalist Plise Perdeler",
+  //   description:
+  //     "Katlanabilir, zarif yapısıyla hem cam üstü hem de tavan uygulamalarına uygun, minimalist tasarım.",
+  //   image: "/heroes/112.webp",
+  //   buttonText: "Plise Çözümlerini İncele",
+  //   href: "/products/plicell",
+  // },
+  // {
+  //   id: 5,
+  //   title: "Rüstik: Otantik Dokunuşlar",
+  //   description:
+  //     "Evinize otantik ve bohem bir hava katın. Klasik görünümü en yeni kumaş teknolojisiyle birleştirin.",
+  //   image: "/heroes/116.webp",
+  //   buttonText: "Rüstik Perdeleri Gör",
+  //   href: "/products/rustic",
+  // },
+  // {
+  //   id: 6,
+  //   title: "Dikey Perdeler: Büyük Cam Çözümü",
+  //   description:
+  //     "Geniş cam yüzeylerde şık bir çözüm. 180 derece dönebilen dikey panellerle ışığı kusursuz yönetin.",
+  //   image: "/heroes/123.webp",
+  //   buttonText: "Dikey Perde Çeşitleri",
+  //   href: "/products/vertical",
+  // },
+  // {
+  //   id: 7,
+  //   title: "Fon Perdeler: Mekana Derinlik",
+  //   description:
+  //     "Tül perdelerinizle mükemmel uyum sağlayacak, renk ve doku zenginliği sunan dekoratif çözümler.",
+  //   image: "/heroes/124.webp",
+  //   buttonText: "Fon Perde Koleksiyonu",
+  //   href: "/products/drapes",
+  // },
+  // {
+  //   id: 8,
+  //   title: "Metal Jaluzi: Keskin Çizgiler",
+  //   description:
+  //     "Minimalist ve endüstriyel tasarımlar için ideal. Dayanıklı yapısıyla net ve kontrollü ışık sağlar.",
+  //   image: "/heroes/128.webp",
+  //   buttonText: "Metal Jaluzileri Keşfet",
+  //   href: "/products/metal",
+  // },
+  // {
+  //   id: 9,
+  //   title: "Klasik Stor Perdeler",
+  //   description:
+  //     "Mekanınızda temiz, düz bir görünüm isteyenler için. Yüzlerce renk ve kumaş seçeneği tek bir yerde.",
+  //   image: "/heroes/134.webp",
+  //   buttonText: "Tüm Stor Perdeler",
+  //   href: "/products/roller",
+  // },
+  // {
+  //   id: 10,
+  //   title: "Zarif Tül Perde Modelleri",
+  //   description:
+  //     "Güneş ışığını filtreleyerek odaya davet eden, ince ve zarif dokularla huzurlu bir atmosfer yaratın.",
+  //   image: "/heroes/135.webp",
+  //   buttonText: "Tül Perde Modelleri",
+  //   href: "/products/sheer",
+  // },
+  // {
+  //   id: 11,
+  //   title: "Perde Aksesuarları",
+  //   description:
+  //     "Perdelerinizin ömrünü uzatan ve kullanım konforunu artıran kaliteli montaj ve dekorasyon ürünleri.",
+  //   image: "/heroes/136.webp",
+  //   buttonText: "Aksesuarları Gör",
+  //   href: "/products/accessories",
+  // },
+  // {
+  //   id: 12,
+  //   title: "Tüm Perde Çeşitleri",
+  //   description:
+  //     "Klasikten moderne, fon perdeden jaluziye kadar tüm perde koleksiyonlarımızı bu sayfada keşfedin.",
+  //   image: "/heroes/140.webp",
+  //   buttonText: "Tüm Perdeleri Gör",
+  //   href: "/products",
+  // },
+  // {
+  //   id: 13,
+  //   title: "Soft Işık Dağılımı (Tül)",
+  //   description:
+  //     "İç mekânlarınızı daha yumuşak ve dengeli bir aydınlığa kavuşturan tül perde çeşitleri.",
+  //   image: "/heroes/144.webp",
+  //   buttonText: "Tül Perdeleri Gör",
+  //   href: "/products/sheer",
+  // },
 ];
 
 const SLIDE_INTERVAL_MS = 6000; // Otomatik geçiş süresi (5 saniyeden 6 saniyeye çıkarıldı)
