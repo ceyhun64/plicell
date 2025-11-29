@@ -10,9 +10,7 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  experimental: {
-    optimizeCss: true, // Parcel CSS optimizer
-  },
+ 
 };
 
 export default nextConfig;
