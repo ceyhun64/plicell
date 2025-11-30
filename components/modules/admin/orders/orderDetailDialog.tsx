@@ -91,7 +91,7 @@ export default function OrderDetailDialog({
               onClick={() => onUpdateStatus(order.id, order.status)}
             >
               <ArrowRight className="w-4 h-4" />{" "}
-              {getStatusInTurkish(nextStatus)}'a Geç
+              {getStatusInTurkish(nextStatus)}'ye Geç
             </Button>
           </div>
         )}
