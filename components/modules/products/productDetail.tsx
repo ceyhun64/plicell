@@ -10,7 +10,6 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import {
   Heart,
-  X,
   ShoppingCart,
   Minus,
   Plus,
@@ -24,7 +23,7 @@ import DescriptionandReview from "./descriptionAndReview";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { ImageZoom } from "@/components/ui/shadcn-io/image-zoom";
-import { addToGuestCart } from "@/utils/cart"; // en üste import et
+import { addToGuestCart } from "@/utils/cart";
 import { useFavorite } from "@/contexts/favoriteContext";
 
 import {
@@ -36,8 +35,6 @@ import {
 } from "@/components/ui/select";
 import ProfileModal from "./profileModal";
 import ProductDetailSkeleton from "./productDetailSkeleton";
-
-// Interface ve Profiles kısmı değişmedi
 
 interface ProductData {
   id: number;
@@ -60,7 +57,6 @@ interface ProductData {
 const profiles = [
   { name: "ANTRASİT", src: "/profiles/antrasit.webp" },
   { name: "BEYAZ", src: "/profiles/beyaz.webp" },
-  // { name: "BRONZ", src: "/profiles/parlak_bronz.webp" },
   { name: "GRİ", src: "/profiles/gri.webp" },
   { name: "KAHVE", src: "/profiles/kahve.webp" },
   { name: "KREM", src: "/profiles/krem.webp" },
@@ -75,7 +71,7 @@ export default function ProductDetailPage() {
   const cartDropdownRef = useRef<{ open: () => void; refreshCart: () => void }>(
     null
   );
-  // ✅ Tüm state hook'ları en üstte
+
   const [product, setProduct] = useState<ProductData | null>(null);
   const [loading, setLoading] = useState(true);
   const [accepted, setAccepted] = useState(false);
@@ -92,35 +88,11 @@ export default function ProductDetailPage() {
   const [selectedProfileImage, setSelectedProfileImage] = useState<
     string | null
   >(null);
-  const { favorites, addFavorite, removeFavorite, isFavorited } = useFavorite();
+  const { isFavorited, addFavorite, removeFavorite } = useFavorite();
 
   const [categoryProducts, setCategoryProducts] = useState<ProductData[]>([]);
-  const [isFavorite, setIsFavorite] = useState(false);
-  const [loadingFavorite, setLoadingFavorite] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  useEffect(() => {
-    if (!product) return;
-
-    const fetchFavorite = async () => {
-      try {
-        const res = await fetch("/api/favorites");
-
-        if (!res.ok) return;
-        const data: { productId: number }[] = await res.json();
-        const fav = data.find((f) => Number(f.productId) === product.id);
-        setIsFavorite(!!fav);
-      } catch (err) {
-        console.error("Favori durumu çekilemedi", err);
-      } finally {
-        setLoadingFavorite(false);
-      }
-    };
-
-    fetchFavorite();
-  }, [product]);
-
-  // ✅ API'den ürünü çek
   useEffect(() => {
     const fetchProduct = async () => {
       setLoading(true);
@@ -128,7 +100,6 @@ export default function ProductDetailPage() {
         const res = await fetch(`/api/products/${productId}`);
         if (!res.ok) throw new Error("Ürün bulunamadı");
         const data = await res.json();
-        console.log("data:", data);
         setProduct(data.product);
       } catch (error) {
         console.error(error);
@@ -140,7 +111,6 @@ export default function ProductDetailPage() {
     fetchProduct();
   }, [productId]);
 
-  console.log("product:", product);
   useEffect(() => {
     if (!product) return;
 
@@ -151,7 +121,7 @@ export default function ProductDetailPage() {
         const data = await res.json();
         setCategoryProducts(
           data.products.filter((p: ProductData) => p.id !== product.id)
-        ); // kendini çıkar
+        );
       } catch (error) {
         console.error(error);
       }
@@ -159,25 +129,30 @@ export default function ProductDetailPage() {
 
     fetchCategoryProducts();
   }, [product]);
-  console.log("categoryProducts:", categoryProducts);
 
+  // ✅ M² hesaplama - gerçek değer
   const calculatedM2 = useMemo(() => {
+    if (!en || !boy || en <= 0 || boy <= 0) return 0;
     const m2 = (en * boy) / 10000;
-    if (isNaN(m2) || m2 <= 0) return 1;
-    return m2 < 1 ? 1 : m2;
+    return m2;
   }, [en, boy]);
+
+  // ✅ Fiyat hesaplama için m² - minimum 1
+  const priceM2 = useMemo(() => {
+    if (calculatedM2 === 0) return 0;
+    return calculatedM2 < 1 ? 1 : calculatedM2;
+  }, [calculatedM2]);
 
   const totalPrice = useMemo(() => {
     if (!product) return 0;
-    return calculatedM2 * product.pricePerM2 * quantity;
-  }, [calculatedM2, product, quantity]);
+    return priceM2 * product.pricePerM2 * quantity;
+  }, [priceM2, product, quantity]);
 
-  // ✅ Login kontrolü
   useEffect(() => {
     const checkLogin = async () => {
       try {
         const res = await fetch("/api/account/check", {
-          credentials: "include", // ⚡ Burayı ekle
+          credentials: "include",
         });
         if (!res.ok) return setIsLoggedIn(false);
         const data = await res.json();
@@ -195,23 +170,26 @@ export default function ProductDetailPage() {
       return;
     }
 
-    if (!product) return;
+    if (!product || en <= 0 || boy <= 0) {
+      toast.error("Lütfen geçerli ölçüler girin.");
+      return;
+    }
 
+    // ✅ Backend'e minimum 1 m² gönder ama en/boy değerleri orijinal kalsın
     const item = {
       productId: product.id,
       quantity,
-      note: note ?? undefined, // ✅ null ise undefined yap
+      note: note ?? undefined,
       profile: selectedProfile,
-      width: en,
-      height: boy,
-      m2: calculatedM2,
+      width: en, // ✅ Orijinal en değeri
+      height: boy, // ✅ Orijinal boy değeri
+      m2: priceM2, // ✅ Fiyat hesaplama için kullanılan m² (minimum 1)
       device: selectedDevice,
       title: product.title,
       pricePerM2: product.pricePerM2,
       image: product.mainImage,
     };
 
-    // 👇 Eğer kullanıcı login değilse localStorage kullan
     if (!isLoggedIn) {
       addToGuestCart(item);
       toast.success("Ürün sepete eklendi.");
@@ -219,7 +197,6 @@ export default function ProductDetailPage() {
       return;
     }
 
-    // 👇 Login ise backend'e gönder
     try {
       const res = await fetch("/api/cart", {
         method: "POST",
@@ -265,9 +242,7 @@ export default function ProductDetailPage() {
     setSelectedProfileImage(profileSrc);
     setOpenProfileImage(true);
   };
-  console.log("product:", product);
-  // ✅ Loading ve 404
-  // ✅ Loading ve 404 (İyileştirilmiş Skeleton)
+
   if (loading) {
     return <ProductDetailSkeleton />;
   }
@@ -279,7 +254,14 @@ export default function ProductDetailPage() {
       </div>
     );
   }
+
   const favorited = isFavorited(product.id);
+  const images = [
+    product.mainImage,
+    product.subImage,
+    product.subImage2,
+    product.subImage3,
+  ].filter(Boolean);
 
   return (
     <div className="bg-white min-h-screen mb-2 mt-1">
@@ -287,36 +269,29 @@ export default function ProductDetailPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 md:gap-8 mt-0 md:mt-6">
           {/* Görseller */}
           <div className="flex flex-col-reverse lg:flex-row gap-4 md:gap-4 lg:sticky lg:top-20 lg:self-start">
-            {/* Thumbnails (Mobil: Yatay kaydırma, Küçük Boyut) */}
+            {/* Thumbnails */}
             <div className="flex flex-row lg:flex-col gap-2 md:gap-3 justify-start overflow-x-auto lg:overflow-visible p-1 lg:p-0 scrollbar-none">
-              {[
-                product.mainImage,
-                product.subImage,
-                product.subImage2,
-                product.subImage3,
-              ]
-                .filter(Boolean)
-                .map((img, i) => (
-                  <motion.button
-                    key={i}
-                    onClick={() => {
-                      setActiveIndex(i);
-                    }}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    className={cn(
-                      "relative w-19 h-24 md:w-33 md:h-41 border-2 rounded-xs overflow-hidden transition-all duration-300 flex-shrink-0"
-                    )}
-                  >
-                    <Image
-                      src={img!}
-                      alt={product.title}
-                      fill
-                      className="object-cover"
-                    />
-                  </motion.button>
-                ))}
+              {images.map((img, i) => (
+                <motion.button
+                  key={i}
+                  onClick={() => setActiveIndex(i)}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className={cn(
+                    "relative w-19 h-24 md:w-33 md:h-41 border-2 rounded-xs overflow-hidden transition-all duration-300 flex-shrink-0",
+                    activeIndex === i ? "border-rose-500" : "border-gray-200"
+                  )}
+                >
+                  <Image
+                    src={img!}
+                    alt={product.title}
+                    fill
+                    className="object-cover"
+                  />
+                </motion.button>
+              ))}
             </div>
+
             {/* Ana görsel */}
             <motion.div
               className="relative w-full min-h-[350px] sm:min-h-[420px] rounded-xs overflow-hidden cursor-zoom-in"
@@ -330,14 +305,7 @@ export default function ProductDetailPage() {
                 )}
               >
                 <Image
-                  src={
-                    [
-                      product.mainImage,
-                      product.subImage,
-                      product.subImage2,
-                      product.subImage3,
-                    ].filter(Boolean)[activeIndex] || product.mainImage
-                  }
+                  src={images[activeIndex] || product.mainImage}
                   alt={product.title}
                   width={700}
                   height={500}
@@ -346,21 +314,14 @@ export default function ProductDetailPage() {
                 />
               </ImageZoom>
 
-              {/* Önceki Slide */}
+              {/* Slide controls */}
               <div className="absolute top-1/2 left-[-2] md:left-3 transform -translate-y-1/2">
                 <Button
                   variant="ghost"
                   size="icon"
                   onClick={() =>
                     setActiveIndex((prev) =>
-                      prev === 0
-                        ? [
-                            product.mainImage,
-                            product.subImage,
-                            product.subImage2,
-                            product.subImage3,
-                          ].filter(Boolean).length - 1
-                        : prev - 1
+                      prev === 0 ? images.length - 1 : prev - 1
                     )
                   }
                   aria-label="Previous Slide"
@@ -370,23 +331,13 @@ export default function ProductDetailPage() {
                 </Button>
               </div>
 
-              {/* Sonraki Slide */}
               <div className="absolute top-1/2 right-[-2] md:right-3 transform -translate-y-1/2">
                 <Button
                   variant="ghost"
                   size="icon"
                   onClick={() =>
                     setActiveIndex((prev) =>
-                      prev ===
-                      [
-                        product.mainImage,
-                        product.subImage,
-                        product.subImage2,
-                        product.subImage3,
-                      ].filter(Boolean).length -
-                        1
-                        ? 0
-                        : prev + 1
+                      prev === images.length - 1 ? 0 : prev + 1
                     )
                   }
                   aria-label="Next Slide"
@@ -397,16 +348,15 @@ export default function ProductDetailPage() {
               </div>
             </motion.div>
           </div>
-          {/* Ürün Detayları ve Aksiyonlar */}
-          <div className=" flex flex-col gap-4 md:gap-6 p-2 py-5 sm:p-6 md:p-8 backdrop-blur-xl bg-gradient-to-br from-yellow-50/50 via-white/90 to-yellow-50/50 transition-all duration-300 rounded-xs shadow-md border border-rose-100">
-            {/* Ürün Başlığı */}
-            {/* Ürün Başlığı */}
+
+          {/* Ürün Detayları */}
+          <div className="flex flex-col gap-4 md:gap-6 p-2 py-5 sm:p-6 md:p-8 backdrop-blur-xl bg-gradient-to-br from-yellow-50/50 via-white/90 to-yellow-50/50 transition-all duration-300 rounded-xs shadow-md border border-rose-100">
+            {/* Başlık */}
             <div className="flex flex-col gap-2">
               <h1 className="text-3xl md:text-5xl font-serif font-extrabold tracking-tight leading-snug text-gray-900 drop-shadow-md">
                 {product.title}
               </h1>
 
-              {/* ✅ Category & Room Badges */}
               <div className="flex gap-2 mt-1 flex-wrap">
                 {product.category && (
                   <span className="inline-block bg-rose-100 text-rose-800 text-xs md:text-sm font-semibold px-2 py-1 rounded-full shadow-sm">
@@ -423,8 +373,7 @@ export default function ProductDetailPage() {
 
             <Separator className="bg-gray-300/40" />
 
-            {/* Açıklama */}
-            <p className="text-gray-700 leading-relaxed text-sm  md:text-base drop-shadow-sm border-l-4 border-rose-300/60 pl-3">
+            <p className="text-gray-700 leading-relaxed text-sm md:text-base drop-shadow-sm border-l-4 border-rose-300/60 pl-3">
               {product.description}
             </p>
             <Separator className="bg-gray-300/40" />
@@ -474,16 +423,13 @@ export default function ProductDetailPage() {
                         key={profile.name}
                         onClick={() => {
                           setSelectedProfile(profile.name);
-                          handleProfileClick(profile.src); // Modal açma
+                          handleProfileClick(profile.src);
                         }}
-                        className={`
-            relative w-full aspect-square cursor-pointer overflow-hidden transition-all duration-300
-            ${
-              isActive
-                ? " ring-offset-2 scale-105 shadow-lg"
-                : "hover:ring-1 hover:ring-gray-300"
-            }
-          `}
+                        className={`relative w-full aspect-square cursor-pointer overflow-hidden transition-all duration-300 ${
+                          isActive
+                            ? "ring-offset-2 scale-105 shadow-lg"
+                            : "hover:ring-1 hover:ring-gray-300"
+                        }`}
                       >
                         <Image
                           src={profile.src}
@@ -509,9 +455,8 @@ export default function ProductDetailPage() {
 
               <Separator className="bg-gray-300/40" />
 
-              {/* ⚙️ Aparat Seçimi - DAHA NET BAŞLIK */}
               <section>
-                <h3 className="text-sm font-semibold text-gray-800 mb-3 uppercase tracking-wider  pb-2">
+                <h3 className="text-sm font-semibold text-gray-800 mb-3 uppercase tracking-wider pb-2">
                   Aparat Seçimi
                 </h3>
                 <Select
@@ -535,13 +480,12 @@ export default function ProductDetailPage() {
 
             <Separator className="bg-gray-300/40" />
 
-            {/* 📐 Ölçü Girişi ve Hesaplama */}
+            {/* Ölçü Girişi */}
             <div className="flex flex-col gap-4 p-4 bg-rose-50/70 rounded-xs shadow-inner border border-rose-100">
               <h3 className="text-xl font-bold text-gray-800 flex items-center gap-2">
                 <Ruler size={20} className="text-rose-700" /> Ölçülerinizi Girin
               </h3>
 
-              {/* Ölçü Nasıl Alınır Butonu */}
               <Button
                 variant="outline"
                 className="h-12 text-xs md:text-sm rounded-full text-gray-800 border-gray-300 hover:bg-gray-100 hover:border-gray-400 transition-all"
@@ -550,7 +494,6 @@ export default function ProductDetailPage() {
                 Ölçü Nasıl Alınır? (Detaylı Anlatım)
               </Button>
 
-              {/* Ölçü Inputları ve M² */}
               <div className="flex gap-1 md:gap-2 mt-2 font-sans">
                 <Input
                   type="number"
@@ -574,15 +517,19 @@ export default function ProductDetailPage() {
                   initial={{ scale: 0.95 }}
                   animate={{ scale: 1 }}
                   transition={{ type: "spring", stiffness: 300, damping: 20 }}
-                  className="flex-1 rounded-full bg-rose-100 text-center flex items-center justify-center text-sm font-extrabold text-rose-800 border-2 border-rose-300 shadow-lg"
+                  className="flex-1  rounded-full bg-rose-100 text-center flex items-center justify-center text-sm font-extrabold text-rose-800 border-2 border-rose-300 shadow-lg"
                 >
                   <span className="text-sm md:text-base">
-                    {calculatedM2.toFixed(2)} m²
+                    {calculatedM2 > 0 ? calculatedM2.toFixed(2) : "0.00"} m²
+                    {calculatedM2 > 0 && calculatedM2 < 1 && (
+                      <span className="text-xs block text-rose-600 mt-0.5">
+                        (Min. 1 m² fiyatlandırılır)
+                      </span>
+                    )}
                   </span>
                 </motion.div>
               </div>
 
-              {/* Not */}
               <Input
                 placeholder="Sipariş Notu (Örn: Rengi teyit ediniz)"
                 value={note || ""}
@@ -590,17 +537,16 @@ export default function ProductDetailPage() {
                 className="rounded-lg bg-white shadow-sm focus:ring-2 focus:ring-rose-400 transition mt-1 text-sm border-gray-300"
               />
 
-              {/* Ölçü Onayı */}
               <div className="flex items-center gap-3 mt-1 p-2 bg-rose-100/50 rounded-md">
                 <Checkbox
                   id="measure_accept"
                   checked={accepted}
                   onCheckedChange={(v) => setAccepted(Boolean(v))}
-                  className=" border-rose-400  text-rose-700  data-[state=checked]:bg-rose-600  data-[state=checked]:border-rose-600  data-[state=checked]:text-white  "
+                  className="border-rose-400 text-rose-700 data-[state=checked]:bg-rose-600 data-[state=checked]:border-rose-600 data-[state=checked]:text-white"
                 />
 
                 <label
-                  htmlFor="measurement-check"
+                  htmlFor="measure_accept"
                   className="text-xs md:text-sm font-medium text-rose-800 cursor-pointer"
                 >
                   Ölçülerimin doğru olduğunu{" "}
@@ -613,23 +559,22 @@ export default function ProductDetailPage() {
 
             <Separator className="bg-gray-300/40" />
 
-            {/* Fiyat ve Aksiyonlar (Daha Büyük ve Göz Alıcı) */}
+            {/* Fiyat ve Aksiyonlar */}
             <div className="flex flex-col gap-4 mt-2">
-              {/* Fiyat Kartı */}
               <div className="flex items-center justify-between p-5 bg-rose-50 backdrop-blur-lg rounded-xs border border-rose-200 shadow-lg ring-1 ring-inset ring-rose-500/10">
                 <div className="flex flex-col">
                   <span className="text-lg font-medium text-gray-600 uppercase">
                     Toplam Fiyat
                   </span>
                   <p className="text-3xl font-extrabold text-rose-700 drop-shadow-lg leading-none mt-1 font-sans">
-                    ₺{totalPrice}
+                    ₺{totalPrice.toFixed(2)}
                   </p>
                   <span className="text-xs text-gray-500 mt-2 font-sans">
-                    ({calculatedM2.toFixed(2)} m² x {quantity} adet)
+                    ({calculatedM2 > 0 ? calculatedM2.toFixed(2) : "0.00"} m² x{" "}
+                    {quantity} adet)
                   </span>
                 </div>
 
-                {/* Miktar */}
                 <div className="flex items-center gap-3 bg-white rounded-full p-1 shadow-inner border border-gray-200">
                   <Button
                     onClick={() => handleQuantityChange(-1)}
@@ -652,7 +597,6 @@ export default function ProductDetailPage() {
                 </div>
               </div>
 
-              {/* Sepet & Favori */}
               <div className="flex gap-3">
                 <motion.button
                   onClick={handleAddToCart}
@@ -660,9 +604,9 @@ export default function ProductDetailPage() {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   aria-label="Sepete Ekle"
-                  className="flex-1 bg-gradient-to-br from-[#7B0323] to-[#9F1B40] hover:from-[#7B0323]/90 hover:to-[#9F1B40]/90 text-white py-0  md:py-2 rounded-full shadow-2xl text-xl font-extrabold transition disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center gap-2"
+                  className="flex-1 bg-gradient-to-br from-[#7B0323] to-[#9F1B40] hover:from-[#7B0323]/90 hover:to-[#9F1B40]/90 text-white py-0 md:py-2 rounded-full shadow-2xl text-xl font-extrabold transition disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center gap-2"
                 >
-                  <ShoppingCart size={24} className="" />
+                  <ShoppingCart size={24} />
                   Sepete Ekle
                 </motion.button>
 
@@ -689,7 +633,6 @@ export default function ProductDetailPage() {
 
         <Separator className="my-10 sm:my-16" />
 
-        {/* Açıklama ve Yorumlar bileşeni */}
         <DescriptionandReview
           productId={product.id}
           productTitle={product.title}
