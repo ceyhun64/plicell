@@ -3,7 +3,7 @@
 
 import React, { useState, useMemo, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { signIn } from "next-auth/react"; // 👈 Oturum açma için eklendi
+import { signIn } from "next-auth/react";
 import PaymentStepper from "@/components/modules/checkout/paymentStepper";
 import StepAddress from "@/components/modules/checkout/stepAddress";
 import StepPaymentCard from "@/components/modules/checkout/stepPayment";
@@ -13,8 +13,8 @@ import { getCart, clearGuestCart, GuestCartItem } from "@/utils/cart";
 import { Spinner } from "@/components/ui/spinner";
 
 const cargoOptions = [
-  { id: "standart", name: "Standart Kargo", fee: 0.0 }, // 👈 Ücret sıfırlandı
-  { id: "express", name: "Hızlı Kargo", fee: 0.0 }, // 👈 Ücret sıfırlandı
+  { id: "standart", name: "Standart Kargo", fee: 0.0 },
+  { id: "express", name: "Hızlı Kargo", fee: 0.0 },
 ];
 
 interface Address {
@@ -81,7 +81,6 @@ export default function PaymentPage() {
     cargoOptions[0].id
   );
 
-  // Kart bilgileri
   const [cardNumber, setCardNumber] = useState("");
   const [expireMonth, setExpireMonth] = useState("");
   const [expireYear, setExpireYear] = useState("");
@@ -89,12 +88,11 @@ export default function PaymentPage() {
   const [holderName, setHolderName] = useState("");
   const [selectedAddress, setSelectedAddress] = useState<number | null>(null);
 
-  // Yeni adres formu (guest kullanıcı için de kullanılacak)
   const initialAddressForm: AddressFormData & { email?: string } = {
     title: "",
     firstName: "",
     lastName: "",
-    email: "", // 👈 checkout formuna eklendi
+    email: "",
     address: "",
     district: "",
     city: "",
@@ -108,12 +106,16 @@ export default function PaymentPage() {
   const [isAddingNewAddress, setIsAddingNewAddress] = useState(false);
   const [isSavingAddress, setIsSavingAddress] = useState(false);
 
-  // Kullanıcı ve sepet verilerini çek
+  // ✅ M² hesaplama fonksiyonu - minimum 1 m²
+  const calculateArea = (width?: number, height?: number): number => {
+    if (!width || !height) return 1;
+    const area = (width * height) / 10000;
+    return area < 1 ? 1 : area; // ✅ 1'den küçükse 1 döndür
+  };
+
   const fetchData = async () => {
-    // 👈 Dışarı taşıdık
     setLoading(true);
     try {
-      // Kullanıcıyı çek
       const userRes = await fetch("/api/user", { credentials: "include" });
       let userData = null;
       if (userRes.ok) {
@@ -123,34 +125,16 @@ export default function PaymentPage() {
         setUser(null);
       }
 
-      // Sepeti belirle
       if (userData?.user?.id) {
-        // Login olmuş kullanıcı için backend cart
         const cartRes = await fetch("/api/cart", { credentials: "include" });
         if (cartRes.ok) {
           const cartData = await cartRes.json();
           setCartItems(cartData);
         } else {
-          setCartItems([]); // Hata durumunda sepeti temizle
-        }
-      } else {
-        // Guest için localStorage cart
-        const localCart = getCart(); // getCart() fonksiyonunu kullan (localStorage'dan çeker)
-        if (localCart.length > 0) {
-          // Sadece doluysa ayarla
-          // Local storage'daki basit ürünleri API'dan detaylı ürün bilgisi ile çekmek gerekebilir.
-          // Ancak mevcut yapıda, local cart'ın sadece ürün ID'leri yerine tam item yapısını
-          // döndürdüğünü varsayarak sadece `getCart()`'ı çağırıp dönen veriyi kullanabiliriz.
-          // Eğer `getCart()` sadece GuestCartItem[] döndürüyorsa, PaymentPage'in CartItem[] tipine dönüştürmelisiniz.
-          // Mevcut kodunuzda localCart'ı doğrudan setCartItems'a atıyorsunuz, bu da `GuestCartItem[]`'ın `CartItem[]` olarak kullanılması anlamına geliyor.
-          // UYUMLULUK SORUNU YAŞAMAMAK İÇİN:
-          // Eğer `getCart()` GuestCartItem[] döndürüyorsa, aşağıdakini kullanın:
-          // setCartItems(localCart as any as CartItem[]);
-          // Eğer `getCart()` (veya localStorage) zaten CartItem[] formatına uygun veri tutuyorsa, mevcut haliyle devam edin:
-          setCartItems(JSON.parse(localStorage.getItem("cart") || "[]"));
-        } else {
           setCartItems([]);
         }
+      } else {
+        setCartItems(JSON.parse(localStorage.getItem("cart") || "[]"));
       }
     } catch (err) {
       console.error("Fetch hatası:", err);
@@ -163,13 +147,12 @@ export default function PaymentPage() {
 
   useEffect(() => {
     fetchData();
-  }, []); // 👈 Sayfa
+  }, []);
 
-  // Subtotal ve total hesaplama
+  // ✅ Subtotal hesaplama - minimum 1 m² ile
   const subTotal = useMemo(() => {
     return cartItems.reduce((acc, item) => {
-      const area =
-        item.width && item.height ? (item.width * item.height) / 10000 : 1;
+      const area = calculateArea(item.width, item.height);
       const itemPrice = item.product.pricePerM2 * area;
       return acc + itemPrice * item.quantity;
     }, 0);
@@ -182,10 +165,7 @@ export default function PaymentPage() {
 
   const totalPrice = useMemo(() => {
     const baseTotal = subTotal + selectedCargoFee;
-    // Yüzde 10'luk artışı ekle (1.1 ile çarp)
-    const totalWithMarkup = baseTotal * 1.1;
-    // Virgülden sonra iki basamak hassasiyeti için toFixed kullanabilirsiniz,
-    // ancak useMemo'dan dönen değerin number olması önerilir.
+    const totalWithMarkup = baseTotal * 1.1; // KDV %10
     return totalWithMarkup;
   }, [subTotal, selectedCargoFee]);
 
@@ -193,7 +173,6 @@ export default function PaymentPage() {
   if (error)
     return <div className="text-red-500 text-center mt-8">{error}</div>;
 
-  // Adres kaydetme (login + guest kullanıcılar için)
   const handleSaveAddress = async () => {
     try {
       setIsSavingAddress(true);
@@ -201,14 +180,12 @@ export default function PaymentPage() {
       let userId = user?.user?.id;
       let passwordForLogin: string | undefined;
 
-      // 🔹 Guest kullanıcı için register ve login
       if (!userId) {
         const guestEmail =
           newAddressForm.email || `guest_${Date.now()}@example.com`;
         const password = Math.random().toString(36).slice(-8);
         passwordForLogin = password;
 
-        // Register
         const registerRes = await fetch("/api/account/register", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -229,7 +206,6 @@ export default function PaymentPage() {
         userId = registerData.user.id;
         setUser({ user: registerData.user });
 
-        // Otomatik login
         if (passwordForLogin) {
           const signInResult = await signIn("credentials", {
             email: guestEmail,
@@ -239,12 +215,10 @@ export default function PaymentPage() {
           if (signInResult?.error)
             console.error("Login error:", signInResult.error);
 
-          // Session’in backend’e yansıması için kısa delay
           await new Promise((resolve) => setTimeout(resolve, 150));
         }
       }
 
-      // 🔹 Adres kaydet
       const addressRes = await fetch("/api/address", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -273,10 +247,8 @@ export default function PaymentPage() {
           : prev
       );
 
-      // 🔹 Yeni adresi otomatik seç
       setSelectedAddress(addressData.address.id);
 
-      // Guest cart’ı backend’e aktar, temizle ve form resetle
       const guestCart: GuestCartItem[] = getCart();
       for (const item of guestCart) {
         await fetch("/api/cart", {
@@ -307,18 +279,16 @@ export default function PaymentPage() {
     }
   };
 
-  // 🔹 Ödeme işlemi
   const handlePayment = async () => {
     let currentUser = user;
-    let passwordForLogin: string | undefined = undefined; // Oturum açmak için parolayı tut
+    let passwordForLogin: string | undefined = undefined;
 
-    // 🔹 Giriş yapılmamışsa guest user oluştur
     if (!currentUser) {
       try {
         const guestEmail =
           newAddressForm.email || `guest_${Date.now()}@example.com`;
         const password = Math.random().toString(36).slice(-8);
-        passwordForLogin = password; // Parolayı kaydet ve kullan
+        passwordForLogin = password;
 
         const registerRes = await fetch("/api/account/register", {
           method: "POST",
@@ -341,11 +311,10 @@ export default function PaymentPage() {
         currentUser = { user: registerData.user };
         setUser(currentUser);
 
-        // 🚨 OTOMATİK OTURUM AÇMA 🚨
         if (passwordForLogin) {
           const signInResult = await signIn("credentials", {
             email: guestEmail,
-            password: passwordForLogin, // Kayıt sırasında oluşturulan parolayı kullan
+            password: passwordForLogin,
             redirect: false,
           });
 
@@ -354,7 +323,6 @@ export default function PaymentPage() {
               "Ödeme öncesi otomatik oturum açma başarısız oldu:",
               signInResult.error
             );
-            // Hata olsa bile ödeme işlemine devam et
           }
         }
       } catch (err) {
@@ -368,12 +336,8 @@ export default function PaymentPage() {
       return alert("Geçersiz kullanıcı ID");
     }
 
-    // Guest için adres formunu kullan
     const shippingAddr =
       currentUser.user.addresses?.[0] || (newAddressForm as Address);
-
-
-      console.log("shippingAddr:", shippingAddr);
 
     const buyer = {
       id: userId.toString(),
@@ -404,14 +368,12 @@ export default function PaymentPage() {
       district: shippingAddr.district ?? "",
       neighborhood: shippingAddr.neighborhood ?? "",
     };
-    console.log("2shippingAddress:", shippingAddress);
 
     const billingAddress = { ...shippingAddress };
-    console.log("cartItems:", cartItems);
 
+    // ✅ basketItems formatlarken minimum 1 m² kullan
     const basketItemsFormatted = cartItems.map((item) => {
-      const area =
-        item.width && item.height ? (item.width * item.height) / 10000 : 1;
+      const area = calculateArea(item.width, item.height);
       const unitPrice = item.product.pricePerM2 * area;
       return {
         id: item.product.id.toString(),
@@ -423,14 +385,12 @@ export default function PaymentPage() {
         profile: item.profile,
         width: item.width,
         height: item.height,
-        m2: item.m2,
+        m2: area, // ✅ Minimum 1 m²
         device: item.device,
         unitPrice: unitPrice.toFixed(2),
         totalPrice: (unitPrice * item.quantity).toFixed(2),
       };
     });
-
-    console.log("basketItemsFormatted:", basketItemsFormatted);
 
     const paymentCardFormatted = {
       cardHolderName: holderName,
@@ -464,7 +424,6 @@ export default function PaymentPage() {
 
       const data = await res.json();
       if (data.status === "success") {
-        // 🔥 Veritabanındaki her cartItem'ı sil
         for (const item of cartItems) {
           try {
             await fetch(`/api/cart/${item.id}`, {
@@ -475,9 +434,7 @@ export default function PaymentPage() {
           }
         }
 
-        // 🔥 Local sepeti temizle
         localStorage.removeItem("cart");
-
         router.push("/checkout/success");
       }
     } catch (err) {
@@ -487,7 +444,7 @@ export default function PaymentPage() {
   };
 
   return (
-    <div className="container mx-auto p-4 md:p-8 max-w-7xl font-sans" >
+    <div className="container mx-auto p-4 md:p-8 max-w-7xl font-sans">
       <h1 className="text-3xl font-bold mb-8 text-center text-gray-900">
         Ödeme İşlemleri
       </h1>
@@ -496,7 +453,6 @@ export default function PaymentPage() {
         <div className="lg:col-span-2 space-y-6">
           <PaymentStepper currentStep={step} />
 
-          {/* ✅ Guest kullanıcı da adres formunu görebilir */}
           {step === 1 && (
             <StepAddress
               addresses={user?.user.addresses ?? []}

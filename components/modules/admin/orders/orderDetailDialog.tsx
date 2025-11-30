@@ -100,7 +100,7 @@ export default function OrderDetailDialog({
       <hr className="my-4 border-gray-200" />
 
       {/* Ürünler */}
-      <div className="space-y-3">
+      <div className="space-y-3 font-sans">
         <h3 className="text-lg font-semibold flex items-center gap-2 text-gray-700">
           <Package className="w-5 h-5" /> Sipariş Ürünleri ({order.items.length}
           )
@@ -147,7 +147,7 @@ export default function OrderDetailDialog({
       <hr className="my-4 border-gray-200" />
 
       {/* Adresler */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 font-sans">
         {["shipping", "billing"].map((type) => {
           const addr = order.addresses.find((a) => a.type === type);
           const title = type === "shipping" ? "Kargo Adresi" : "Fatura Adresi";

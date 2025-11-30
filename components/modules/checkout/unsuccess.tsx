@@ -17,7 +17,7 @@ export default function Failed() {
   }, [router]);
 
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center bg-red-950/20 p-4">
+    <div className="min-h-screen flex flex-col justify-center items-center bg-red-950/20 p-4 font-sans">
       <div className="bg-white shadow-lg rounded-xs p-10 text-center max-w-md">
         {/* Büyük ikon */}
         <XCircle className="text-red-600 w-24 h-24 mx-auto mb-4" />

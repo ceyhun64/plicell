@@ -40,7 +40,6 @@ interface BasketItem {
 interface BasketSummaryCardProps {
   basketItemsData?: BasketItem[];
   subTotal?: number;
-  // selectedCargoFee: number; // Kargo kaldırıldığı için kullanılmıyor, ancak imzayı bozmamak için bırakıldı.
   selectedCargoFee: number;
   totalPrice?: number;
 }
@@ -48,7 +47,7 @@ interface BasketSummaryCardProps {
 export default function BasketSummaryCard({
   basketItemsData = [],
   subTotal = 0,
-  selectedCargoFee, // Artık KDV yerine kullanılacak
+  selectedCargoFee,
   totalPrice = 0,
 }: BasketSummaryCardProps) {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
@@ -145,10 +144,16 @@ export default function BasketSummaryCard({
           device: item.device,
         }));
 
+  // ✅ M² hesaplama fonksiyonu - minimum 1 m²
+  const calculateArea = (width?: number, height?: number): number => {
+    if (!width || !height) return 1;
+    const area = (width * height) / 10000;
+    return area < 1 ? 1 : area; // ✅ 1'den küçükse 1 döndür
+  };
+
   // 🔹 Ara toplamı hesapla
   const calculatedSubTotal = itemsToRender.reduce((acc, item) => {
-    const area =
-      item.width && item.height ? (item.width * item.height) / 10000 : 1;
+    const area = calculateArea(item.width, item.height);
     return acc + item.product.pricePerM2 * area * item.quantity;
   }, 0);
 
@@ -162,10 +167,27 @@ export default function BasketSummaryCard({
     const details: string[] = [];
     if (item.note) details.push(`Not: "${item.note}"`);
     if (item.profile) details.push(`Profil: ${item.profile}`);
-    if (item.width && item.height)
-      details.push(
-        `Boyut: ${item.width} x ${item.height} cm (${item.device ?? "vidali"})`
-      );
+    if (item.width && item.height) {
+      const realArea = (item.width * item.height) / 10000;
+      const pricingArea = calculateArea(item.width, item.height);
+
+      // ✅ Eğer gerçek alan 1'den küçükse uyarı göster
+      if (realArea < 1) {
+        details.push(
+          `Boyut: ${item.width} x ${item.height} cm (${realArea.toFixed(
+            2
+          )} m² → 1.00 m²)`
+        );
+      } else {
+        details.push(
+          `Boyut: ${item.width} x ${item.height} cm (${pricingArea.toFixed(
+            2
+          )} m²)`
+        );
+      }
+
+      if (item.device) details.push(`Aparat: ${item.device}`);
+    }
     return details;
   };
 
@@ -192,10 +214,7 @@ export default function BasketSummaryCard({
           {itemsToRender.map((item) => {
             const product: Product = item.product;
             const details = getItemDetails(item);
-            const area =
-              item.width && item.height
-                ? (item.width * item.height) / 10000
-                : 1;
+            const area = calculateArea(item.width, item.height); // ✅ Minimum 1 m²
             const itemPrice = product.pricePerM2 * area * item.quantity;
 
             return (
@@ -244,16 +263,14 @@ export default function BasketSummaryCard({
 
         <div className="space-y-2 text-sm">
           <div className="flex justify-between font-normal">
-            <span>Ara Toplam (KDV Hariç)</span> {/* Yeni metin */}
+            <span>Ara Toplam (KDV Hariç)</span>
             <span className="font-medium">
               {calculatedSubTotal.toFixed(2)}TL
             </span>
           </div>
           <div className="flex justify-between font-normal">
-            <span>KDV (%10)</span> {/* KDV eklendi */}
-            <span
-              className="font-medium text-red-500" // KDV'yi de vurgulayabiliriz
-            >
+            <span>KDV (%10)</span>
+            <span className="font-medium text-red-500">
               +{calculatedKdv.toFixed(2)}TL
             </span>
           </div>
