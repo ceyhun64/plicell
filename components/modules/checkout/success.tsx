@@ -12,21 +12,22 @@ import { useRouter } from "next/navigation";
 
 export default function PaymentSuccessPage() {
   const [countdown, setCountdown] = useState(5);
-const router = useRouter();
+  const router = useRouter();
+  // Sayaç
   useEffect(() => {
     const timer = setInterval(() => {
-      setCountdown((prev) => {
-        if (prev <= 1) {
-          clearInterval(timer);
-          router.push("/");
-          return 0;
-        }
-        return prev - 1;
-      });
+      setCountdown((prev) => prev - 1);
     }, 1000);
 
     return () => clearInterval(timer);
   }, []);
+
+  // Redirect işlemi (setState dışında)
+  useEffect(() => {
+    if (countdown <= 0) {
+      router.push("/");
+    }
+  }, [countdown, router]);
 
   const nextSteps = [
     {
@@ -78,7 +79,6 @@ const router = useRouter();
 
           {/* Content */}
           <div className="p-6 md:p-8">
-            
             {/* Success Message */}
             <div className="mb-8 text-center">
               <p className="text-gray-600 leading-relaxed">
@@ -200,16 +200,6 @@ const router = useRouter();
           </div>
         </div>
 
-        {/* Contact Support */}
-        <div className="mt-6 text-center">
-          <p className="text-sm text-gray-600 mb-2">
-            Yardıma mı ihtiyacınız var?
-          </p>
-          <button className="text-green-600 hover:text-green-700 font-semibold text-sm inline-flex items-center gap-1">
-            Müşteri Hizmetleri
-            <ChevronRight className="w-4 h-4" />
-          </button>
-        </div>
       </div>
     </div>
   );

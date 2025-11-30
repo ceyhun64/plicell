@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { useState, useEffect } from "react";
 import {
   XCircle,
@@ -14,21 +14,22 @@ import { useRouter } from "next/navigation";
 
 export default function PaymentFailedPage() {
   const [countdown, setCountdown] = useState(5);
-const router = useRouter();
+  const router = useRouter();
+  // Sayaç
   useEffect(() => {
     const timer = setInterval(() => {
-      setCountdown((prev) => {
-        if (prev <= 1) {
-          clearInterval(timer);
-          router.push("/");
-          return 0;
-        }
-        return prev - 1;
-      });
+      setCountdown((prev) => prev - 1);
     }, 1000);
 
     return () => clearInterval(timer);
   }, []);
+
+  // Redirect işlemi (setState dışında)
+  useEffect(() => {
+    if (countdown <= 0) {
+      router.push("/");
+    }
+  }, [countdown, router]);
 
   const commonReasons = [
     {
@@ -181,8 +182,6 @@ const router = useRouter();
               </div>
             </div>
 
-         
-
             {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row gap-3">
               <button
@@ -219,16 +218,6 @@ const router = useRouter();
           </div>
         </div>
 
-        {/* Additional Help */}
-        <div className="mt-6 text-center">
-          <p className="text-sm text-gray-600 mb-2">
-            Hala sorun yaşıyor musunuz?
-          </p>
-          <button className="text-red-600 hover:text-red-700 font-semibold text-sm inline-flex items-center gap-1">
-            Canlı Destek ile İletişime Geç
-            <ChevronRight className="w-4 h-4" />
-          </button>
-        </div>
       </div>
     </div>
   );

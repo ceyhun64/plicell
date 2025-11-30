@@ -543,26 +543,7 @@ export default function PaymentPage() {
     );
   }
 
-  if (cartItems.length === 0) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center p-8 bg-white rounded-lg shadow-md">
-          <h2 className="text-2xl font-semibold text-gray-900 mb-4">
-            Sepetiniz Boş
-          </h2>
-          <p className="text-gray-600 mb-6">
-            Ödeme yapabilmek için sepetinize ürün eklemelisiniz.
-          </p>
-          <button
-            onClick={() => router.push("/")}
-            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            Alışverişe Devam Et
-          </button>
-        </div>
-      </div>
-    );
-  }
+ 
 
   return (
     <div className="min-h-screen bg-gray-50 py-8 font-sans">
