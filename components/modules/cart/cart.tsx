@@ -8,6 +8,7 @@ import { Button } from "../../ui/button";
 import { ShoppingBag } from "lucide-react";
 import { Spinner } from "@/components/ui/spinner";
 import Link from "next/link";
+import { Skeleton } from "@/components/ui/skeleton";
 
 import {
   getCart,
@@ -183,7 +184,43 @@ export default function Cart() {
     return acc + price * quantity * m2;
   }, 0);
 
-  if (isLoading) return <Spinner />;
+  if (isLoading) {
+    return (
+      <div className="container mx-auto px-3 md:px-40 py-8 md:py-16 mb-12">
+        <h2 className="text-3xl md:text-4xl font-bold text-gray-800 text-center mb-12 font-serif">
+          Sepetim
+        </h2>
+
+        <div className="flex flex-col md:flex-row gap-8">
+          {/* Sol taraf skeleton ürün listesi */}
+          <div className="flex-1 space-y-6">
+            {[1, 2, 3].map((i) => (
+              <div
+                key={i}
+                className="flex items-center gap-4 p-4 border rounded-lg shadow-sm"
+              >
+                <Skeleton className="w-24 h-24 rounded-md" />
+                <div className="flex-1 space-y-3">
+                  <Skeleton className="h-4 w-3/4" />
+                  <Skeleton className="h-4 w-1/2" />
+                  <Skeleton className="h-4 w-1/3" />
+                </div>
+                <Skeleton className="w-10 h-10 rounded-md" />
+              </div>
+            ))}
+          </div>
+
+          {/* Sağ taraf summary skeleton */}
+          <div className="w-full md:w-80 p-6 border rounded-lg shadow-md space-y-4">
+            <Skeleton className="h-6 w-1/2" />
+            <Skeleton className="h-4 w-3/4" />
+            <Skeleton className="h-4 w-2/3" />
+            <Skeleton className="h-10 w-full rounded-md" />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const EmptyCart = () => (
     <div className="flex flex-col items-center justify-center mt-16 space-y-4 text-gray-500">

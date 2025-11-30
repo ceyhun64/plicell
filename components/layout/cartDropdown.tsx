@@ -30,6 +30,7 @@ import {
   GuestCartItem,
 } from "@/utils/cart";
 import { Spinner } from "../ui/spinner";
+import { Skeleton } from "../ui/skeleton";
 
 interface Product {
   id: number;
@@ -276,7 +277,36 @@ const CartDropdown = forwardRef(
           {/* İçerik */}
           <div className="flex-1 overflow-y-auto overflow-x-hidden space-y-3">
             {isLoading ? (
-              <Spinner />
+              <div className="space-y-3">
+                {[1, 2, 3].map((i) => (
+                  <div
+                    key={i}
+                    className="flex items-center gap-3 p-3 border rounded-lg shadow-sm"
+                  >
+                    <Skeleton className="w-16 h-16 rounded-md" />
+                    <div className="flex-1 space-y-2">
+                      <Skeleton className="h-4 w-3/4" />
+                      <Skeleton className="h-4 w-1/2" />
+                      <Skeleton className="h-4 w-1/3" />
+                    </div>
+                    <Skeleton className="w-8 h-8 rounded-md" />
+                  </div>
+                ))}
+
+                {/* Summary skeleton */}
+                <div className="mt-4 space-y-3 border-t pt-4">
+                  <Skeleton className="h-4 w-1/2" />
+                  <Skeleton className="h-4 w-1/3" />
+                  <Skeleton className="h-4 w-2/3" />
+                </div>
+
+                {/* Footer skeleton */}
+                <div className="space-y-2 mt-6">
+                  <Skeleton className="h-10 w-full rounded-full" />
+                  <Skeleton className="h-10 w-full rounded-full" />
+                  <Skeleton className="h-10 w-full rounded-full" />
+                </div>
+              </div>
             ) : cartItems.length === 0 ? (
               <div className="flex flex-col items-center justify-center mt-16 space-y-4 text-gray-500">
                 <ShoppingCart className="h-12 w-12 text-gray-400 animate-bounce" />

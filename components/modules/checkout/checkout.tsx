@@ -11,6 +11,7 @@ import BasketSummaryCard from "@/components/modules/checkout/cartSummary";
 import { AddressFormData } from "@/components/modules/profile/addressForm";
 import { getCart, clearGuestCart, GuestCartItem } from "@/utils/cart";
 import { Spinner } from "@/components/ui/spinner";
+import Link from "next/link";
 
 const cargoOptions = [
   { id: "standart", name: "Standart Kargo", fee: 0.0 },
@@ -72,14 +73,13 @@ export default function PaymentPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [processingPayment, setProcessingPayment] = useState(false);
 
   const [user, setUser] = useState<UserUser | null>(null);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
 
   const [step, setStep] = useState(1);
-  const [selectedCargo, setSelectedCargo] = useState<string>(
-    cargoOptions[0].id
-  );
+  const [selectedCargo, setSelectedCargo] = useState<string>(cargoOptions[0].id);
 
   const [cardNumber, setCardNumber] = useState("");
   const [expireMonth, setExpireMonth] = useState("");
@@ -106,17 +106,22 @@ export default function PaymentPage() {
   const [isAddingNewAddress, setIsAddingNewAddress] = useState(false);
   const [isSavingAddress, setIsSavingAddress] = useState(false);
 
-  // ✅ M² hesaplama fonksiyonu - minimum 1 m²
   const calculateArea = (width?: number, height?: number): number => {
     if (!width || !height) return 1;
     const area = (width * height) / 10000;
-    return area < 1 ? 1 : area; // ✅ 1'den küçükse 1 döndür
+    return area < 1 ? 1 : area;
   };
 
   const fetchData = async () => {
     setLoading(true);
+    setError(null);
+    
     try {
-      const userRes = await fetch("/api/user", { credentials: "include" });
+      const userRes = await fetch("/api/user", { 
+        credentials: "include",
+        cache: "no-store"
+      });
+      
       let userData = null;
       if (userRes.ok) {
         userData = await userRes.json();
@@ -126,7 +131,11 @@ export default function PaymentPage() {
       }
 
       if (userData?.user?.id) {
-        const cartRes = await fetch("/api/cart", { credentials: "include" });
+        const cartRes = await fetch("/api/cart", { 
+          credentials: "include",
+          cache: "no-store"
+        });
+        
         if (cartRes.ok) {
           const cartData = await cartRes.json();
           setCartItems(cartData);
@@ -134,10 +143,12 @@ export default function PaymentPage() {
           setCartItems([]);
         }
       } else {
-        setCartItems(JSON.parse(localStorage.getItem("cart") || "[]"));
+        const guestCart = localStorage.getItem("cart");
+        setCartItems(guestCart ? JSON.parse(guestCart) : []);
       }
     } catch (err) {
-      console.error("Fetch hatası:", err);
+      console.error("Veri yükleme hatası:", err);
+      setError("Veriler yüklenirken bir hata oluştu. Lütfen sayfayı yenileyin.");
       setUser(null);
       setCartItems([]);
     } finally {
@@ -149,7 +160,6 @@ export default function PaymentPage() {
     fetchData();
   }, []);
 
-  // ✅ Subtotal hesaplama - minimum 1 m² ile
   const subTotal = useMemo(() => {
     return cartItems.reduce((acc, item) => {
       const area = calculateArea(item.width, item.height);
@@ -165,24 +175,37 @@ export default function PaymentPage() {
 
   const totalPrice = useMemo(() => {
     const baseTotal = subTotal + selectedCargoFee;
-    const totalWithMarkup = baseTotal * 1.1; // KDV %10
+    const totalWithMarkup = baseTotal * 1.1;
     return totalWithMarkup;
   }, [subTotal, selectedCargoFee]);
 
-  if (loading) return <Spinner />;
-  if (error)
-    return <div className="text-red-500 text-center mt-8">{error}</div>;
+  const validateAddressForm = (): boolean => {
+    const required = ['firstName', 'lastName', 'address', 'city', 'district', 'phone'];
+    for (const field of required) {
+      if (!newAddressForm[field as keyof typeof newAddressForm]) {
+        alert(`Lütfen ${field} alanını doldurun.`);
+        return false;
+      }
+    }
+    
+    if (newAddressForm.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newAddressForm.email)) {
+      alert("Geçerli bir e-posta adresi girin.");
+      return false;
+    }
+    
+    return true;
+  };
 
   const handleSaveAddress = async () => {
+    if (!validateAddressForm()) return;
+
     try {
       setIsSavingAddress(true);
-
       let userId = user?.user?.id;
       let passwordForLogin: string | undefined;
 
       if (!userId) {
-        const guestEmail =
-          newAddressForm.email || `guest_${Date.now()}@example.com`;
+        const guestEmail = newAddressForm.email || `guest_${Date.now()}@example.com`;
         const password = Math.random().toString(36).slice(-8);
         passwordForLogin = password;
 
@@ -198,8 +221,8 @@ export default function PaymentPage() {
         });
 
         if (!registerRes.ok) {
-          const text = await registerRes.text();
-          throw new Error("Register failed: " + text);
+          const errorData = await registerRes.json().catch(() => ({}));
+          throw new Error(errorData.message || "Kullanıcı kaydı başarısız");
         }
 
         const registerData = await registerRes.json();
@@ -212,22 +235,28 @@ export default function PaymentPage() {
             password: passwordForLogin,
             redirect: false,
           });
-          if (signInResult?.error)
-            console.error("Login error:", signInResult.error);
+          
+          if (signInResult?.error) {
+            console.error("Otomatik giriş hatası:", signInResult.error);
+          }
 
-          await new Promise((resolve) => setTimeout(resolve, 150));
+          await new Promise((resolve) => setTimeout(resolve, 200));
         }
       }
 
       const addressRes = await fetch("/api/address", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...newAddressForm, userId, country: "Türkiye" }),
+        body: JSON.stringify({ 
+          ...newAddressForm, 
+          userId, 
+          country: "Türkiye" 
+        }),
       });
 
       if (!addressRes.ok) {
-        const text = await addressRes.text();
-        throw new Error("Address save failed: " + text);
+        const errorData = await addressRes.json().catch(() => ({}));
+        throw new Error(errorData.message || "Adres kaydedilemedi");
       }
 
       const addressData = await addressRes.json();
@@ -238,10 +267,7 @@ export default function PaymentPage() {
               ...prev,
               user: {
                 ...prev.user,
-                addresses: [
-                  addressData.address,
-                  ...(prev.user.addresses ?? []),
-                ],
+                addresses: [addressData.address, ...(prev.user.addresses ?? [])],
               },
             }
           : prev
@@ -250,43 +276,71 @@ export default function PaymentPage() {
       setSelectedAddress(addressData.address.id);
 
       const guestCart: GuestCartItem[] = getCart();
-      for (const item of guestCart) {
-        await fetch("/api/cart", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            productId: item.productId,
-            quantity: item.quantity || 1,
-            note: item.note || null,
-            profile: item.profile || "",
-            width: item.width || 0,
-            height: item.height || 0,
-            device: item.device || "vidali",
-          }),
-        });
+      if (guestCart.length > 0) {
+        for (const item of guestCart) {
+          await fetch("/api/cart", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              productId: item.productId,
+              quantity: item.quantity || 1,
+              note: item.note || null,
+              profile: item.profile || "",
+              width: item.width || 0,
+              height: item.height || 0,
+              device: item.device || "vidali",
+            }),
+          });
+        }
+        clearGuestCart();
+        await fetchData();
       }
-      clearGuestCart();
-      await fetchData();
+
       setIsAddingNewAddress(false);
       setNewAddressForm(initialAddressForm);
     } catch (err) {
-      console.error("handleSaveAddress error:", err);
-      alert(
-        "Adres kaydedilemedi veya sepet aktarımı başarısız oldu. Konsolu kontrol edin."
-      );
+      console.error("Adres kaydetme hatası:", err);
+      alert(err instanceof Error ? err.message : "Adres kaydedilemedi. Lütfen tekrar deneyin.");
     } finally {
       setIsSavingAddress(false);
     }
   };
 
-  const handlePayment = async () => {
-    let currentUser = user;
-    let passwordForLogin: string | undefined = undefined;
+  const validatePaymentInfo = (): boolean => {
+    if (!holderName.trim()) {
+      alert("Kart sahibinin adını girin.");
+      return false;
+    }
 
-    if (!currentUser) {
-      try {
-        const guestEmail =
-          newAddressForm.email || `guest_${Date.now()}@example.com`;
+    if (cardNumber.replace(/\s/g, "").length !== 16) {
+      alert("Geçerli bir kart numarası girin.");
+      return false;
+    }
+
+    if (!expireMonth || !expireYear) {
+      alert("Son kullanma tarihini girin.");
+      return false;
+    }
+
+    if (cvc.length !== 3) {
+      alert("Geçerli bir CVV kodu girin.");
+      return false;
+    }
+
+    return true;
+  };
+
+  const handlePayment = async () => {
+    if (!validatePaymentInfo()) return;
+    
+    setProcessingPayment(true);
+
+    try {
+      let currentUser = user;
+      let passwordForLogin: string | undefined = undefined;
+
+      if (!currentUser) {
+        const guestEmail = newAddressForm.email || `guest_${Date.now()}@example.com`;
         const password = Math.random().toString(36).slice(-8);
         passwordForLogin = password;
 
@@ -302,9 +356,7 @@ export default function PaymentPage() {
         });
 
         if (!registerRes.ok) {
-          return alert(
-            "Kullanıcı oluşturulamadı, lütfen bilgilerinizi kontrol edin."
-          );
+          throw new Error("Kullanıcı oluşturulamadı");
         }
 
         const registerData = await registerRes.json();
@@ -319,192 +371,308 @@ export default function PaymentPage() {
           });
 
           if (signInResult?.error) {
-            console.error(
-              "Ödeme öncesi otomatik oturum açma başarısız oldu:",
-              signInResult.error
-            );
+            console.error("Otomatik oturum açma hatası:", signInResult.error);
           }
         }
-      } catch (err) {
-        console.error("Register error:", err);
-        return alert("Kullanıcı oluşturulurken hata oluştu.");
       }
-    }
 
-    const userId = Number(currentUser?.user?.id);
-    if (isNaN(userId) || userId <= 0) {
-      return alert("Geçersiz kullanıcı ID");
-    }
+      const userId = Number(currentUser?.user?.id);
+      if (isNaN(userId) || userId <= 0) {
+        throw new Error("Geçersiz kullanıcı bilgisi");
+      }
 
-    const shippingAddr =
-      currentUser.user.addresses?.[0] || (newAddressForm as Address);
+      const shippingAddr = currentUser.user.addresses?.[0] || (newAddressForm as Address);
 
-    const buyer = {
-      id: userId.toString(),
-      buyerName: shippingAddr.firstName || "Adınız",
-      buyerSurname: shippingAddr.lastName || "Soyadınız",
-      email: currentUser.user.email ?? "",
-      identityNumber: "11111111111",
-      registrationDate: new Date().toISOString(),
-      lastLoginDate: new Date().toISOString(),
-      phone: shippingAddr.phone ?? "",
-      city: shippingAddr.city ?? "",
-      country: shippingAddr.country ?? "Türkiye",
-      zipCode: shippingAddr.zip ?? "",
-      ip: "127.0.0.1",
-      tcno: shippingAddr.tcno ?? "",
-    };
-
-    const shippingAddress = {
-      contactName: `${shippingAddr.firstName ?? ""} ${
-        shippingAddr.lastName ?? ""
-      }`.trim(),
-      city: shippingAddr.city ?? "",
-      country: shippingAddr.country ?? "Türkiye",
-      address: shippingAddr.address ?? "",
-      zipCode: shippingAddr.zip ?? "",
-      phone: shippingAddr.phone ?? "",
-      tcno: shippingAddr.tcno ?? "",
-      district: shippingAddr.district ?? "",
-      neighborhood: shippingAddr.neighborhood ?? "",
-    };
-
-    const billingAddress = { ...shippingAddress };
-
-    // ✅ basketItems formatlarken minimum 1 m² kullan
-    const basketItemsFormatted = cartItems.map((item) => {
-      const area = calculateArea(item.width, item.height);
-      const unitPrice = item.product.pricePerM2 * area;
-      return {
-        id: item.product.id.toString(),
-        name: item.product.title,
-        category1: item.product.category,
-        itemType: "PHYSICAL",
-        price: unitPrice.toFixed(2),
-        quantity: item.quantity,
-        profile: item.profile,
-        width: item.width,
-        height: item.height,
-        m2: area, // ✅ Minimum 1 m²
-        device: item.device,
-        unitPrice: unitPrice.toFixed(2),
-        totalPrice: (unitPrice * item.quantity).toFixed(2),
+      const buyer = {
+        id: userId.toString(),
+        buyerName: shippingAddr.firstName || "Ad",
+        buyerSurname: shippingAddr.lastName || "Soyad",
+        email: currentUser.user.email ?? "",
+        identityNumber: shippingAddr.tcno || "11111111111",
+        registrationDate: new Date().toISOString(),
+        lastLoginDate: new Date().toISOString(),
+        phone: shippingAddr.phone ?? "",
+        city: shippingAddr.city ?? "",
+        country: shippingAddr.country ?? "Türkiye",
+        zipCode: shippingAddr.zip ?? "",
+        ip: "127.0.0.1",
+        tcno: shippingAddr.tcno ?? "",
       };
-    });
 
-    const paymentCardFormatted = {
-      cardHolderName: holderName,
-      cardNumber,
-      expireMonth,
-      expireYear,
-      cvc,
-    };
+      const shippingAddress = {
+        contactName: `${shippingAddr.firstName ?? ""} ${shippingAddr.lastName ?? ""}`.trim(),
+        city: shippingAddr.city ?? "",
+        country: shippingAddr.country ?? "Türkiye",
+        address: shippingAddr.address ?? "",
+        zipCode: shippingAddr.zip ?? "",
+        phone: shippingAddr.phone ?? "",
+        tcno: shippingAddr.tcno ?? "",
+        district: shippingAddr.district ?? "",
+        neighborhood: shippingAddr.neighborhood ?? "",
+      };
 
-    const orderPayload = {
-      userId,
-      basketItems: basketItemsFormatted,
-      shippingAddress,
-      billingAddress,
-      totalPrice,
-      paidPrice: totalPrice,
-      currency: "TRY",
-      paymentMethod: "iyzipay",
-      paymentCard: paymentCardFormatted,
-      buyer,
-    };
+      const billingAddress = { ...shippingAddress };
 
-    try {
+      const basketItemsFormatted = cartItems.map((item) => {
+        const area = calculateArea(item.width, item.height);
+        const unitPrice = item.product.pricePerM2 * area;
+        return {
+          id: item.product.id.toString(),
+          name: item.product.title,
+          category1: item.product.category,
+          itemType: "PHYSICAL",
+          price: unitPrice.toFixed(2),
+          quantity: item.quantity,
+          profile: item.profile,
+          width: item.width,
+          height: item.height,
+          m2: area,
+          device: item.device,
+          unitPrice: unitPrice.toFixed(2),
+          totalPrice: (unitPrice * item.quantity).toFixed(2),
+        };
+      });
+
+      const paymentCardFormatted = {
+        cardHolderName: holderName,
+        cardNumber: cardNumber.replace(/\s/g, ""),
+        expireMonth,
+        expireYear,
+        cvc,
+      };
+
+      const orderPayload = {
+        userId,
+        basketItems: basketItemsFormatted,
+        shippingAddress,
+        billingAddress,
+        totalPrice,
+        paidPrice: totalPrice,
+        currency: "TRY",
+        paymentMethod: "iyzipay",
+        paymentCard: paymentCardFormatted,
+        buyer,
+      };
+
       const res = await fetch("/api/order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(orderPayload),
       });
 
-      if (!res.ok) return router.push("/checkout/unsuccess");
+      if (!res.ok) {
+        throw new Error("Ödeme işlemi başarısız");
+      }
 
       const data = await res.json();
+      
       if (data.status === "success") {
-        for (const item of cartItems) {
-          try {
-            await fetch(`/api/cart/${item.id}`, {
-              method: "DELETE",
-            });
-          } catch (err) {
-            console.error("Cart item delete error:", err);
-          }
-        }
+        await Promise.all(
+          cartItems.map((item) =>
+            fetch(`/api/cart/${item.id}`, { method: "DELETE" })
+              .catch((err) => console.error("Sepet temizleme hatası:", err))
+          )
+        );
 
         localStorage.removeItem("cart");
         router.push("/checkout/success");
+      } else {
+        throw new Error("Ödeme onaylanmadı");
       }
     } catch (err) {
-      console.error("handlePayment fetch hatası:", err);
+      console.error("Ödeme hatası:", err);
+      alert(err instanceof Error ? err.message : "Ödeme işlemi sırasında bir hata oluştu");
       router.push("/checkout/unsuccess");
+    } finally {
+      setProcessingPayment(false);
     }
   };
 
-  return (
-    <div className="container mx-auto p-4 md:p-8 max-w-7xl font-sans">
-      <h1 className="text-3xl font-bold mb-8 text-center text-gray-900">
-        Ödeme İşlemleri
-      </h1>
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <Spinner />
+      </div>
+    );
+  }
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 space-y-6">
-          <PaymentStepper currentStep={step} />
-
-          {step === 1 && (
-            <StepAddress
-              addresses={user?.user.addresses ?? []}
-              selectedAddress={selectedAddress}
-              onSelectAddress={setSelectedAddress}
-              onNext={() => setStep(2)}
-              newAddressForm={newAddressForm}
-              setNewAddressForm={setNewAddressForm}
-              onSaveAddress={handleSaveAddress}
-              isAddingNewAddress={isAddingNewAddress}
-              setIsAddingNewAddress={setIsAddingNewAddress}
-              isSavingAddress={isSavingAddress}
-            />
-          )}
-
-          {step === 2 && (
-            <StepPaymentCard
-              holderName={holderName}
-              setHolderName={setHolderName}
-              cardNumber={cardNumber}
-              setCardNumber={setCardNumber}
-              formattedCardNumber={cardNumber}
-              expireMonth={expireMonth}
-              setExpireMonth={setExpireMonth}
-              expireYear={expireYear}
-              setExpireYear={setExpireYear}
-              cvc={cvc}
-              setCvc={setCvc}
-              totalPrice={totalPrice}
-              setStep={setStep}
-              handlePayment={handlePayment}
-            />
-          )}
-        </div>
-
-        <div className="lg:col-span-1">
-          <div className="flex justify-center">
-            <img
-              src="/iyzico/iyzico_ile_ode_colored_horizontal.webp"
-              alt="iyzico ile güvenli ödeme"
-              className="h-10 md:h-12 object-contain mb-4"
-              loading="lazy"
-            />
-          </div>
-          <BasketSummaryCard
-            basketItemsData={cartItems}
-            subTotal={subTotal}
-            selectedCargoFee={selectedCargoFee}
-            totalPrice={totalPrice}
-          />
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center p-8 bg-white rounded-lg shadow-md">
+          <div className="text-red-500 text-lg mb-4">{error}</div>
+          <button
+            onClick={() => fetchData()}
+            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Tekrar Dene
+          </button>
         </div>
       </div>
+    );
+  }
+
+  if (cartItems.length === 0) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center p-8 bg-white rounded-lg shadow-md">
+          <h2 className="text-2xl font-semibold text-gray-900 mb-4">
+            Sepetiniz Boş
+          </h2>
+          <p className="text-gray-600 mb-6">
+            Ödeme yapabilmek için sepetinize ürün eklemelisiniz.
+          </p>
+          <button
+            onClick={() => router.push("/")}
+            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Alışverişe Devam Et
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50 py-8 font-sans">
+      <div className="container mx-auto px-4 md:px-8 max-w-7xl">
+        {/* Header */}
+        <div className="mb-8 text-center">
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
+            Güvenli Ödeme
+          </h1>
+          <p className="text-gray-600">
+            Siparişinizi tamamlamak için bilgilerinizi girin
+          </p>
+        </div>
+
+        {/* Main Content */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+          {/* Left Column - Forms */}
+          <div className="lg:col-span-2 space-y-6">
+            <PaymentStepper currentStep={step} />
+
+            {step === 1 && (
+              <div className="bg-white rounded-lg shadow-md p-6">
+                <StepAddress
+                  addresses={user?.user.addresses ?? []}
+                  selectedAddress={selectedAddress}
+                  onSelectAddress={setSelectedAddress}
+                  onNext={() => setStep(2)}
+                  newAddressForm={newAddressForm}
+                  setNewAddressForm={setNewAddressForm}
+                  onSaveAddress={handleSaveAddress}
+                  isAddingNewAddress={isAddingNewAddress}
+                  setIsAddingNewAddress={setIsAddingNewAddress}
+                  isSavingAddress={isSavingAddress}
+                />
+              </div>
+            )}
+
+            {step === 2 && (
+              <div className="bg-white rounded-lg shadow-md p-6">
+                <StepPaymentCard
+                  holderName={holderName}
+                  setHolderName={setHolderName}
+                  cardNumber={cardNumber}
+                  setCardNumber={setCardNumber}
+                  formattedCardNumber={cardNumber}
+                  expireMonth={expireMonth}
+                  setExpireMonth={setExpireMonth}
+                  expireYear={expireYear}
+                  setExpireYear={setExpireYear}
+                  cvc={cvc}
+                  setCvc={setCvc}
+                  totalPrice={totalPrice}
+                  setStep={setStep}
+                  handlePayment={handlePayment}
+                  isProcessing={processingPayment}
+                />
+              </div>
+            )}
+
+            {/* Security Badges */}
+            <div className="bg-white rounded-lg shadow-md p-6">
+              <div className="flex flex-wrap items-center justify-center gap-6">
+                <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <svg className="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+                  </svg>
+                  <span className="font-medium">256-bit SSL Şifreleme</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M2.166 4.999A11.954 11.954 0 0010 1.944 11.954 11.954 0 0017.834 5c.11.65.166 1.32.166 2.001 0 5.225-3.34 9.67-8 11.317C5.34 16.67 2 12.225 2 7c0-.682.057-1.35.166-2.001zm11.541 3.708a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                  </svg>
+                  <span className="font-medium">PCI DSS Uyumlu</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm text-gray-600">
+                  <svg className="w-5 h-5 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z" />
+                    <path d="M3 4a1 1 0 00-1 1v10a1 1 0 001 1h1.05a2.5 2.5 0 014.9 0H10a1 1 0 001-1V5a1 1 0 00-1-1H3zM14 7a1 1 0 00-1 1v6.05A2.5 2.5 0 0115.95 16H17a1 1 0 001-1v-5a1 1 0 00-.293-.707l-2-2A1 1 0 0015 7h-1z" />
+                  </svg>
+                  <span className="font-medium">Hızlı Teslimat</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column - Summary */}
+          <div className="lg:col-span-1">
+            <div className="sticky top-8 space-y-6">
+              {/* Payment Provider Logo */}
+              <div className="bg-white rounded-lg shadow-md p-4 flex items-center justify-center">
+                <img
+                  src="/iyzico/iyzico_ile_ode_colored_horizontal.webp"
+                  alt="iyzico ile güvenli ödeme"
+                  className="h-10 object-contain"
+                  loading="lazy"
+                />
+              </div>
+
+              {/* Basket Summary */}
+              <div className="bg-white rounded-lg shadow-md">
+                <BasketSummaryCard
+                  basketItemsData={cartItems}
+                  subTotal={subTotal}
+                  selectedCargoFee={selectedCargoFee}
+                  totalPrice={totalPrice}
+                />
+              </div>
+
+              {/* Help Section */}
+              <div className="bg-blue-50 rounded-lg p-4 text-sm">
+                <Link href="/contact">
+                <h3 className="font-semibold text-gray-900 mb-2">
+                  Yardıma mı ihtiyacınız var?
+                </h3>
+                <p className="text-gray-600 mb-3">
+                  Ödeme işleminizle ilgili sorularınız için müşteri hizmetlerimizle iletişime geçebilirsiniz.
+                </p>
+                <button className="text-blue-600 hover:text-blue-700 font-medium">
+                  İletişime Geç →
+                </button>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Processing Overlay */}
+      {processingPayment && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-8 max-w-sm mx-4 text-center">
+            <Spinner />
+            <h3 className="text-xl font-semibold text-gray-900 mt-4 mb-2">
+              Ödemeniz İşleniyor
+            </h3>
+            <p className="text-gray-600">
+              Lütfen bekleyin, sayfayı kapatmayın...
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

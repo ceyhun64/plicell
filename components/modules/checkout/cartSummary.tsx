@@ -14,6 +14,16 @@ import {
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { getCart, GuestCartItem } from "@/utils/cart";
+import {
+  ShoppingCart,
+  Package,
+  Edit3,
+  Info,
+  Receipt,
+  TrendingUp,
+  CheckCircle2,
+  Truck,
+} from "lucide-react";
 
 // KDV Oranı
 const KDV_RATE = 0.1; // %10
@@ -53,8 +63,9 @@ export default function BasketSummaryCard({
   const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null);
   const [guestItems, setGuestItems] = useState<GuestCartItem[]>([]);
   const [basketItems, setBasketItems] = useState<BasketItem[]>([]);
+  const [isExpanded, setIsExpanded] = useState(false);
 
-  // ✅ Giriş durumunu kontrol et
+  // Giriş durumunu kontrol et
   useEffect(() => {
     const checkLoginStatus = async () => {
       try {
@@ -69,7 +80,7 @@ export default function BasketSummaryCard({
     checkLoginStatus();
   }, []);
 
-  // ✅ Cart verisini yükle (login -> backend, guest -> localStorage)
+  // Cart verisini yükle
   useEffect(() => {
     if (isLoggedIn === null) return;
 
@@ -98,7 +109,6 @@ export default function BasketSummaryCard({
             setBasketItems(items);
             setGuestItems([]);
           } else {
-            console.error("Backend cart fetch failed");
             setBasketItems([]);
           }
         } catch (err) {
@@ -114,7 +124,6 @@ export default function BasketSummaryCard({
 
     fetchCart();
 
-    // 🔹 Cart güncellendiğinde tekrar yükle
     const handleCartUpdated = () => {
       fetchCart();
     };
@@ -124,7 +133,7 @@ export default function BasketSummaryCard({
     };
   }, [isLoggedIn]);
 
-  // 🔹 Gösterilecek ürünleri belirle
+  // Gösterilecek ürünleri belirle
   const itemsToRender =
     isLoggedIn && basketItems.length > 0
       ? basketItems
@@ -144,23 +153,23 @@ export default function BasketSummaryCard({
           device: item.device,
         }));
 
-  // ✅ M² hesaplama fonksiyonu - minimum 1 m²
+  // M² hesaplama - minimum 1 m²
   const calculateArea = (width?: number, height?: number): number => {
     if (!width || !height) return 1;
     const area = (width * height) / 10000;
-    return area < 1 ? 1 : area; // ✅ 1'den küçükse 1 döndür
+    return area < 1 ? 1 : area;
   };
 
-  // 🔹 Ara toplamı hesapla
+  // Ara toplamı hesapla
   const calculatedSubTotal = itemsToRender.reduce((acc, item) => {
     const area = calculateArea(item.width, item.height);
     return acc + item.product.pricePerM2 * area * item.quantity;
   }, 0);
 
-  // 🔹 KDV'yi hesapla (Ara Toplamın %10'u)
+  // KDV'yi hesapla
   const calculatedKdv = calculatedSubTotal * KDV_RATE;
 
-  // 🔹 Toplamı hesapla (Ara Toplam + KDV)
+  // Toplamı hesapla
   const calculatedTotal = calculatedSubTotal + calculatedKdv;
 
   const getItemDetails = (item: BasketItem): string[] => {
@@ -171,18 +180,15 @@ export default function BasketSummaryCard({
       const realArea = (item.width * item.height) / 10000;
       const pricingArea = calculateArea(item.width, item.height);
 
-      // ✅ Eğer gerçek alan 1'den küçükse uyarı göster
       if (realArea < 1) {
         details.push(
-          `Boyut: ${item.width} x ${item.height} cm (${realArea.toFixed(
+          `${item.width} x ${item.height} cm (${realArea.toFixed(
             2
           )} m² → 1.00 m²)`
         );
       } else {
         details.push(
-          `Boyut: ${item.width} x ${item.height} cm (${pricingArea.toFixed(
-            2
-          )} m²)`
+          `${item.width} x ${item.height} cm (${pricingArea.toFixed(2)} m²)`
         );
       }
 
@@ -192,104 +198,230 @@ export default function BasketSummaryCard({
   };
 
   if (isLoggedIn === null) {
-    return <p className="text-center mt-4 text-gray-400">Yükleniyor...</p>;
+    return (
+      <Card className="sticky top-6">
+        <CardContent className="py-8">
+          <div className="flex flex-col items-center justify-center gap-3">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <p className="text-sm text-gray-500">Sepet yükleniyor...</p>
+          </div>
+        </CardContent>
+      </Card>
+    );
   }
 
   if (!itemsToRender || itemsToRender.length === 0) {
     return (
-      <p className="text-center mt-4 text-gray-500">
-        Sepetinizde ürün bulunmamaktadır.
-      </p>
+      <Card className="sticky top-6">
+        <CardContent className="py-12">
+          <div className="flex flex-col items-center justify-center gap-4 text-center">
+            <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center">
+              <ShoppingCart className="w-8 h-8 text-gray-400" />
+            </div>
+            <div>
+              <p className="font-medium text-gray-900 mb-1">Sepetiniz Boş</p>
+              <p className="text-sm text-gray-500">
+                Alışverişe başlamak için ürün ekleyin
+              </p>
+            </div>
+            <Link href="/" className="w-full">
+              <Button className="w-full">Alışverişe Başla</Button>
+            </Link>
+          </div>
+        </CardContent>
+      </Card>
     );
   }
 
+  const displayedItems = isExpanded ? itemsToRender : itemsToRender.slice(0, 3);
+  const hasMoreItems = itemsToRender.length > 3;
+
   return (
-    <Card className="sticky top-6 lg:h-fit">
-      <CardHeader>
-        <CardTitle className="text-xl">Sepet Özeti</CardTitle>
+    <Card className="sticky top-6 shadow-lg border-2">
+      <CardHeader className="space-y-2 pb-4">
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-xl flex items-center gap-2">
+            <ShoppingCart className="w-5 h-5 text-blue-600" />
+            Sipariş Özeti
+          </CardTitle>
+          <div className="flex items-center gap-1.5 px-3 py-1 bg-blue-50 rounded-full">
+            <Package className="w-4 h-4 text-blue-600" />
+            <span className="text-sm font-semibold text-blue-600">
+              {itemsToRender.length} Ürün
+            </span>
+          </div>
+        </div>
       </CardHeader>
 
       <CardContent className="space-y-4">
-        <div className="space-y-4">
-          {itemsToRender.map((item) => {
+        {/* Ürün Listesi */}
+        <div className="space-y-3 max-h-[340px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+          {displayedItems.map((item) => {
             const product: Product = item.product;
             const details = getItemDetails(item);
-            const area = calculateArea(item.width, item.height); // ✅ Minimum 1 m²
+            const area = calculateArea(item.width, item.height);
             const itemPrice = product.pricePerM2 * area * item.quantity;
 
             return (
-              <div key={item.id} className="flex items-center space-x-4">
-                <div className="w-12 h-16 bg-gray-100 rounded-xs flex-shrink-0 flex items-center justify-center overflow-hidden">
+              <div
+                key={item.id}
+                className="flex gap-3 p-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors border border-gray-200"
+              >
+                {/* Ürün Görseli */}
+                <div className="relative w-15 h-20 bg-white rounded-md flex-shrink-0 flex items-center justify-center overflow-hidden border border-gray-200 group">
                   <Image
                     src={product.mainImage}
                     alt={product.title}
-                    width={50}
-                    height={50}
-                    className="object-contain"
+                    width={64}
+                    height={64}
+                    className="object-contain transition-transform group-hover:scale-110"
                   />
+               
                 </div>
 
-                <div className="flex-grow">
-                  <p className="font-semibold text-sm">{product.title}</p>
+                {/* Ürün Bilgileri */}
+                <div className="flex-1 min-w-0">
+                  <p className="font-semibold text-sm text-gray-900 line-clamp-2 mb-1">
+                    {product.title}
+                  </p>
                   {details.length > 0 && (
-                    <div className="text-xs text-gray-500 space-y-0.5 mt-1">
+                    <div className="text-xs text-gray-600 space-y-0.5">
                       {details.map((detail, idx) => (
-                        <p key={idx}>{detail}</p>
+                        <p key={idx} className="line-clamp-1">
+                          {detail}
+                        </p>
                       ))}
                     </div>
                   )}
-                  <p className="text-xs text-gray-400 mt-1">
-                    {item.quantity} adet
-                  </p>
                 </div>
 
-                <div className="text-right flex flex-col items-end">
-                  <span className="text-sm font-medium text-red-500">
-                    {itemPrice.toFixed(2)}TL
+                {/* Fiyat */}
+                <div className="text-right flex flex-col items-end justify-center">
+                  <span className="text-base font-bold text-gray-900">
+                    ₺{itemPrice.toFixed(2)}
                   </span>
-                  {product.oldPrice &&
-                    product.oldPrice > product.pricePerM2 && (
-                      <span className="text-xs line-through text-gray-400">
-                        {(product.oldPrice * area * item.quantity).toFixed(2)}TL
-                      </span>
-                    )}
+                  <span className="text-xs text-gray-500">
+                    ₺{product.pricePerM2}/m²
+                  </span>
                 </div>
               </div>
             );
           })}
         </div>
 
-        <Separator />
+        {/* Daha Fazla Göster Butonu */}
+        {hasMoreItems && (
+          <button
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="w-full py-2 text-sm font-medium text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors"
+          >
+            {isExpanded
+              ? "Daha Az Göster ↑"
+              : `+${itemsToRender.length - 3} Ürün Daha Göster ↓`}
+          </button>
+        )}
 
-        <div className="space-y-2 text-sm">
-          <div className="flex justify-between font-normal">
-            <span>Ara Toplam (KDV Hariç)</span>
-            <span className="font-medium">
-              {calculatedSubTotal.toFixed(2)}TL
+        <Separator className="my-4" />
+
+        {/* Fiyat Detayları */}
+        <div className="space-y-3">
+          {/* Ara Toplam */}
+          <div className="flex justify-between items-center">
+            <span className="text-sm text-gray-600 flex items-center gap-1.5">
+              <Receipt className="w-4 h-4" />
+              Ara Toplam
+            </span>
+            <span className="text-base font-semibold text-gray-900">
+              ₺{calculatedSubTotal.toFixed(2)}
             </span>
           </div>
-          <div className="flex justify-between font-normal">
-            <span>KDV (%10)</span>
-            <span className="font-medium text-red-500">
-              +{calculatedKdv.toFixed(2)}TL
+
+          {/* Kargo */}
+          <div className="flex justify-between items-center bg-green-50 -mx-6 px-6 py-3 border-y border-green-100">
+            <span className="text-sm text-green-800 flex items-center gap-1.5 font-medium">
+              <Truck className="w-4 h-4" />
+              Kargo Ücreti
+            </span>
+            <span className="text-base font-bold text-green-700">
+              {selectedCargoFee === 0
+                ? "ÜCRETSİZ"
+                : `₺${selectedCargoFee.toFixed(2)}`}
+            </span>
+          </div>
+
+          {/* KDV */}
+          <div className="flex justify-between items-center">
+            <span className="text-sm text-gray-600 flex items-center gap-1.5">
+              <TrendingUp className="w-4 h-4" />
+              KDV (%10)
+            </span>
+            <span className="text-base font-semibold text-gray-900">
+              ₺{calculatedKdv.toFixed(2)}
             </span>
           </div>
         </div>
 
-        <Separator />
+        <Separator className="my-4" />
 
-        <div className="flex justify-between text-lg font-bold">
-          <span>Genel Toplam</span>
-          <span>{calculatedTotal.toFixed(2)}TL</span>
+        {/* Genel Toplam */}
+        <div className="bg-gradient-to-r from-blue-600 to-indigo-600 -mx-6 px-6 py-5 rounded-b-lg">
+          <div className="flex justify-between items-center">
+            <div className="text-white">
+              <p className="text-xs font-medium mb-1 opacity-90">
+                Ödenecek Tutar
+              </p>
+              <p className="text-3xl font-bold tracking-tight">
+                ₺{calculatedTotal.toFixed(2)}
+              </p>
+              <p className="text-xs mt-1 opacity-75">(KDV Dahil)</p>
+            </div>
+            <CheckCircle2 className="w-10 h-10 text-white opacity-90" />
+          </div>
+        </div>
+
+        {/* Bilgilendirme */}
+        <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 flex gap-2 -mx-6 mx-6">
+          <Info className="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0" />
+          <div className="text-xs text-amber-800">
+            <p className="font-medium mb-1">Önemli Bilgiler</p>
+            <ul className="space-y-1">
+              <li>• Fiyatlara KDV dahildir</li>
+              <li>• Ödeme sonrası siparişiniz onaylanacaktır</li>
+              <li>• Kargo ücretsizdir</li>
+            </ul>
+          </div>
         </div>
       </CardContent>
 
-      <CardFooter>
+      <CardFooter className="flex flex-col gap-3 pt-4 border-t">
+        {/* Sepeti Düzenle */}
         <Link href="/cart" className="w-full">
-          <Button variant="outline" className="w-full">
+          <Button
+            variant="outline"
+            className="w-full h-11 border-2 hover:bg-gray-50 font-medium group"
+          >
+            <Edit3 className="w-4 h-4 mr-2 group-hover:rotate-12 transition-transform" />
             Sepeti Düzenle
           </Button>
         </Link>
+
+        {/* Güvenli Ödeme Badge */}
+        <div className="flex items-center justify-center gap-3 text-xs text-gray-500 pt-2">
+          <div className="flex items-center gap-1">
+            <CheckCircle2 className="w-3.5 h-3.5 text-green-600" />
+            <span>Güvenli Ödeme</span>
+          </div>
+          <span>•</span>
+          <div className="flex items-center gap-1">
+            <CheckCircle2 className="w-3.5 h-3.5 text-green-600" />
+            <span>256-bit SSL</span>
+          </div>
+          <span>•</span>
+          <div className="flex items-center gap-1">
+            <CheckCircle2 className="w-3.5 h-3.5 text-green-600" />
+            <span>PCI DSS</span>
+          </div>
+        </div>
       </CardFooter>
     </Card>
   );
