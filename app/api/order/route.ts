@@ -121,7 +121,6 @@ export async function POST(req: NextRequest) {
       paymentCard,
     } = body;
 
-
     if (!userId || !basketItems || basketItems.length === 0) {
       return NextResponse.json(
         { status: "failure", error: "Geçerli kullanıcı veya ürün yok" },
@@ -130,7 +129,6 @@ export async function POST(req: NextRequest) {
     }
 
     // --- Iyzipay uyumlu buyer objesi ---
-    // --- Iyzipay uyumlu buyer objesi (body'den al) ---
     const buyer = {
       id: body.buyer?.id?.toString() || userId.toString(),
       name: body.buyer?.buyerName || body.buyer?.name || "",
@@ -150,7 +148,7 @@ export async function POST(req: NextRequest) {
 
     // --- Iyzipay uyumlu shipping & billing adres ---
     const shipping = {
-      contactName: buyer.name,
+      contactName: `${buyer.name} ${buyer.surname}`.trim(),
       city: shippingAddress.city ?? "",
       country: shippingAddress.country ?? "Türkiye",
       address: shippingAddress.address ?? "",
@@ -158,7 +156,7 @@ export async function POST(req: NextRequest) {
     };
 
     const billing = {
-      contactName: buyer.name,
+      contactName: `${buyer.name} ${buyer.surname}`.trim(),
       city: billingAddress.city ?? "",
       country: billingAddress.country ?? "Türkiye",
       address: billingAddress.address ?? "",
@@ -194,35 +192,55 @@ export async function POST(req: NextRequest) {
       basketId: "B" + Date.now(),
     };
 
-    // --- Payment API çağrısı ---
-    const paymentRes = await fetch(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/payment`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(paymentPayload),
-      }
-    );
+    // --- Payment API çağrısı (APP ROUTER için düzeltildi) ---
+    // App Router'da internal API çağrısı için base URL oluştur
+    const protocol = req.headers.get("x-forwarded-proto") || "http";
+    const host = req.headers.get("host") || "localhost:3000";
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || `${protocol}://${host}`;
 
+    console.log("🔄 Payment API çağrılıyor:", `${baseUrl}/api/payment`);
+
+    const paymentRes = await fetch(`${baseUrl}/api/payment`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(paymentPayload),
+    });
+
+    // Response'u kontrol et
     if (!paymentRes.ok) {
       const errText = await paymentRes.text();
+      console.error("❌ Payment API HTTP hatası:", paymentRes.status, errText);
       return NextResponse.json(
-        { status: "failure", error: "Ödeme başarısız: " + errText },
+        {
+          status: "failure",
+          error: "Ödeme başarısız: " + errText,
+        },
         { status: 400 }
       );
     }
 
     const paymentResult = await paymentRes.json();
+    console.log("💳 Payment API response:", paymentResult);
 
+    // İyzipay başarı kontrolü
     if (!paymentResult || paymentResult.status !== "success") {
+      console.error("❌ İyzipay ödeme hatası:", paymentResult);
       return NextResponse.json(
         {
           status: "failure",
-          error: paymentResult?.errorMessage || "Ödeme başarısız",
+          error:
+            paymentResult?.error ||
+            paymentResult?.errorMessage ||
+            "Ödeme başarısız",
+          errorCode: paymentResult?.errorCode,
         },
         { status: 400 }
       );
     }
+
+    console.log("✅ Ödeme başarılı! Sipariş oluşturuluyor...");
 
     // --- Ödeme başarılı, veritabanına kaydet ---
     const order = await prisma.order.create({
@@ -240,9 +258,7 @@ export async function POST(req: NextRequest) {
               connect: { id: Number(item.id) },
             },
             quantity: Number(item.quantity || 1),
-            // DÜZELTME: item.unitPrice undefined ise 0 kullan
             unitPrice: Number(item.unitPrice || 0),
-            // totalPrice için de güvenlik önlemi
             totalPrice: Number(item.totalPrice || 0),
             note: item.note,
             profile: item.profile,
@@ -252,7 +268,6 @@ export async function POST(req: NextRequest) {
             device: item.device,
           })),
         },
-
         addresses: {
           create: [
             {
@@ -277,20 +292,22 @@ export async function POST(req: NextRequest) {
               zip: billingAddress.zip ?? billingAddress.zipCode ?? "",
               phone: body.buyer?.phone ?? "",
               country: billingAddress.country ?? "Türkiye",
-              tcno: shippingAddress.tcno ?? body.buyer?.tcno ?? "",
+              tcno: billingAddress.tcno ?? body.buyer?.tcno ?? "",
             },
           ],
         },
       },
       include: { items: true, addresses: true },
     });
+
+    console.log("✅ Sipariş oluşturuldu:", order.id);
+
     const formatPrice = (price: any) =>
       Number(price).toLocaleString("tr-TR", {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
       });
 
-    // Mail gönderimleri
     // --- Mail Gönderimi ---
     try {
       // 1A. Müşteri onay maili
@@ -336,14 +353,11 @@ Bizi tercih ettiğiniz için teşekkür eder, iyi günler dileriz.
 
 Saygılarımızla, 
 **MODA PERDE Ekibi**
-[Web Sitenizin Adresi veya İletişim Bilgileri]
 `
         );
       }
 
       // 1B. Admin bilgilendirme maili
-      /* ... POST fonksiyonu içinde ... */
-      // 1B. Admin bilgilendirme maili (Güncellenmiş)
       await sendMail(
         ["modaperdeofficial@gmail.com"],
         `🔔 Yeni Sipariş Kaydı - Acil İşlem Gerekiyor: #${order.id}`,
@@ -380,13 +394,13 @@ Lütfen siparişin detaylarını kontrol ederek üretim ve gönderim sürecini b
 `
       );
     } catch (mailErr) {
-      console.error("Mail gönderimi sırasında hata:", mailErr);
+      console.error("⚠️ Mail gönderimi sırasında hata:", mailErr);
       // Ödeme ve sipariş başarılı ise mail hatası siparişi iptal etmez
     }
 
     return NextResponse.json({ status: "success", order, paymentResult });
   } catch (err: any) {
-    console.error("Order POST Error:", err);
+    console.error("💥 Order POST Error:", err);
     return NextResponse.json(
       { status: "failure", error: err.message },
       { status: 500 }
