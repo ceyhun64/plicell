@@ -50,13 +50,14 @@ export async function POST(req: Request): Promise<Response> {
   <div style="position: absolute; bottom: -20px; left: -20px; width: 90px; height: 90px; background: rgba(255,255,255,0.08); border-radius: 50%; filter: blur(40px);"></div>
 
   <!-- Logo Container -->
-  <div style="background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-radius: 16px; padding: 16px; display: inline-block; margin-bottom: 16px; box-shadow: 0 8px 28px rgba(0,0,0,0.10); position: relative; z-index: 1;">
-    <img 
-      src="cid:modaperde-logo" 
-      alt="Moda Perde Logo" 
-      style="width: 110px; height: auto; display: block;"
-    />
-  </div>
+ <div style="background: #ffffff; border-radius: 16px; padding: 16px; display: inline-block; margin-bottom: 16px; box-shadow: 0 8px 28px rgba(0,0,0,0.10); position: relative; z-index: 1;">
+  <img 
+    src="cid:modaperde-logo" 
+    alt="Moda Perde Logo" 
+    style="width: 110px; height: auto; display: block;"
+  />
+</div>
+
 
   <h1 style="margin: 0; font-size: 26px; font-weight: 700; color: #ffffff; letter-spacing: -0.3px; position: relative; z-index: 1;">
     MODA PERDE
@@ -169,8 +170,8 @@ export async function POST(req: Request): Promise<Response> {
       html: htmlTemplate,
       attachments: [
         {
-          filename: "logo.webp", // Filename belirtilmeli ama görünmez
-          path: "./public/logo/logo.webp",
+          filename: "logomail.webp", // Filename belirtilmeli ama görünmez
+          path: "./public/logo/logomail.webp",
           cid: "modaperde-logo", // Content-ID ile gömülü kullanım
           contentDisposition: "inline", // Inline olarak göm
         },
