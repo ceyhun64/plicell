@@ -1,0 +1,7 @@
+{
+  "functions": {
+    "pages/api/payment.ts": {
+      "includeFiles": "node_modules/iyzipay/**"
+    }
+  }
+}
