@@ -22,7 +22,7 @@ import { Button } from "@/components/ui/button";
 import { ShoppingCart, ArrowRight, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { toast } from "sonner";
-import CartItemDropdown from "./cartItem"; // <-- Burayı ekledik
+import CartItemDropdown from "./cartItem";
 import {
   getCart,
   updateGuestCartQuantity,
@@ -169,22 +169,45 @@ const CartDropdown = forwardRef(
       return () => window.removeEventListener("cartUpdated", handleCartUpdate);
     }, [isLoggedIn, fetchCart, loadGuestCart, guest]);
 
+    // ✅ FIX: Backend'e quantity göndermeli
     const handleQuantityChange = async (id: number, delta: number) => {
       if (!isLoggedIn) {
+        // Guest cart
         updateGuestCartQuantity(id, delta);
         loadGuestCart();
         return;
       }
+
+      // Logged-in cart
+      const item = cartItems.find((c) => c.id === id);
+      if (!item) return;
+
+      const newQuantity = Math.max(1, item.quantity + delta);
+
       try {
         const res = await fetch(`/api/cart/${id}`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ delta }),
+          body: JSON.stringify({ quantity: newQuantity }), // ✅ quantity gönder, delta değil
           credentials: "include",
         });
-        if (res.ok) fetchCart();
-        else toast.error("Miktar güncellenemedi");
-      } catch {
+
+        if (!res.ok) {
+          const errorData = await res.json();
+          toast.error(errorData.error || "Miktar güncellenemedi");
+          return;
+        }
+
+        const updatedItem = await res.json();
+
+        // UI'yi güncelle
+        setCartItems((prev) =>
+          prev.map((c) =>
+            c.id === id ? { ...c, quantity: updatedItem.quantity } : c
+          )
+        );
+      } catch (err) {
+        console.error("Quantity update error:", err);
         toast.error("Miktar güncellenemedi");
       }
     };
@@ -200,8 +223,12 @@ const CartDropdown = forwardRef(
           method: "DELETE",
           credentials: "include",
         });
-        if (res.ok) fetchCart();
-        else toast.error("Ürün kaldırılamadı");
+        if (res.ok) {
+          setCartItems((prev) => prev.filter((c) => c.id !== id));
+          toast.success("Ürün sepetten kaldırıldı");
+        } else {
+          toast.error("Ürün kaldırılamadı");
+        }
       } catch {
         toast.error("Ürün kaldırılamadı");
       }
@@ -326,5 +353,7 @@ const CartDropdown = forwardRef(
     );
   }
 );
+
+CartDropdown.displayName = "CartDropdown";
 
 export default CartDropdown;

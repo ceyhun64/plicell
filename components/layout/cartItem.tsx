@@ -16,7 +16,9 @@ const CartItemDropdown: React.FC<CartItemDropdownProps> = ({
   onQuantityChange,
   onRemove,
 }) => {
-  const itemPrice = (item.product.pricePerM2 || 0) * (item.m2 || 1);
+  // ✅ Fiyat hesabına quantity'yi de dahil et
+  const pricePerUnit = (item.product.pricePerM2 || 0) * (item.m2 || 1);
+  const totalPrice = pricePerUnit * (item.quantity || 1);
 
   return (
     <div className="flex items-center justify-between p-4 bg-white/60 rounded-xs border border-gray-200 shadow-sm font-sans">
@@ -36,8 +38,13 @@ const CartItemDropdown: React.FC<CartItemDropdownProps> = ({
             {item.width}x{item.height} cm
           </p>
         )}
-        <p className="text-sm font-bold text-gray-800 mt-2">
-          ₺{itemPrice.toFixed(2)}
+        {/* ✅ Birim fiyat göster */}
+        <p className="text-xs text-gray-500 mt-1">
+          Birim: ₺{pricePerUnit.toFixed(2)}
+        </p>
+        {/* ✅ Toplam fiyat - quantity ile çarpılmış */}
+        <p className="text-sm font-bold text-gray-800 mt-1">
+          ₺{totalPrice.toFixed(2)}
         </p>
       </div>
       <div className="flex flex-col items-end gap-2">

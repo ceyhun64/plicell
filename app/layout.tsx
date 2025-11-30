@@ -253,8 +253,7 @@ export default function RootLayout({
           }}
         />
 
-        {/* ✅ Hreflang (Eğer çok dilli site yaparsanız) */}
-        {/* <link rel="alternate" hrefLang="tr" href="https://plicell.vercel.app" /> */}
+      
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${playfairDisplay.className} antialiased`}
