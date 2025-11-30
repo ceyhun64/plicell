@@ -59,6 +59,28 @@ function formatDateForIyzipay(date: string | Date): string {
   return `${yyyy}-${mm}-${dd} ${hh}:${min}:${ss}`;
 }
 
+/**
+ * Fiyat hesaplama ve hizmet bedeli ekleme
+ */
+function calculatePricing(basketItems: BasketItem[]) {
+  // Sepet toplamını hesapla
+  const subtotal = basketItems.reduce((sum, item) => {
+    const price =
+      typeof item.price === "string" ? parseFloat(item.price) : item.price;
+    return sum + price;
+  }, 0);
+
+  // %10 hizmet bedeli ekle
+  const serviceFee = subtotal * 0.1;
+  const total = subtotal + serviceFee;
+
+  return {
+    subtotal: parseFloat(subtotal.toFixed(2)),
+    serviceFee: parseFloat(serviceFee.toFixed(2)),
+    total: parseFloat(total.toFixed(2)),
+  };
+}
+
 // Tipler
 interface PaymentCard {
   cardHolderName: string;
@@ -151,27 +173,43 @@ export async function POST(req: NextRequest) {
       lastLoginDate: formatDateForIyzipay(buyer.lastLoginDate),
     };
 
-    // Sepet toplamını hesapla
-    const basketTotal = basketItems
-      .reduce((sum, item) => {
-        const price =
-          typeof item.price === "string" ? parseFloat(item.price) : item.price;
-        return sum + price;
-      }, 0)
-      .toFixed(2);
+    // Fiyat hesaplaması (%10 hizmet bedeli dahil)
+    const pricing = calculatePricing(basketItems);
+
+    // Sepet ürünleri (orijinal fiyatlarla)
+    const formattedBasketItems = basketItems.map((item) => {
+      const price =
+        typeof item.price === "string" ? parseFloat(item.price) : item.price;
+      return {
+        id: item.id.toString(),
+        name: item.name || "Ürün",
+        category1: item.category1 || "Genel",
+        itemType: item.itemType || "PHYSICAL",
+        price: price.toFixed(2),
+      };
+    });
+
+    // Hizmet bedeli ürün olarak ekle
+    formattedBasketItems.push({
+      id: "SERVICE_FEE",
+      name: "Hizmet Bedeli",
+      category1: "Hizmet",
+      itemType: "VIRTUAL",
+      price: pricing.serviceFee.toFixed(2),
+    });
 
     // İyzipay ödeme request body'si
     const paymentRequest = {
       locale: "tr",
       conversationId: Date.now().toString(),
-      price: basketTotal,
-      paidPrice: basketTotal,
+      price: pricing.total.toFixed(2),
+      paidPrice: pricing.total.toFixed(2),
       currency,
       basketId: basketId || `B${Date.now()}`,
       paymentChannel: "WEB",
       paymentCard: {
         cardHolderName: paymentCard.cardHolderName,
-        cardNumber: paymentCard.cardNumber.replace(/\s/g, ""), // Boşlukları temizle
+        cardNumber: paymentCard.cardNumber.replace(/\s/g, ""),
         expireMonth: paymentCard.expireMonth,
         expireYear: paymentCard.expireYear,
         cvc: paymentCard.cvc,
@@ -192,24 +230,13 @@ export async function POST(req: NextRequest) {
         address: billingAddress.address,
         zipCode: billingAddress.zipCode,
       },
-      basketItems: basketItems.map((item) => {
-        const price =
-          typeof item.price === "string" ? parseFloat(item.price) : item.price;
-
-        return {
-          id: item.id.toString(),
-          name: item.name || "Ürün",
-          category1: item.category1 || "Genel",
-          itemType: item.itemType || "PHYSICAL",
-          price: price.toFixed(2),
-        };
-      }),
+      basketItems: formattedBasketItems,
     };
 
     // Request body'yi JSON'a çevir
     const requestBody = JSON.stringify(paymentRequest);
 
-    // Authorization header'ı oluştur (✅ 4 parametre)
+    // Authorization header'ı oluştur
     const uri = "/payment/auth";
     const { authorization, randomKey } = createAuthorizationHeader(
       apiKey,
@@ -220,8 +247,10 @@ export async function POST(req: NextRequest) {
 
     console.log("İyzipay ödeme isteği gönderiliyor...", {
       endpoint: `${baseUrl}${uri}`,
-      basketTotal,
-      itemCount: basketItems.length,
+      subtotal: pricing.subtotal,
+      serviceFee: pricing.serviceFee,
+      total: pricing.total,
+      itemCount: formattedBasketItems.length,
     });
 
     // İyzipay API'ye istek gönder
@@ -244,6 +273,7 @@ export async function POST(req: NextRequest) {
       console.log("✅ İyzipay ödeme başarılı:", {
         paymentId: result.paymentId,
         conversationId: result.conversationId,
+        amount: pricing.total,
       });
 
       return NextResponse.json({
@@ -251,6 +281,11 @@ export async function POST(req: NextRequest) {
         paymentId: result.paymentId,
         conversationId: result.conversationId,
         fraudStatus: result.fraudStatus,
+        pricing: {
+          subtotal: pricing.subtotal,
+          serviceFee: pricing.serviceFee,
+          total: pricing.total,
+        },
         ...result,
       });
     }
