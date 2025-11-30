@@ -167,7 +167,7 @@ export default function PaymentSuccessPage() {
             {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row gap-3">
               <button
-                onClick={() => (window.location.href = "/orders")}
+                onClick={() => (window.location.href = "/profile/orders")}
                 className="flex-1 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-xl font-semibold transition-colors flex items-center justify-center gap-2 shadow-lg shadow-green-600/30"
               >
                 <Package className="w-5 h-5" />
