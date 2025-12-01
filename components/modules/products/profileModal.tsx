@@ -39,7 +39,7 @@ export default function ProfilePreviewModal({
           alt="Seçilen Profil"
           width={500}
           height={500}
-          className="object-contain w-full h-full max-h-180"
+          className="object-contain w-full h-100 md:h-120 "
           unoptimized
         />
 
