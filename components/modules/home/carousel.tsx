@@ -36,33 +36,33 @@ const heroes = [
     buttonText: "Tüm Perde Koleksiyonu",
     href: "/products",
   },
-  // {
-  //   id: 4, //stor
-  //   title: "Karartma Stor: Tam Kontrol",
-  //   description:
-  //     "Yatak odaları ve sunum alanları için %100 ışık kesme performansı. Gün ışığını tamamen bloke ederek konforlu ve kesintisiz bir karanlık sağlayın.",
-  //   image: "/heroes/stor.webp",
-  //   buttonText: "Storları Gör",
-  //   href: "/products/drapes",
-  // },
-  // {
-  //   id: 5, //fon
-  //   title: "Mekana Derinlik Kat",
-  //   description:
-  //     "Tül veya jaluzinizle kombinleyerek pencerenizi çerçeveleyin. Zengin renk ve kadife, keten gibi farklı dokularla odanızın ambiyansını değiştirin.",
-  //   image: "/heroes/fon.webp",
-  //   buttonText: "Fon Perde Koleksiyonu",
-  //   href: "/products/roller",
-  // },
-  // {
-  //   id: 6, //dikey
-  //   title: "Dikey & Zebra İle Işığı Yönetin",
-  //   description:
-  //     "Hem tül hem de güneşlik özelliğini tek bir üründe birleştirin. Işığı tam kontrol altında tutarak modern ve dinamik bir pencere görünümü yaratın.",
-  //   image: "/heroes/dikey.webp",
-  //   buttonText: "Dikey Perde Modelleri",
-  //   href: "/products/vertical",
-  // },
+  {
+    id: 4, //stor
+    title: "Karartma Stor: Tam Kontrol",
+    description:
+      "Yatak odaları ve sunum alanları için %100 ışık kesme performansı. Gün ışığını tamamen bloke ederek konforlu ve kesintisiz bir karanlık sağlayın.",
+    image: "/heroes/stor.webp",
+    buttonText: "Storları Gör",
+    href: "/products/drapes",
+  },
+  {
+    id: 5, //fon
+    title: "Mekana Derinlik Kat",
+    description:
+      "Tül veya jaluzinizle kombinleyerek pencerenizi çerçeveleyin. Zengin renk ve kadife, keten gibi farklı dokularla odanızın ambiyansını değiştirin.",
+    image: "/heroes/fon.webp",
+    buttonText: "Fon Perde Koleksiyonu",
+    href: "/products/roller",
+  },
+  {
+    id: 6, //dikey
+    title: "Dikey & Zebra İle Işığı Yönetin",
+    description:
+      "Hem tül hem de güneşlik özelliğini tek bir üründe birleştirin. Işığı tam kontrol altında tutarak modern ve dinamik bir pencere görünümü yaratın.",
+    image: "/heroes/dikey.webp",
+    buttonText: "Dikey Perde Modelleri",
+    href: "/products/vertical",
+  },
 ];
 
 const SLIDE_INTERVAL_MS = 6000; // Otomatik geçiş süresi (5 saniyeden 6 saniyeye çıkarıldı)
