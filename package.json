@@ -53,7 +53,7 @@
     "motion": "^12.23.24",
     "mysql": "^2.18.1",
     "mysql2": "^3.15.3",
-    "next": "16.0.3",
+    "next": "^16.0.10",
     "next-auth": "^4.24.13",
     "next-cloudinary": "^6.17.5",
     "next-session": "^4.0.5",

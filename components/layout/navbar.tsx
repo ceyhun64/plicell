@@ -35,7 +35,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { usePathname, useRouter } from "next/navigation";
-import { GradientText } from "../ui/shadcn-io/gradient-text/index";
 import CartDropdown from "./cartDropdown";
 import { getGuestCartCount } from "@/utils/cart";
 import { useFavorite } from "@/contexts/favoriteContext";
